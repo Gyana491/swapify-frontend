@@ -1,0 +1,21 @@
+{
+    "deleted": false,
+    "_id": "67a102de3fd066d5fccea8d1",
+    "title": "Dummy List",
+    "seller_id": {
+        "_id": "67a102953fd066d5fccea8cb",
+        "username": "gyanaranjanmohanta491+swapify",
+        "email": "gyanaranjanmohanta491+swapify@gmail.com"
+    },
+    "seller_no": "8249099406",
+    "category_id": "",
+    "price": 2345677,
+    "description": "www",
+    "cover_image": "20250203175406-New_Delhi.PNG",
+    "country": "India",
+    "state": "Odisha",
+    "city": "Jajapur",
+    "pincode": "755028",
+    "created_at": "2025-02-03T17:54:38.574Z",
+    "__v": 0
+}
