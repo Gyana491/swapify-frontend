@@ -1,17 +1,35 @@
 "use client";
-import { useRouter } from 'next/navigation';
-import { WhatsAppIcon } from './Icons';
 
-export default function ChatWithSeller({ seller }) {
-  const router = useRouter();
+export default function ChatWithSeller({ phoneNumber, listing }) {
+  const handleWhatsAppRedirect = () => {
+    // Remove any non-digit characters from the phone number
+    const formattedNumber = phoneNumber.replace(/\D/g, '');
+    
+    // Add country code if not present (assuming Indian numbers)
+    const fullNumber = formattedNumber.startsWith('91') ? formattedNumber : `91${formattedNumber}`;
+    
+    // Create listing URL
+    const listingUrl = `${process.env.NEXT_PUBLIC_HOST}/listing/${listing._id}`;
+    
+    // Create message with listing URL
+    const message = encodeURIComponent(
+      `Hi! I am interested in your listing "${listing.title}" priced at ₹${listing.price.toLocaleString('en-IN')}. Is this still available?\n\nListing Link: ${listingUrl}`
+    );
+    
+    // Create WhatsApp URL with pre-filled message
+    const whatsappUrl = `https://wa.me/${fullNumber}?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+  };
 
   return (
     <button 
-      onClick={() => router.push(`/messages?seller=${seller}`)}
-      className="flex items-center justify-center gap-2 text-white bg-green-700 max-w-sm hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+      onClick={handleWhatsAppRedirect}
+      className="w-full sm:w-auto flex items-center justify-center gap-2 text-white bg-green-600 hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-6 py-3 text-center"
     >
-      <WhatsAppIcon />
-      Chat With Seller
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+        <path d="M12 2C6.48 2 2 6.48 2 12c0 2.17.7 4.19 1.89 5.83L2.29 22l4.17-1.59c1.57 1.01 3.44 1.6 5.54 1.6 5.52 0 10-4.48 10-10S17.52 2 12 2zm.89 14.14l-.12.06c-.92.44-1.92.64-2.77.64-1.55 0-2.94-.59-3.89-1.54-.95-.95-1.54-2.34-1.54-3.89s.59-2.94 1.54-3.89c.95-.95 2.34-1.54 3.89-1.54s2.94.59 3.89 1.54c.95.95 1.54 2.34 1.54 3.89 0 .84-.19 1.84-.64 2.77l-.06.12 1.17 3.14-3.14-1.17z"/>
+      </svg>
+      Chat on WhatsApp
     </button>
   );
 } 

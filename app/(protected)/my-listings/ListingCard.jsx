@@ -8,7 +8,7 @@ const ListingCard = ({ listing }) => {
                 <div className="w-full h-full flex flex-row items-center justify-center">
                     <Image 
                         src={`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${listing.cover_image}`}
-                        alt={listing.name}
+                        alt={`Image of ${listing.name}`}
                         width={224}
                         height={224}
                         className="aspect-square w-48 object-cover md:w-56"
@@ -33,7 +33,7 @@ const ListingCard = ({ listing }) => {
                     </p>
                 </div>
                 <div className="flex flex-row justify-between gap-2">
-                    <Link href={`/edit-listing/${listing._id}`}>
+                    <Link href={`/edit/${listing._id}`}>
                         <button className="inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             <span className="line-clamp-1">Edit Listing</span>
                         </button>

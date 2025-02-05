@@ -5,7 +5,7 @@ import ListingsContainer from './ListingsContainer';
 
 async function getListings() {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const tokenCookie = cookieStore.get('token');
     const token = tokenCookie?.value;
 

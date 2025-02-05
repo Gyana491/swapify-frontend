@@ -94,6 +94,13 @@ export default function ProfileSetupForm({ initialData }) {
     }
   }
 
+  const handleLogout = () => {
+    // Delete the token cookie
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+    // Redirect to logout API route
+    router.push('/auth/login')
+  }
+
   return (
     <section className="bg-white dark:bg-gray-900">
       <div className="max-w-2xl px-4 py-8 mx-auto lg:py-16">
@@ -254,7 +261,7 @@ export default function ProfileSetupForm({ initialData }) {
             
             <button
               type="button"
-              onClick={() => router.push('/api/auth/logout')}
+              onClick={handleLogout}
               className="w-1/4 text-red-600 inline-flex items-center justify-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-2 sm:px-5 py-2.5 text-center whitespace-nowrap"
             >
               Log Out
