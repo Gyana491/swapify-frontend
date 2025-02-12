@@ -46,7 +46,7 @@ export default async function ProfileSetup() {
     <>
       <Header />
       <MobileNavigation />
-      <section className="bg-white dark:bg-gray-900 pb-20 md:pb-4">
+      <section className="bg-white dark:bg-gray-900 pb-28 md:pb-4">
         <ProfileSetupForm initialData={profileData} />
       </section>
     </>
