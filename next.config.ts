@@ -5,11 +5,12 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'http',
-        hostname: 'media.instacdn.live',
+        hostname: 'phpstack-1409678-5243790.cloudwaysapps.com',
         pathname: '*',
       },
+
     ],
-    domains: ['media.instacdn.live'],
+    domains: ['phpstack-1409678-5243790.cloudwaysapps.com'],
   },
   /* config options here */
 };

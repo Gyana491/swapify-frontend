@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import Header from '@/app/components/Header';
-import MobileNavigation from '@/app/components/MobileNavigation';
 import ChatWithSeller from './components/ChatWithSeller';
 import MakeOffer from './components/MakeOffer';
 import ListingDescription from './components/ListingDescription';
+import MessageBox from './components/MessageBox';
 
 // Fetch function for server-side data fetching
 async function getListing(id) {
@@ -38,18 +38,16 @@ async function getRelatedListings(categoryId, currentListingId) {
   }
 }
 
-async function ListingPage({ params }) {
+export default async function ListingPage({ params }) {
   const listing = await getListing(params.id);
   const relatedListings = await getRelatedListings(listing?.category_id, params.id);
 
   if (!listing) return <div>No listing found</div>;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <>
       <Header />
-      <MobileNavigation />
-      
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-12">
+      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-20 md:pb-6 transform-none">
         {/* Breadcrumb - Hide on smallest screens */}
         <nav className="hidden sm:block mb-6 sm:mb-8 text-sm">
           <ol className="list-none p-0 flex text-gray-500 dark:text-gray-400">
@@ -107,6 +105,42 @@ async function ListingPage({ params }) {
                   </div>
                 </div>
 
+                {/* Seller Information */}
+                <div className="flex items-center gap-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                    <Image
+                      src={listing.seller?.profile_picture || '/default-avatar.png'}
+                      alt={listing.seller?.name || 'Seller'}
+                      width={48}
+                      height={48}
+                      className="object-cover"
+                    />
+                    {listing.seller?.verified && (
+                      <div className="absolute bottom-0 right-0 p-1 bg-white rounded-full">
+                        <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
+                      {listing.seller?.name || 'Seller'}
+                      {listing.seller?.verified && (
+                        <span className="ml-2 text-xs text-blue-600">Verified</span>
+                      )}
+                    </h3>
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                      </svg>
+                      <span>{listing.seller?.rating || 'New Seller'}</span>
+                      <span>•</span>
+                      <span>Member since {new Date(listing.seller?.join_date).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Location */}
                 {listing.location && (
                   <div className="flex items-center gap-2 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -135,6 +169,11 @@ async function ListingPage({ params }) {
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <ChatWithSeller phoneNumber={listing.seller_no} listing={listing} />
                   <MakeOffer listing={listing} />
+                </div>
+
+                {/* Message Box */}
+                <div className="mt-6">
+                  <MessageBox listing={listing} />
                 </div>
 
                 {/* Additional Info */}
@@ -185,9 +224,7 @@ async function ListingPage({ params }) {
             </div>
           </div>
         )}
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
-
-export default ListingPage;

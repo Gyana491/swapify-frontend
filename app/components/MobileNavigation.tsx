@@ -23,7 +23,7 @@ const MobileNavigation = () => {
             <span className="tab tab-account block text-xs">Account</span>
           </Link>
 
-          <Link href="/chats" className="svg-body w-full focus:text-teal-500 hover:text-teal-500 justify-center inline-block text-center pt-2 pb-1">
+          <Link href="/chat" className="svg-body w-full focus:text-teal-500 hover:text-teal-500 justify-center inline-block text-center pt-2 pb-1">
             <svg width="25" height="25" viewBox="0 0 24 24" className="inline-block mb-1 dark:text-white">
               <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
             </svg>

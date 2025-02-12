@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 export default function SignUp() {
   const router = useRouter();
@@ -20,11 +21,10 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setValidationMessage('');
+    const loadingToast = toast.loading('Creating your account...');
     
     if (formData.password !== formData.confirmPassword) {
-      setValidationMessage('Passwords do not match');
+      toast.error('Passwords do not match', { id: loadingToast });
       setIsLoading(false);
       return;
     }
@@ -38,16 +38,17 @@ export default function SignUp() {
       
       const data = response.data;
       document.cookie = `token=${data.token}; path=/;`;
-      router.push('/auth/login');
+      toast.success('Registration successful! Redirecting to your profile...', { id: loadingToast });
+      router.push('/my-profile');
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.code === 'ERR_NETWORK') {
-          setValidationMessage('Network error. Please check your internet connection.');
+          toast.error('Network error. Please check your internet connection.', { id: loadingToast });
         } else {
-          setValidationMessage(error.response?.data?.message || 'Registration failed. Please try again.');
+          toast.error(error.response?.data?.message || 'Registration failed. Please try again.', { id: loadingToast });
         }
       } else {
-        setValidationMessage('An unexpected error occurred');
+        toast.error('An unexpected error occurred during registration.', { id: loadingToast });
       }
       console.error('Registration error:', error);
     } finally {

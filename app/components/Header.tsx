@@ -66,6 +66,16 @@ const Header = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-4 flex-shrink-0">
+            {/* Chat Icon */}
+            <Link 
+              href="/chat" 
+              className="hidden md:flex items-center p-2 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+              </svg>
+            </Link>
+
             {/* Sell Button */}
             <Link href="/create-listing">
               <button className="relative inline-flex items-center justify-center overflow-hidden rounded-lg sm:rounded-xl group transition-all hover:scale-105">

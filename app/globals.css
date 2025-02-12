@@ -18,5 +18,26 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
-  margin-bottom: 200px;
+}
+
+.chat-container {
+    height: 100vh;
+}
+
+@media (max-width: 768px) {
+    .chat-container {
+        height: 100vh;
+    }
+}
+
+/* Add this to ensure fixed positioning works correctly */
+html, body {
+    position: static;
+    height: 100%;
+}
+
+/* Ensure no parent elements interfere with fixed positioning */
+.fixed {
+    position: fixed;
+    transform: none !important;
 }

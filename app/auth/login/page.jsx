@@ -24,17 +24,17 @@ const Login = () => {
       const response = await axios.post('/api/auth/login', { email, password });
       const data = response.data;
       document.cookie = `token=${data.token}; path=/;`;
-      toast.success('Login successful!', { id: loadingToast });
+      toast.success('Login successful! Redirecting...', { id: loadingToast });
       router.push('/');
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.code === 'ERR_NETWORK') {
           toast.error('Network error. Please check your connection.', { id: loadingToast });
         } else {
-          toast.error(error.response?.data?.message || 'Login failed', { id: loadingToast });
+          toast.error(error.response?.data?.message || 'Login failed. Please check your credentials.', { id: loadingToast });
         }
       } else {
-        toast.error('An unexpected error occurred', { id: loadingToast });
+        toast.error('An unexpected error occurred. Please try again.', { id: loadingToast });
       }
       console.error('Login error:', error);
     } finally {

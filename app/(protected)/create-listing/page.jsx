@@ -4,6 +4,7 @@ import MobileNavigation from '@/app/components/MobileNavigation';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import LocationPermission from '@/app/components/LocationPermission';
 
 const CreateListing = () => {
   const router = useRouter();
@@ -24,6 +25,8 @@ const CreateListing = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [coverImageName, setCoverImageName] = useState('');
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
 
 
   const handleImageChange = async (e) => {
@@ -68,40 +71,47 @@ const CreateListing = () => {
     const loadingToast = toast.loading('Creating your listing...');
     
     try {
-      const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
-      const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/create-listing`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `bearer ${token}`
-        },
-        body: JSON.stringify({
-          title,
-          seller_no: phoneNumber,
-          category_id: category,
-          price,
-          description,
-          cover_image: coverImageName,
-          country,
-          state,
-          city,
-          pincode
-        })
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        toast.success('Listing created successfully!', { id: loadingToast });
-        router.push('/my-listings');
-      } else {
-        toast.error(data.error || 'Failed to create listing', { id: loadingToast });
-      }
+        // Ensure coordinates are available
+        if (!latitude || !longitude) {
+            throw new Error('Location coordinates are required');
+        }
+
+        const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+        const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/create-listing`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `bearer ${token}`
+            },
+            body: JSON.stringify({
+                title,
+                seller_no: phoneNumber,
+                category_id: category,
+                price,
+                description,
+                cover_image: coverImageName,
+                country,
+                state,
+                city,
+                pincode,
+                latitude,
+                longitude
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            toast.success('Listing created successfully!', { id: loadingToast });
+            router.push('/my-listings');
+        } else {
+            toast.error(data.error || 'Failed to create listing', { id: loadingToast });
+        }
     } catch (error) {
-      console.error('Error creating listing:', error);
-      toast.error('Failed to create listing. Please try again.', { id: loadingToast });
+        console.error('Error creating listing:', error);
+        toast.error(error.message || 'Failed to create listing. Please try again.', { id: loadingToast });
     } finally {
-      setIsUpdating(false);
+        setIsUpdating(false);
     }
   };
 
@@ -301,6 +311,12 @@ const CreateListing = () => {
         </form>
       </div>
     </section>
+    <LocationPermission 
+        onGranted={(lat, lng) => {
+            setLatitude(lat);
+            setLongitude(lng);
+        }}
+    />
     </>
   );
 };
