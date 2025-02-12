@@ -119,7 +119,7 @@ const CreateListing = () => {
     <>
     <Header />
     <MobileNavigation />
-    <section className="bg-white dark:bg-gray-900 mb-[60px] md:mb-2">
+    <section className="bg-white dark:bg-gray-900 pb-20 md:pb-4">
       <div className="max-w-3xl px-4 py-4 mx-auto">
         <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white text-center">
           Create a New Listing!
