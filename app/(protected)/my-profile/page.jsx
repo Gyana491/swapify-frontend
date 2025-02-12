@@ -46,7 +46,9 @@ export default async function ProfileSetup() {
     <>
       <Header />
       <MobileNavigation />
-      <ProfileSetupForm initialData={profileData} />
+      <section className="bg-white dark:bg-gray-900 mb-[60px] md:mb-2">
+        <ProfileSetupForm initialData={profileData} />
+      </section>
     </>
   )
 }

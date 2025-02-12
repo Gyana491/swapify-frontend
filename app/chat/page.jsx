@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export default function ChatHomePage() {
     return (
-        <div className="flex h-screen">
+        <div className="flex h-screen mb-[60px] md:mb-2">
             <div className="w-full md:w-80">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                     <Link href="/" className="flex items-center gap-2">
