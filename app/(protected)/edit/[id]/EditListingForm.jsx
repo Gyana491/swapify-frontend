@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { getToken } from '@/app/utils/getToken';
 
 const EditListingForm = ({ listingId }) => {
   const router = useRouter();
@@ -26,7 +27,12 @@ const EditListingForm = ({ listingId }) => {
     // Fetch existing listing data
     const fetchListing = async () => {
       try {
-        const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+        const token = getToken();
+        if (!token) {
+          toast.error('Authentication required');
+          return;
+        }
+
         const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/listings/${listingId}`, {
           headers: {
             'Authorization': `bearer ${token}`
@@ -104,7 +110,11 @@ const EditListingForm = ({ listingId }) => {
     const loadingToast = toast.loading('Updating your listing...');
     
     try {
-      const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+      const token = getToken();
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/listings/${listingId}`, {
         method: 'PUT',
         headers: {
@@ -135,7 +145,7 @@ const EditListingForm = ({ listingId }) => {
       }
     } catch (error) {
       console.error('Error updating listing:', error);
-      toast.error('Failed to update listing. Please try again.', { id: loadingToast });
+      toast.error(error.message || 'Failed to update listing. Please try again.', { id: loadingToast });
     } finally {
       setIsUpdating(false);
     }

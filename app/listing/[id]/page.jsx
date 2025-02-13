@@ -8,223 +8,250 @@ import MessageBox from './components/MessageBox';
 // Fetch function for server-side data fetching
 async function getListing(id) {
   try {
-    const response = await fetch(`${process.env.BACKEND}/listings/${id}`)
+    const response = await fetch(`${process.env.BACKEND}/listings/${id}`, {
+      cache: 'no-store' // Disable caching for real-time data
+    });
+    
     if (!response.ok) {
-      throw new Error(`Failed to fetch listing: ${response.statusText}`)
+      throw new Error(`Failed to fetch listing: ${response.statusText}`);
     }
 
-    const data = await response.json()
-    return data
+    return response.json();
   } catch (error) {
-    console.error('Error fetching listing:', error)
-    throw error // Re-throw to be handled by the page component
+    console.error('Error fetching listing:', error);
+    throw error;
   }
 }
 
 async function getRelatedListings(categoryId, currentListingId) {
   try {
-    const response = await fetch(`${process.env.BACKEND}/listings?category=${categoryId}&limit=5`)
+    const response = await fetch(
+      `${process.env.BACKEND}/listings?category=${categoryId}&limit=5`,
+      { cache: 'no-store' }
+    );
+    
     if (!response.ok) {
-      throw new Error(`Failed to fetch related listings: ${response.statusText}`)
+      throw new Error(`Failed to fetch related listings: ${response.statusText}`);
     }
-    const data = await response.json()
+    
+    const data = await response.json();
     // Filter out the current listing and limit to 4 items
     return data
       .filter(listing => listing._id !== currentListingId)
-      .slice(0, 4)
+      .slice(0, 4);
   } catch (error) {
-    console.error('Error fetching related listings:', error)
-    return [] // Return empty array on error
+    console.error('Error fetching related listings:', error);
+    return []; // Return empty array on error
   }
 }
 
-export default async function ListingPage({ params }) {
-  const listing = await getListing(params.id);
-  const relatedListings = await getRelatedListings(listing?.category_id, params.id);
+export default async function ListingPage({ params: { id } }) {
+  try {
+    // Fetch listing data
+    const listing = await getListing(id);
+    
+    // Only fetch related listings if we have a listing and category_id
+    const relatedListings = listing?.category_id 
+      ? await getRelatedListings(listing.category_id, id)
+      : [];
 
-  if (!listing) return <div>No listing found</div>;
-
-  return (
-    <>
-      <Header />
-      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-20 md:pb-6 transform-none">
-        {/* Breadcrumb - Hide on smallest screens */}
-        <nav className="hidden sm:block mb-6 sm:mb-8 text-sm">
-          <ol className="list-none p-0 flex text-gray-500 dark:text-gray-400">
-            <li className="flex items-center">
-              <a href="/" className="hover:text-blue-600 dark:hover:text-blue-400">Home</a>
-              <svg className="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </li>
-            <li className="text-gray-700 dark:text-gray-300 truncate max-w-[200px]">{listing.title}</li>
-          </ol>
-        </nav>
-
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-8">
-          {/* Image Section */}
-          <div className="md:col-span-5">
-            <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-lg sm:shadow-xl transform transition-transform hover:scale-[1.02]">
-              <Image 
-                src={`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${listing.cover_image}`}
-                alt={listing.title}
-                width={600}
-                height={700}
-                className="w-full h-[300px] sm:h-[500px] object-cover"
-                priority
-              />
-              <div className="absolute top-2 sm:top-4 left-2 sm:left-4 flex flex-wrap gap-2">
-                <span className="bg-blue-600 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium shadow-lg">
-                  Recently Posted
-                </span>
-                {listing.category_id && (
-                  <span className="bg-purple-600 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium shadow-lg">
-                    {listing.category_id}
-                  </span>
-                )}
-              </div>
+    if (!listing) {
+      return (
+        <>
+          <Header />
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center text-gray-600 dark:text-gray-400">
+              No listing found
             </div>
           </div>
+        </>
+      );
+    }
 
-          {/* Details Section */}
-          <div className="md:col-span-7">
-            <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-8 shadow-lg sm:shadow-xl backdrop-blur-sm bg-opacity-95">
-              <div className="space-y-4 sm:space-y-8">
-                {/* Title and Price */}
-                <div>
-                  <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
-                    {listing.title}
-                  </h1>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                    <span className="text-3xl sm:text-5xl font-bold text-blue-600 dark:text-blue-400">
-                      ₹{listing.price.toLocaleString('en-IN')}
+    return (
+      <>
+        <Header />
+        <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-20 md:pb-6 transform-none">
+          {/* Breadcrumb - Hide on smallest screens */}
+          <nav className="hidden sm:block mb-6 sm:mb-8 text-sm">
+            <ol className="list-none p-0 flex text-gray-500 dark:text-gray-400">
+              <li className="flex items-center">
+                <a href="/" className="hover:text-blue-600 dark:hover:text-blue-400">Home</a>
+                <svg className="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </li>
+              <li className="text-gray-700 dark:text-gray-300 truncate max-w-[200px]">{listing.title}</li>
+            </ol>
+          </nav>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-8">
+            {/* Image Section */}
+            <div className="md:col-span-5">
+              <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-lg sm:shadow-xl transform transition-transform hover:scale-[1.02]">
+                <Image 
+                  src={`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${listing.cover_image}`}
+                  alt={listing.title}
+                  width={600}
+                  height={700}
+                  className="w-full h-[300px] sm:h-[500px] object-cover"
+                  priority
+                />
+                <div className="absolute top-2 sm:top-4 left-2 sm:left-4 flex flex-wrap gap-2">
+                  <span className="bg-blue-600 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium shadow-lg">
+                    Recently Posted
+                  </span>
+                  {listing.category_id && (
+                    <span className="bg-purple-600 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium shadow-lg">
+                      {listing.category_id}
                     </span>
-                    <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                      Inclusive of all taxes
-                    </span>
-                  </div>
+                  )}
                 </div>
+              </div>
+            </div>
 
-                {/* Seller Information */}
-                <div className="flex items-center gap-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden">
-                    <Image
-                      src={listing.seller?.profile_picture || '/default-avatar.png'}
-                      alt={listing.seller?.name || 'Seller'}
-                      width={48}
-                      height={48}
-                      className="object-cover"
-                    />
-                    {listing.seller?.verified && (
-                      <div className="absolute bottom-0 right-0 p-1 bg-white rounded-full">
-                        <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                        </svg>
-                      </div>
-                    )}
-                  </div>
+            {/* Details Section */}
+            <div className="md:col-span-7">
+              <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-8 shadow-lg sm:shadow-xl backdrop-blur-sm bg-opacity-95">
+                <div className="space-y-4 sm:space-y-8">
+                  {/* Title and Price */}
                   <div>
-                    <h3 className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
-                      {listing.seller?.name || 'Seller'}
-                      {listing.seller?.verified && (
-                        <span className="ml-2 text-xs text-blue-600">Verified</span>
-                      )}
-                    </h3>
-                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                      </svg>
-                      <span>{listing.seller?.rating || 'New Seller'}</span>
-                      <span>•</span>
-                      <span>Member since {new Date(listing.seller?.join_date).toLocaleDateString()}</span>
+                    <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
+                      {listing.title}
+                    </h1>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                      <span className="text-3xl sm:text-5xl font-bold text-blue-600 dark:text-blue-400">
+                        ₹{listing.price.toLocaleString('en-IN')}
+                      </span>
+                      <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        Inclusive of all taxes
+                      </span>
                     </div>
                   </div>
-                </div>
 
-                {/* Location */}
-                {listing.location && (
+                  {/* Location */}
                   <div className="flex items-center gap-2 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 font-medium">
-                      {listing.location?.city || 'City not specified'}
-                      {listing.location?.state && `, ${listing.location.state}`}
+                      {listing.city}, {listing.state}
                     </p>
                   </div>
-                )}
 
-                {/* Description */}
-                {listing.description && (
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg sm:rounded-xl p-4 sm:p-6">
-                    <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-white">
-                      About this item
-                    </h2>
-                    <ListingDescription description={listing.description} />
+                  {/* Description */}
+                  {listing.description && (
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg sm:rounded-xl p-4 sm:p-6">
+                      <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-white">
+                        About this item
+                      </h2>
+                      <ListingDescription description={listing.description} />
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <ChatWithSeller phoneNumber={listing.seller_no} listing={listing} />
+                    <MakeOffer listing={listing} />
                   </div>
-                )}
 
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                  <ChatWithSeller phoneNumber={listing.seller_no} listing={listing} />
-                  <MakeOffer listing={listing} />
-                </div>
+                  {/* Message Box */}
+                  <div className="mt-6">
+                    <MessageBox listing={listing} />
+                  </div>
 
-                {/* Message Box */}
-                <div className="mt-6">
-                  <MessageBox listing={listing} />
-                </div>
-
-                {/* Additional Info */}
-                <div className="p-3 sm:p-4 bg-blue-50 dark:bg-gray-700 rounded-lg text-xs sm:text-sm">
-                  <p className="text-blue-800 dark:text-blue-200">
-                    <span className="font-semibold">💡 Tip:</span> For a safe buying experience, meet the seller at a safe location and inspect the item before making payment.
-                  </p>
+                  {/* Additional Info */}
+                  <div className="p-3 sm:p-4 bg-blue-50 dark:bg-gray-700 rounded-lg text-xs sm:text-sm">
+                    <p className="text-blue-800 dark:text-blue-200">
+                      <span className="font-semibold">💡 Tip:</span> For a safe buying experience, meet the seller at a safe location and inspect the item before making payment.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Related Listings Section */}
-        {relatedListings.length > 0 && (
-          <div className="max-w-7xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Similar Listings
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {relatedListings.map((item) => (
-                <div key={item._id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-                  <div className="relative w-full aspect-[4/3]">
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${item.cover_image}`}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                    />
+          {/* Related Listings Section */}
+          {relatedListings.length > 0 && (
+            <div className="max-w-7xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                Similar Listings
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {relatedListings.map((item) => (
+                  <div key={item._id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                    <div className="relative w-full aspect-[4/3]">
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${item.cover_image}`}
+                        alt={item.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                        ₹{item.price.toLocaleString('en-IN')}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-3">
+                        {item.title}
+                      </p>
+                      <a
+                        href={`/listing/${item._id}`}
+                        className="inline-block w-full text-center text-sm text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        View Details
+                      </a>
+                    </div>
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      ₹{item.price.toLocaleString('en-IN')}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-3">
-                      {item.title}
-                    </p>
-                    <a
-                      href={`/listing/${item._id}`}
-                      className="inline-block w-full text-center text-sm text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      View Details
-                    </a>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
+          )}
+        </main>
+      </>
+    );
+  } catch (error) {
+    console.error('Error in ListingPage:', error);
+    return (
+      <>
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center text-red-600 dark:text-red-400">
+            Error loading listing. Please try again later.
           </div>
-        )}
-      </main>
-    </>
-  );
+        </div>
+      </>
+    );
+  }
+}
+
+// Add generateMetadata for better SEO
+export async function generateMetadata(context) {
+  const { params } = context;
+  const id = params.id;
+  try {
+    const listing = await getListing(id);
+    
+    return {
+      title: listing?.title || 'Listing Details',
+      description: listing?.description?.slice(0, 160) || 'View listing details on Swapify',
+      openGraph: {
+        title: listing?.title || 'Listing Details',
+        description: listing?.description?.slice(0, 160) || 'View listing details on Swapify',
+        images: listing?.cover_image ? [{
+          url: `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${listing.cover_image}`,
+          width: 1200,
+          height: 630,
+          alt: listing.title,
+        }] : [],
+      },
+    };
+  } catch (error) {
+    return {
+      title: 'Listing Details - Swapify',
+      description: 'View listing details on Swapify',
+    };
+  }
 }

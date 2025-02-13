@@ -15,7 +15,6 @@ export default function ProfileSetupForm({ initialData }) {
   const [imageName, setImageName] = useState(initialData.user_avatar || '')
   const [formData, setFormData] = useState({
     username: initialData.username || '',
-    full_name: initialData.full_name || '',
     phone_number: initialData.phone_number || '',
     country: initialData.country || 'India',
     state: initialData.state || '',
@@ -134,33 +133,9 @@ export default function ProfileSetupForm({ initialData }) {
 
           {/* Form Fields */}
           <div className="grid gap-4 mb-4 p-4 sm:grid-cols-2 sm:gap-6 sm:mb-5 bg-gray-100 rounded-lg dark:bg-gray-800">
-            {/* Username Field */}
+            {/* Name Field */}
             <div className="sm:col-span-2">
               <label htmlFor="username" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-                Username
-              </label>
-              <div className="flex">
-                <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-e-0 border-gray-300 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
-                  @
-                </span>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  className="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                  placeholder="johndoe"
-                  value={formData.username}
-                  onChange={(e) => setFormData({...formData, username: e.target.value.toLowerCase()})}
-                  required
-                  pattern="[a-zA-Z0-9_]+"
-                  title="Username can only contain letters, numbers and underscores"
-                />
-              </div>
-            </div>
-
-            {/* Full Name Field */}
-            <div className="sm:col-span-2">
-              <label htmlFor="full_name" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
                 Full Name
               </label>
               <div className="flex">
@@ -171,12 +146,12 @@ export default function ProfileSetupForm({ initialData }) {
                 </span>
                 <input
                   type="text"
-                  id="full_name"
-                  name="full_name"
+                  id="username"
+                  name="username"
                   className="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                  placeholder="John Doe"
-                  value={formData.full_name}
-                  onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                  placeholder="Ex. Gyana Ranjan"
+                  value={formData.username}
+                  onChange={(e) => setFormData({...formData, username: e.target.value})}
                   required
                 />
               </div>

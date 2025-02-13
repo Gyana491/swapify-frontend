@@ -1,17 +1,23 @@
 export const verifyToken = async (token: string) => {
-    if (!token) return false;
+    if (!token) return { isLoggedIn: false, user: null };
     
     try {
         const response = await fetch(`${process.env.BACKEND}/verify-token`, {
             method: 'POST',
             headers: {
-                'Authorization': 'bearer ' + token
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
         });
+
+        if (!response.ok) {
+            return { isLoggedIn: false, user: null };
+        }
+
         const data = await response.json();
         return {
-            isLoggedIn: data.isLoggedIn,
-            user: data.user // Assuming the backend returns user data
+            isLoggedIn: Boolean(data.isLoggedIn),
+            user: data.user || null
         };
     } catch (error) {
         console.error('Token verification failed:', error);

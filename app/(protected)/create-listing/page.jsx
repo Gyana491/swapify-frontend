@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import LocationPermission from '@/app/components/LocationPermission';
+import { getToken } from '@/app/utils/getToken';
 
 const CreateListing = () => {
   const router = useRouter();
@@ -76,7 +77,11 @@ const CreateListing = () => {
             throw new Error('Location coordinates are required');
         }
 
-        const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
+        const token = getToken();
+        if (!token) {
+            throw new Error('Authentication required');
+        }
+
         const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/create-listing`, {
             method: 'POST',
             headers: {
