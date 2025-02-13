@@ -23,10 +23,10 @@ async function getListing(id) {
   }
 }
 
-async function getRelatedListings(categoryId, currentListingId) {
+async function getRelatedListings(currentListingId) {
   try {
     const response = await fetch(
-      `${process.env.BACKEND}/listings?category=${categoryId}&limit=5`,
+      `${process.env.BACKEND}/listings?limit=5`,
       { cache: 'no-store' }
     );
     
@@ -45,7 +45,8 @@ async function getRelatedListings(categoryId, currentListingId) {
   }
 }
 
-export default async function ListingPage({ params: { id } }) {
+export default async function ListingPage({ params }) {
+  const { id } = await params;
   try {
     // Fetch listing data
     const listing = await getListing(id);
@@ -76,12 +77,14 @@ export default async function ListingPage({ params: { id } }) {
           <nav className="hidden sm:block mb-6 sm:mb-8 text-sm">
             <ol className="list-none p-0 flex text-gray-500 dark:text-gray-400">
               <li className="flex items-center">
-                <a href="/" className="hover:text-blue-600 dark:hover:text-blue-400">Home</a>
+                <a href="/" className="hover:text-blue-600 dark:hover:text-blue-400" tabIndex={0} aria-label="Home">Home</a>
                 <svg className="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                 </svg>
               </li>
-              <li className="text-gray-700 dark:text-gray-300 truncate max-w-[200px]">{listing.title}</li>
+              <li className="text-gray-700 dark:text-gray-300 truncate max-w-[200px]">
+                {listing.title}
+              </li>
             </ol>
           </nav>
 
@@ -200,6 +203,8 @@ export default async function ListingPage({ params: { id } }) {
                       <a
                         href={`/listing/${item._id}`}
                         className="inline-block w-full text-center text-sm text-white bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                        tabIndex={0}
+                        aria-label="View Details"
                       >
                         View Details
                       </a>
@@ -227,31 +232,4 @@ export default async function ListingPage({ params: { id } }) {
   }
 }
 
-// Add generateMetadata for better SEO
-export async function generateMetadata(context) {
-  const { params } = context;
-  const id = params.id;
-  try {
-    const listing = await getListing(id);
-    
-    return {
-      title: listing?.title || 'Listing Details',
-      description: listing?.description?.slice(0, 160) || 'View listing details on Swapify',
-      openGraph: {
-        title: listing?.title || 'Listing Details',
-        description: listing?.description?.slice(0, 160) || 'View listing details on Swapify',
-        images: listing?.cover_image ? [{
-          url: `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${listing.cover_image}`,
-          width: 1200,
-          height: 630,
-          alt: listing.title,
-        }] : [],
-      },
-    };
-  } catch (error) {
-    return {
-      title: 'Listing Details - Swapify',
-      description: 'View listing details on Swapify',
-    };
-  }
-}
+

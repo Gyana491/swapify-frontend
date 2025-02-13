@@ -16,7 +16,7 @@ export const useAuth = () => {
                 }
                 const data = await response.json();
                 setUser(data.user);
-            } catch (error) {
+            } catch {
                 router.push('/auth/login');
             } finally {
                 setLoading(false);

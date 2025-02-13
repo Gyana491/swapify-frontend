@@ -120,7 +120,7 @@ const Header = () => {
                     My Profile
                   </Link>
                   <Link 
-                    href="/chats" 
+                    href="/chat" 
                     className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">

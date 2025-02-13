@@ -5,7 +5,7 @@ import MobileNavigation from "./components/MobileNavigation";
 import Image from "next/image";
 
 // Helper function to format price in Indian currency
-const formatIndianPrice = (price: number) => {
+const formatIndianPrice = (price) => {
     return new Intl.NumberFormat('en-IN', {
         style: 'currency',
         currency: 'INR',
@@ -24,13 +24,12 @@ const Home = async () => {
         data = [];
     }
     
-
     return (
         <>
             <Header />
             <MobileNavigation />
-            <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 bg-white dark:bg-gray-900 p-3 sm:p-6 max-w-screen-xl mx-auto">
-                {data && data.map((item: any) => (
+            <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 bg-white dark:bg-gray-900 p-3 sm:p-6 max-w-screen-xl mx-auto pb-20 md:pb-4">
+                {data && data.map((item) => (
                     <div key={item._id} className="group bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
                         <Link href={`/listing/${item._id}`}>
                             <div className="relative w-full aspect-[4/3] overflow-hidden">
@@ -61,7 +60,7 @@ const Home = async () => {
                                 <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4c3.865 0 7 3.134 7 7 0 3.337-3 8-7 13-4-5-7-9.663-7-13 0-3.866 3.135-7 7-7zM12 6a2 2 0 100 4 2 2 0 000-4z" />
                                 </svg>
-                                <p className="truncate">{item.city}, {item.country}</p>
+                                <p className="truncate">{item.city}, {item.state}</p>
                             </div>
                             <Link 
                                 href={`/listing/${item._id}`} 
@@ -76,8 +75,6 @@ const Home = async () => {
                     </div>
                 ))}
             </section>
-
-
         </>
     );
 };

@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import MobileNavigation from "../components/MobileNavigation";
 
 // Helper function to format price in Indian currency
-const formatIndianPrice = (price: number) => {
+const formatIndianPrice = (price) => {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
@@ -12,7 +12,7 @@ const formatIndianPrice = (price: number) => {
   }).format(price);
 };
 
-async function searchListings(query: string) {
+async function searchListings(query) {
   try {
     const response = await fetch(`${process.env.BACKEND}/search-listings?query=${encodeURIComponent(query)}`, {
       cache: 'no-store'
@@ -29,12 +29,11 @@ async function searchListings(query: string) {
   }
 }
 
-export default async function SearchPage({
-  searchParams
-}: {
-  searchParams: { q: string }
-}) {
-  const query = searchParams.q || '';
+const SearchPage = async ({ searchParams }) => {
+  const query = Array.isArray(searchParams.q) 
+    ? searchParams.q[0] || ''
+    : searchParams.q || '';
+
   const searchResults = await searchListings(query);
 
   return (
@@ -48,12 +47,12 @@ export default async function SearchPage({
             Search Results
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            {searchResults.length} results found for "{query}"
+            {searchResults.length} results found for &quot;{query}&quot;
           </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {searchResults.map((item: any) => (
+          {searchResults.map((item) => (
             <div key={item._id} className="group bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
               <Link href={`/listing/${item._id}`}>
                 <div className="relative w-full aspect-[4/3] overflow-hidden">
@@ -88,7 +87,7 @@ export default async function SearchPage({
           {searchResults.length === 0 && (
             <div className="col-span-full text-center py-12">
               <div className="text-gray-500 dark:text-gray-400 mb-4">
-                No results found for "{query}"
+                No results found for &quot;{query}&quot;
               </div>
               <Link 
                 href="/"
@@ -102,4 +101,6 @@ export default async function SearchPage({
       </main>
     </>
   );
-} 
+};
+
+export default SearchPage;

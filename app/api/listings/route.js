@@ -1,10 +1,6 @@
-
- 
-export async function GET( req) {
-
+export async function GET() {
   try {
-    const data = await fetch(`${process.env.BACKEND}/listings`, {
-    });
+    const data = await fetch(`${process.env.BACKEND}/listings`);
 
     if (!data.ok) {
       throw new Error('Failed to fetch listings');

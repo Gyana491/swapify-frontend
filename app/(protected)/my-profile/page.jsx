@@ -46,7 +46,9 @@ export default async function ProfileSetup() {
     <>
       <Header />
       <MobileNavigation />
-      <ProfileSetupForm initialData={profileData} />
+      <div className="pb-20 md:pb-4">
+        <ProfileSetupForm initialData={profileData} />
+      </div>
     </>
   )
 }

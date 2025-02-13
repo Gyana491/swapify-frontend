@@ -40,7 +40,7 @@ export default async function MyListings() {
       <Header />
       <MobileNavigation />
       
-      <section className="bg-white dark:bg-gray-900 mb-[60px] md:mb-2">
+      <section className="bg-white dark:bg-gray-900 pb-20 md:pb-4">
         <h1 className="text-2xl text-center font-bold tracking-tight text-gray-900 dark:text-white my-4">
           My Listings
         </h1>
