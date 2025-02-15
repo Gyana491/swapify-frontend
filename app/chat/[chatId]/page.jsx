@@ -1,7 +1,7 @@
 import Header from '@/app/components/Header';
 import MobileNavigation from '@/app/components/MobileNavigation';
-import ChatWindow from './components/ChatWindow';
-import ChatList from '@/app/components/chat-list';
+import ChatWindow from '../components/ChatWindow';
+import ChatList from '../components/ChatList';
 import Link from 'next/link';
 import Image from 'next/image';
 

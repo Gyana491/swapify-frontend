@@ -1,6 +1,6 @@
-import ChatList from '@/app/components/chat-list';
 import Link from 'next/link';
 import Image from 'next/image';
+import ChatList from './components/ChatList';
 
 export default function ChatHomePage() {
     return (
