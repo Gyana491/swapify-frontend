@@ -1,0 +1,189 @@
+'use client'
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+import LocationPermission from '@/app/components/LocationPermission';
+import { getToken } from '@/app/utils/getToken';
+
+const CreateListingForm = () => {
+  const router = useRouter();
+  const [title, setTitle] = useState('');
+  const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('');
+  const [description, setDescription] = useState('');
+  const [city, setCity] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [state, setState] = useState('');
+  const [country, setCountry] = useState('India');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [coverImage, setCoverImage] = useState('');
+  const [imagePreview, setImagePreview] = useState('/assets/place-holder.jpg');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [coverImageName, setCoverImageName] = useState('');
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setIsLoading(true);
+      const loadingToast = toast.loading('Uploading image...');
+      
+      try {
+        const formData = new FormData();
+        formData.append('files', file);
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error('Upload failed');
+        }
+
+        const data = await response.json();
+        const filename = data.files[0].filename;
+        const imageUrl = `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${filename}`;
+        setCoverImageName(filename);
+        setCoverImage(imageUrl);
+        setImagePreview(imageUrl);
+        toast.success('Image uploaded successfully!', { id: loadingToast });
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        toast.error('Failed to upload image. Please try again.', { id: loadingToast });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsUpdating(true);
+    
+    const loadingToast = toast.loading('Creating your listing...');
+    
+    try {
+        if (!latitude || !longitude) {
+            throw new Error('Location coordinates are required');
+        }
+
+        const token = getToken();
+        if (!token) {
+            throw new Error('Authentication required');
+        }
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/create-listing`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `bearer ${token}`
+            },
+            body: JSON.stringify({
+                title,
+                seller_no: phoneNumber,
+                category_id: category,
+                price,
+                description,
+                cover_image: coverImageName,
+                country,
+                state,
+                city,
+                pincode,
+                latitude,
+                longitude
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            toast.success('Listing created successfully!', { id: loadingToast });
+            router.push('/my-listings');
+        } else {
+            toast.error(data.error || 'Failed to create listing', { id: loadingToast });
+        }
+    } catch (error) {
+        console.error('Error creating listing:', error);
+        toast.error(error.message || 'Failed to create listing. Please try again.', { id: loadingToast });
+    } finally {
+        setIsUpdating(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* Image Upload Section */}
+      <div className="mx-auto bg-white rounded-lg shadow-md mb-4 items-center dark:bg-gray-800">
+        <div className="p-6 mb-4 rounded-lg items-center mx-auto text-center cursor-pointer max-w-xl">
+          <label htmlFor="upload" className="cursor-pointer relative">
+            {isLoading && (
+              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center bg-white shadow-sm dark:text-white dark:bg-gray-800 p-4 rounded">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gray-100 m-auto" style={{ background: 'linear-gradient(to right, #ff00cc, #3333ff)' }}></div>
+                <p>Uploading Image...</p>
+              </div>
+            )}
+            <img 
+              src={imagePreview} 
+              className="mb-4 rounded-lg w-full object-center object-cover aspect-[4/3] mx-auto" 
+              alt="Image preview" 
+            />
+            <h5 className="w-full text-white bg-[#050708] hover:bg-[#050708]/90 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center justify-center mr-2 mb-2 cursor-pointer">
+              Upload Cover Image
+            </h5>
+            <span className="text-gray-500 bg-gray-200 z-50">{coverImage}</span>
+          </label>
+          <input 
+            id="upload" 
+            type="file" 
+            className="hidden" 
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+        </div>
+      </div>
+
+      {/* Form Fields */}
+      <div className="p-4 mb-4 w-full bg-gray-100 rounded-lg cursor-pointer dark:bg-gray-800">
+        <div className="w-full">
+          <label htmlFor="title" className="block my-2 text-sm font-bold text-gray-900 dark:text-white">
+            Listing Title
+          </label>
+          <input
+            type="text"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+            placeholder="Type product name"
+            required
+          />
+        </div>
+
+        {/* Other form fields remain the same */}
+        {/* ... */}
+
+        {/* Submit Button */}
+        <div className="flex items-center justify-center space-x-4">
+          <button
+            type="submit"
+            disabled={isUpdating}
+            className="w-3/4 text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-primary-800"
+          >
+            {isUpdating ? 'Creating Listing...' : 'Create New Listing'}
+          </button>
+        </div>
+      </div>
+      <LocationPermission 
+        onGranted={(lat, lng) => {
+          setLatitude(lat);
+          setLongitude(lng);
+        }}
+      />
+    </form>
+  );
+};
+
+export default CreateListingForm; 

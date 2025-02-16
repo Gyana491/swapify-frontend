@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import Header from '@/app/components/Header'
+import Header from '@/app/components/header/Header'
 import MobileNavigation from '@/app/components/MobileNavigation'
 import ListingCard from '@/app/components/ListingCard'
 

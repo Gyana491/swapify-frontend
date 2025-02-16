@@ -1,4 +1,4 @@
-import Header from '@/app/components/Header';
+import Header from '@/app/components/header/Header';
 import MobileNavigation from '@/app/components/MobileNavigation';
 import ChatWindow from '../components/ChatWindow';
 import ChatList from '../components/ChatList';

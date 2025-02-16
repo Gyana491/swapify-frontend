@@ -8,9 +8,7 @@ export default function ProfileSetupForm({ initialData }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [imageLoading, setImageLoading] = useState(false)
-  const initialPreviewImage = initialData.user_avatar 
-    ? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${initialData.user_avatar}`
-    : '/assets/place-holder.jpg'
+  const initialPreviewImage = initialData.user_avatar? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${initialData.user_avatar}` : initialData.google_user_avatar.replace('=s96-c', '=s400-c') || '/assets/place-holder.jpg'
   const [previewImage, setPreviewImage] = useState(initialPreviewImage)
   const [imageName, setImageName] = useState(initialData.user_avatar || '')
   const [formData, setFormData] = useState({

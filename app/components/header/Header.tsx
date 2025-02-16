@@ -1,21 +1,10 @@
-'use client'
+// No longer a client component
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
-import { useRouter } from 'next/navigation'
-import toast from 'react-hot-toast'
 
-const Header = () => {
-  const router = useRouter()
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+import UserMenu from "./UserMenu"
 
-  const handleLogout = () => {
-    // Delete the token cookie
-    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
-    toast.success('Logged out successfully!')
-    router.push('/auth/login')
-  }
-
+const Header = async () => {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 py-2 dark:bg-gray-900/80">
       <div className="max-w-screen-xl mx-auto px-3">
@@ -38,7 +27,7 @@ const Header = () => {
 
           {/* Search Bar - Hidden on mobile, shown on desktop */}
           <div className="hidden lg:block flex-grow max-w-2xl">
-            <form className="w-full" action="/search">   
+            <form className="w-full" action="/search">
               <label htmlFor="default-search" className="sr-only">Search</label>
               <div className="relative">
                 <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -86,66 +75,15 @@ const Header = () => {
             </Link>
 
             {/* User Menu (Desktop) */}
-            <div className="hidden lg:block relative">
-              <button 
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-1 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              >
-                <svg width="24" height="24" className="dark:text-white" viewBox="0 0 32 32">
-                  <path fill="currentColor" d="M16,2A14,14,0,1,0,30,16,14,14,0,0,0,16,2ZM10,26.39a6,6,0,0,1,11.94,0,11.87,11.87,0,0,1-11.94,0Zm13.74-1.26a8,8,0,0,0-15.54,0,12,12,0,1,1,15.54,0ZM16,8a5,5,0,1,0,5,5A5,5,0,0,0,16,8Zm0,8a3,3,0,1,1,3-3A3,3,0,0,1,16,16Z" />
-                </svg>
-                <svg className="w-4 h-4 dark:text-white" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M7 10l5 5 5-5z"/>
-                </svg>
-              </button>
-
-              {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 border border-gray-200 dark:border-gray-700">
-                  <Link 
-                    href="/my-listings" 
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
-                      <path fill="currentColor" d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/>
-                    </svg>
-                    My Listings
-                  </Link>
-                  <Link 
-                    href="/my-profile" 
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <svg className="w-4 h-4 mr-2" viewBox="0 0 32 32">
-                      <path fill="currentColor" d="M16,2A14,14,0,1,0,30,16,14,14,0,0,0,16,2Z" />
-                    </svg>
-                    My Profile
-                  </Link>
-                  <Link 
-                    href="/chat" 
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
-                      <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-                    </svg>
-                    Chats
-                  </Link>
-                  <button 
-                    onClick={handleLogout}
-                    className="flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
-                      <path fill="currentColor" d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 012-2h9z"/>
-                    </svg>
-                    Logout
-                  </button>
-                </div>
-              )}
+            <div className="hidden lg:block">
+              <UserMenu/>
             </div>
           </div>
         </div>
 
         {/* Search Bar - Mobile Only */}
         <div className="mt-4 lg:hidden">
-          <form className="max-w-2xl mx-auto" action="/search">   
+          <form className="max-w-2xl mx-auto" action="/search">
             <label htmlFor="mobile-search" className="sr-only">Search</label>
             <div className="relative">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">

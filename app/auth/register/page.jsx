@@ -6,6 +6,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import GoogleRegisterButton from './GoogleRegisterButton';
 
 export default function SignUp() {
   const router = useRouter();
@@ -16,7 +17,6 @@ export default function SignUp() {
     password: '',
     confirmPassword: ''
   });
-  const [validationMessage, setValidationMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -57,162 +57,161 @@ export default function SignUp() {
   };
 
   return (
-    <section className="bg-white dark:bg-gray-900">
-      <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center dark:bg-gray-900">
-        <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1 dark:bg-gray-800">
-          <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-            <Link href="/">
-              <Image
-                src="/assets/Swapify.jpg"
-                alt="Swapify Logo"
-                width={128}
-                height={128}
-                className="w-32 mx-auto rounded"
-              />
-            </Link>
-            
-            <div className="mt-12 flex flex-col items-center">
-              <h1 className="text-2xl xl:text-3xl font-extrabold dark:text-white">
-                Sign up To Swapify
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-md lg:max-w-lg mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+          <div className="px-8 py-10">
+            <div className="flex flex-col items-center space-y-6">
+              <Link href="/" className="hover:opacity-80 transition-opacity">
+                <Image
+                  src="/assets/Swapify.jpg"
+                  alt="Swapify Logo"
+                  width={120}
+                  height={120}
+                  className="w-24 h-24 rounded-lg"
+                />
+              </Link>
+              
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Join Swapify
               </h1>
+              <p className="text-gray-600 dark:text-gray-300 text-center">
+                Create your account to start swapping
+              </p>
+            </div>
 
-              <div className="w-full flex-1 mt-8">
-                <form onSubmit={handleSubmit}>
-                  <div className="mx-auto max-w-xs">
+            <div className="mt-8">
+              <div className="flex justify-center">
+                <GoogleRegisterButton />
+              </div>
+
+              <div className="my-6 relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                    Or sign up with email
+                  </span>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Email address
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Password
+                  </label>
+                  <div className="relative">
                     <input
-                      className="text-md block px-3 py-2 rounded-lg w-full 
-                        bg-white border-2 border-gray-300 placeholder-gray-600 shadow-md
-                        focus:placeholder-gray-500 focus:bg-white 
-                        focus:border-gray-600 focus:outline-none"
-                      type="email"
-                      placeholder="Email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter password"
+                      value={formData.password}
+                      onChange={(e) => setFormData({...formData, password: e.target.value})}
                       required
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition-colors pr-12"
                     />
-
-                    <div className="py-2 relative">
-                      <input
-                        className="text-md block px-3 py-2 rounded-lg w-full 
-                          bg-white border-2 border-gray-300 placeholder-gray-600 shadow-md
-                          focus:placeholder-gray-500 focus:bg-white 
-                          focus:border-gray-600 focus:outline-none"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="Enter Password"
-                        value={formData.password}
-                        onChange={(e) => setFormData({...formData, password: e.target.value})}
-                        required
-                      />
-                      <button
-                        type="button"
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {/* Eye icon SVG */}
-                        {showPassword ? (
-                          <EyeOffIcon className="h-6 text-gray-700" />
-                        ) : (
-                          <EyeIcon className="h-6 text-gray-700" />
-                        )}
-                      </button>
-                    </div>
-
-                    <div className="py-2 relative">
-                      <input
-                        className="text-md block px-3 py-2 rounded-lg w-full 
-                          bg-white border-2 border-gray-300 placeholder-gray-600 shadow-md
-                          focus:placeholder-gray-500 focus:bg-white 
-                          focus:border-gray-600 focus:outline-none"
-                        type={showConfirmPassword ? 'text' : 'password'}
-                        placeholder="Confirm Password"
-                        value={formData.confirmPassword}
-                        onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
-                        required
-                      />
-                      <button
-                        type="button"
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      >
-                        {showConfirmPassword ? (
-                          <EyeOffIcon className="h-6 text-gray-700" />
-                        ) : (
-                          <EyeIcon className="h-6 text-gray-700" />
-                        )}
-                      </button>
-                    </div>
-
-                    {validationMessage && (
-                      <p className="text-center text-orange-500 italic text-sm">
-                        {validationMessage}
-                      </p>
-                    )}
-
                     <button
-                      type="submit"
-                      disabled={isLoading}
-                      className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none disabled:bg-indigo-300"
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
-                      {isLoading ? (
-                        <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      {showPassword ? (
+                        <EyeOffIcon className="w-5 h-5" />
                       ) : (
-                        <>
-                          <svg
-                            className="w-6 h-6 -ml-2"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                            <circle cx="8.5" cy="7" r="4" />
-                            <path d="M20 8v6M23 11h-6" />
-                          </svg>
-                          <span className="ml-3">Sign Up</span>
-                        </>
+                        <EyeIcon className="w-5 h-5" />
                       )}
                     </button>
                   </div>
-                </form>
+                </div>
+
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      placeholder="Confirm password"
+                      value={formData.confirmPassword}
+                      onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                      required
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition-colors pr-12"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                      aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOffIcon className="w-5 h-5" />
+                      ) : (
+                        <EyeIcon className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition-colors focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Creating account...</span>
+                    </div>
+                  ) : (
+                    'Sign Up'
+                  )}
+                </button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <p className="text-gray-600 dark:text-gray-400">
+                  Already have an account?{' '}
+                  <Link href="/auth/login" className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium">
+                    Log in
+                  </Link>
+                </p>
               </div>
             </div>
-
-            <div className="flex w-full items-center gap-2 py-6 text-sm text-slate-600">
-              <div className="h-px w-full bg-slate-200"></div>
-              <p className="dark:text-white">OR</p>
-              <div className="h-px w-full bg-slate-200"></div>
-            </div>
-
-            <p className="mt-2 text-center dark:text-white">
-              Already Have an Account!
-            </p>
-            <Link href="/auth/login">
-              <button className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
-                <span className="ml-3">Log In Here</span>
-              </button>
-            </Link>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
+
 const EyeIcon = ({ className }) => (
-  <svg className={className} fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-    <path
-      fill="currentColor"
-      d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"
-    />
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.478 0-8.268-2.943-9.542-7z" />
   </svg>
 );
 
 const EyeOffIcon = ({ className }) => (
-  <svg className={className} fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-    <path
-      fill="currentColor"
-      d="M320 400c-75.85 0-137.25-58.71-142.9-133.11L72.2 185.82c-13.79 17.3-26.48 35.59-36.72 55.59a32.35 32.35 0 0 0 0 29.19C89.71 376.41 197.07 448 320 448c26.91 0 52.87-4 77.89-10.46L346 397.39a144.13 144.13 0 0 1-26 2.61zm313.82 58.1l-110.55-85.44a331.25 331.25 0 0 0 81.25-102.07 32.35 32.35 0 0 0 0-29.19C550.29 135.59 442.93 64 320 64a308.15 308.15 0 0 0-147.32 37.7L45.46 3.37A16 16 0 0 0 23 6.18L3.37 31.45A16 16 0 0 0 6.18 53.9l588.36 454.73a16 16 0 0 0 22.46-2.81l19.64-25.27a16 16 0 0 0-2.82-22.45zm-183.72-142l-39.3-30.38A94.75 94.75 0 0 0 416 256a94.76 94.76 0 0 0-121.31-92.21A47.65 47.65 0 0 1 304 192a46.64 46.64 0 0 1-1.54 10l-73.61-56.89A142.31 142.31 0 0 1 320 112a143.92 143.92 0 0 1 144 144c0 21.63-5.29 41.79-13.9 60.11z"
-    />
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
   </svg>
 );

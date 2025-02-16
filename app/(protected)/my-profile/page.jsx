@@ -1,11 +1,11 @@
 import { headers, cookies } from 'next/headers'
-import Header from '@/app/components/Header'
+import Header from '@/app/components/header/Header'
 import MobileNavigation from '@/app/components/MobileNavigation'
 import ProfileSetupForm from './profile-setup-form'
 
 export default async function ProfileSetup() {
   // Get the current user ID and token from the request headers/cookies
-  const userId = headers().get('x-user-id')
+  const userId = await headers().get('x-user-id')
   console.log(userId)
 
   // Set default profile data
@@ -35,7 +35,9 @@ export default async function ProfileSetup() {
       state: data.state || '',
       city: data.city || '',
       pincode: data.pincode || '',
-      user_avatar: data.user_avatar || ''
+      user_avatar: data.user_avatar || '',
+      google_user_avatar: data.google_user_avatar || '',
+      
         }
       } catch (error) {
         console.error('Error fetching profile:', error)

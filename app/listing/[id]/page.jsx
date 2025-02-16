@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import Header from '@/app/components/Header';
+import Header from '@/app/components/header/Header';
 import ChatWithSeller from './components/ChatWithSeller';
 import MakeOffer from './components/MakeOffer';
 import ListingDescription from './components/ListingDescription';
