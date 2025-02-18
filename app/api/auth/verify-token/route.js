@@ -15,7 +15,7 @@ export const POST = async (req) => {
   
   try {
     const decoded = await verifyToken(token)
-    const googleimage= decoded.user.google_user_avatar.replace('=s96-c', '=s400-c')
+    const googleimage= decoded.user.google_user_avatar.replace('=s96-c', '')
     
     
     return NextResponse.json({

@@ -34,7 +34,7 @@ const UserMenu = () => {
         setUserAvatar(
           data.user_avatar
             ? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${data.user_avatar}`
-            : data.google_user_avatar
+            : data.google_user_avatar.replace('=s96-c', '')
         )
       } catch (error) {
         console.error("Error fetching the user avatar:", error)
