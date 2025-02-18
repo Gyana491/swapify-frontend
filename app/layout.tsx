@@ -26,11 +26,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{ position: 'relative', zIndex: 1 }}
       >
         <Toaster position="top-center" />
         {children}
-       
       </body>
     </html>
   );

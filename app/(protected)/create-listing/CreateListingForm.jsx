@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import LocationPermission from '@/app/components/LocationPermission';
 import { getToken } from '@/app/utils/getToken';
+import LocationDetails from '@/app/(protected)/create-listing/LocationDetails';
 
 const CreateListingForm = () => {
   const router = useRouter();
@@ -23,6 +24,14 @@ const CreateListingForm = () => {
   const [coverImageName, setCoverImageName] = useState('');
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
+
+  // Add combined location state
+  const [locationData, setLocationData] = useState({
+    country: 'India',
+    state: '',
+    city: '',
+    pincode: ''
+  });
 
   const handleImageChange = async (e) => {
     const file = e.target.files?.[0];
@@ -88,10 +97,10 @@ const CreateListingForm = () => {
                 price,
                 description,
                 cover_image: coverImageName,
-                country,
-                state,
-                city,
-                pincode,
+                country: locationData.country,
+                state: locationData.state,
+                city: locationData.city,
+                pincode: locationData.pincode,
                 latitude,
                 longitude
             })
@@ -114,59 +123,133 @@ const CreateListingForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {/* Image Upload Section */}
-      <div className="mx-auto bg-white rounded-lg shadow-md mb-4 items-center dark:bg-gray-800">
-        <div className="p-6 mb-4 rounded-lg items-center mx-auto text-center cursor-pointer max-w-xl">
-          <label htmlFor="upload" className="cursor-pointer relative">
-            {isLoading && (
-              <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center bg-white shadow-sm dark:text-white dark:bg-gray-800 p-4 rounded">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gray-100 m-auto" style={{ background: 'linear-gradient(to right, #ff00cc, #3333ff)' }}></div>
-                <p>Uploading Image...</p>
-              </div>
-            )}
-            <img 
-              src={imagePreview} 
-              className="mb-4 rounded-lg w-full object-center object-cover aspect-[4/3] mx-auto" 
-              alt="Image preview" 
+    <div className="container mx-auto px-4">
+      <form onSubmit={handleSubmit}>
+        {/* Image Upload Section */}
+        <div className="mx-auto bg-white rounded-lg shadow-md mb-4 items-center dark:bg-gray-800">
+          <div className="p-6 mb-4 rounded-lg items-center mx-auto text-center cursor-pointer max-w-xl">
+            <label htmlFor="upload" className="cursor-pointer relative">
+              {isLoading && (
+                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center bg-white shadow-sm dark:text-white dark:bg-gray-800 p-4 rounded">
+                  <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gray-100 m-auto" style={{ background: 'linear-gradient(to right, #ff00cc, #3333ff)' }}></div>
+                  <p>Uploading Image...</p>
+                </div>
+              )}
+              <img 
+                src={imagePreview} 
+                className="mb-4 rounded-lg w-full object-center object-cover aspect-[4/3] mx-auto" 
+                alt="Image preview" 
+              />
+              <h5 className="w-full text-white bg-[#050708] hover:bg-[#050708]/90 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center justify-center mr-2 mb-2 cursor-pointer">
+                Upload Cover Image
+              </h5>
+              <span className="text-gray-500 bg-gray-200 z-50">{coverImage}</span>
+            </label>
+            <input 
+              id="upload" 
+              type="file" 
+              className="hidden" 
+              accept="image/*"
+              onChange={handleImageChange}
             />
-            <h5 className="w-full text-white bg-[#050708] hover:bg-[#050708]/90 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center justify-center mr-2 mb-2 cursor-pointer">
-              Upload Cover Image
-            </h5>
-            <span className="text-gray-500 bg-gray-200 z-50">{coverImage}</span>
-          </label>
-          <input 
-            id="upload" 
-            type="file" 
-            className="hidden" 
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-        </div>
-      </div>
-
-      {/* Form Fields */}
-      <div className="p-4 mb-4 w-full bg-gray-100 rounded-lg cursor-pointer dark:bg-gray-800">
-        <div className="w-full">
-          <label htmlFor="title" className="block my-2 text-sm font-bold text-gray-900 dark:text-white">
-            Listing Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-            placeholder="Type product name"
-            required
-          />
+          </div>
         </div>
 
-        {/* Other form fields remain the same */}
-        {/* ... */}
+        {/* Title and Price Section */}
+        <div className="p-4 mb-4 w-full bg-gray-100 rounded-lg dark:bg-gray-800">
+          <div className="w-full">
+            <label htmlFor="title" className="block my-2 text-sm font-bold text-gray-900 dark:text-white">
+              Listing Title
+            </label>
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="Type product name"
+              required
+            />
+          </div>
+
+          <div className="w-full mt-4">
+            <label htmlFor="price" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
+              Price
+            </label>
+            <input
+              type="number"
+              id="price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="Ex. ₹2,999"
+              required
+            />
+          </div>
+
+          {/* Category Selection */}
+          <div className="mt-4">
+            <label htmlFor="category" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
+              Category
+            </label>
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+            >
+              <option value="">Select a category</option>
+              {/* Add your category options here */}
+            </select>
+          </div>
+
+          {/* Description */}
+          <div className="w-full mt-4">
+            <label htmlFor="description" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
+              Description
+            </label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={8}
+              className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="Add Additional Information about Your Product here..."
+            />
+          </div>
+        </div>
+
+        {/* Phone Number Section */}
+        <div className="p-4 mb-4 w-full bg-gray-100 rounded-lg dark:bg-gray-800">
+          <div className="w-full">
+            <label htmlFor="phone" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
+              Your Whatsapp Number
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="987654321"
+              pattern="[0-9]{10}"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Location Details */}
+        <LocationDetails
+          formData={locationData}
+          setFormData={setLocationData}
+          onLocationUpdate={(lat, lng) => {
+            setLatitude(lat);
+            setLongitude(lng);
+          }}
+        />
 
         {/* Submit Button */}
-        <div className="flex items-center justify-center space-x-4">
+        <div className="flex items-center justify-center space-x-4 mb-4">
           <button
             type="submit"
             disabled={isUpdating}
@@ -175,15 +258,9 @@ const CreateListingForm = () => {
             {isUpdating ? 'Creating Listing...' : 'Create New Listing'}
           </button>
         </div>
-      </div>
-      <LocationPermission 
-        onGranted={(lat, lng) => {
-          setLatitude(lat);
-          setLongitude(lng);
-        }}
-      />
-    </form>
+      </form>
+    </div>
   );
 };
 
-export default CreateListingForm; 
+export default CreateListingForm;
