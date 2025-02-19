@@ -3,6 +3,15 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
+// Helper function to format distance
+const formatDistance = (distance) => {
+  if (!distance) return null;
+  if (distance < 1) {
+    return `${Math.round(distance * 1000)}m away`;
+  }
+  return `${Math.round(distance * 10) / 10}km away`;
+};
+
 export default function ListingCard({ listing }) {
   const [imageError, setImageError] = useState(false)
   
@@ -43,8 +52,8 @@ export default function ListingCard({ listing }) {
           </p>
 
           {/* Location */}
-          {(listing.location_display_name) && (
-            <div className="flex items-center text-gray-500 text-sm dark:text-gray-400">
+          {listing.location_display_name && (
+            <div className="flex items-center text-gray-500 text-sm dark:text-gray-400 mb-1">
               <svg 
                 className="w-4 h-4 mr-1" 
                 fill="none" 
@@ -67,6 +76,26 @@ export default function ListingCard({ listing }) {
               <span className="truncate">
                 {listing.location_display_name}
               </span>
+            </div>
+          )}
+
+          {/* Distance - Only show if distance exists */}
+          {listing.distance && (
+            <div className="flex items-center text-blue-600 text-sm dark:text-blue-400 mb-2">
+              <svg 
+                className="w-4 h-4 mr-1" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth="2" 
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
+              </svg>
+              <span>{formatDistance(listing.distance)}</span>
             </div>
           )}
 

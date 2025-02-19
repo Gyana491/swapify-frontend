@@ -7,7 +7,10 @@ const Home = () => {
         <>
             <Header />
             <MobileNavigation />
-            <Listings />
+            <main className="min-h-screen">
+                <h1 className="sr-only">Swapify - Local Marketplace</h1>
+                <Listings />
+            </main>
         </>
     );
 };
