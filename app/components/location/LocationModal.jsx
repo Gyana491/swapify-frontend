@@ -6,27 +6,68 @@ import Cookies from 'js-cookie';
 import { createPortal } from 'react-dom';
 
 const popularCities = [
-    {
-      display_name: "Mumbai, Maharashtra, India",
-      lat: "19.075983",
-      lon: "72.877655"
-    },
-    {
-      display_name: "Bangalore, Karnataka, India",
-      lat: "12.971599",
-      lon: "77.594566"
-    },
-    {
-      display_name: "Delhi, India",
-      lat: "28.6139",
-      lon: "77.2090"
-    },
-    {
-      display_name: "Chennai, Tamil Nadu, India",
-      lat: "13.08268",
-      lon: "80.270721"
-    }
-];
+  {
+    "display_name": "Mumbai, Maharashtra, India",
+    "lat": "19.0760",
+    "lon": "72.8777",
+    "image": "https://images.unsplash.com/photo-1595658658481-d53d3f999875"
+  },
+  {
+    "display_name": "Bangalore, Karnataka, India",
+    "lat": "12.9716",
+    "lon": "77.5946",
+    "image": "https://images.unsplash.com/photo-1596176530529-78163a4f7af2"
+  },
+  {
+    "display_name": "Delhi, India",
+    "lat": "28.7041",
+    "lon": "77.1025",
+    "image": "https://images.unsplash.com/photo-1587474260584-136574528ed5"
+  },
+  {
+    "display_name": "Chennai, Tamil Nadu, India",
+    "lat": "13.0827",
+    "lon": "80.2707",
+    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220"
+  },
+  {
+    "display_name": "Hyderabad, Telangana, India",
+    "lat": "17.3850",
+    "lon": "78.4867",
+    "image": "https://images.unsplash.com/photo-1572445271230-a78b5944a659"
+  },
+  {
+    "display_name": "Pune, Maharashtra, India",
+    "lat": "18.5204",
+    "lon": "73.8567",
+    "image": "https://images.unsplash.com/photo-1572445271230-a78b5944a659"
+  },
+  {
+    "display_name": "Kolkata, West Bengal, India",
+    "lat": "22.5726",
+    "lon": "88.3639",
+    "image": "https://images.unsplash.com/photo-1558431382-27e303142255"
+  },
+  {
+    "display_name": "Ahmedabad, Gujarat, India",
+    "lat": "23.0225",
+    "lon": "72.5714",
+    "image": "https://images.unsplash.com/photo-1599940824399-b87987ceb72a"
+  },
+  {
+    "display_name": "Jaipur, Rajasthan, India",
+    "lat": "26.9124",
+    "lon": "75.7873",
+    "image": "https://images.unsplash.com/photo-1477587458883-47145ed94245"
+  },
+  {
+    "display_name": "Chandigarh, India",
+    "lat": "30.7333",
+    "lon": "76.7794",
+    "image": "https://images.unsplash.com/photo-1587474260584-136574528ed5"
+  }
+]
+;
 
 const LocationModal = ({ isOpen, onClose, onSelect }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -147,37 +188,37 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
   return createPortal(
     <div className="fixed inset-0 z-[99999] overflow-hidden">
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
       <div className="fixed inset-0 z-[99999] overflow-y-auto">
         <div className="flex min-h-screen items-center justify-center p-4">
-          <div className="relative w-full max-w-lg transform overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:border dark:border-gray-800">
+          <div className="relative w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all dark:bg-gray-900 dark:border dark:border-gray-800">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-medium text-gray-900">
+            <div className="flex items-center justify-between p-6 border-b dark:border-gray-800">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 Select Location
               </h3>
               <button
                 onClick={onClose}
-                className="p-1 text-gray-400 hover:text-gray-500"
+                className="rounded-full p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 <BiX className="w-6 h-6" />
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-4">
+            <div className="p-6">
               {/* Search and Auto-detect section */}
-              <div className="space-y-4">
+              <div className="space-y-4 max-w-2xl mx-auto">
                 {/* Search input */}
                 <div className="relative">
-                  <BiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <BiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
                   <input
                     type="text"
                     placeholder="Search for a location..."
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-[4px] text-sm focus:outline-none focus:ring-2 focus:ring-[#FF3B30] focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
+                    className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -187,7 +228,7 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
                 <button
                   onClick={detectLocation}
                   disabled={isDetecting}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-[4px] text-sm font-medium text-gray-700 transition-colors duration-200 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl text-base font-medium text-gray-700 transition-colors duration-200 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <BiCurrentLocation className={`h-5 w-5 ${isDetecting ? 'animate-spin' : ''}`} />
                   {isDetecting ? 'Detecting location...' : 'Auto-detect my location'}
@@ -196,18 +237,18 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
 
               {/* Error message */}
               {error && (
-                <div className="mt-2 p-2 text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/30 rounded-[4px]">
+                <div className="mt-4 p-3 text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/30 rounded-xl max-w-2xl mx-auto">
                   {error}
                 </div>
               )}
 
               {/* Selected Location */}
               {selectedLocation.display_name && (
-                <div className="mb-4">
+                <div className="my-6 max-w-2xl mx-auto">
                   <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Selected Location</h4>
-                  <div className="flex items-center gap-3 p-3 bg-red-50 text-red-600 rounded-[4px] dark:bg-red-900/30 dark:text-red-300">
-                    <IoLocationSharp className="flex-shrink-0 text-red-600 dark:text-red-400" />
-                    <span className="text-sm dark:text-red-100 truncate">
+                  <div className="flex items-center gap-3 p-4 bg-red-50 text-red-600 rounded-xl border border-red-100 dark:bg-red-900/30 dark:border-red-800/30 dark:text-red-300">
+                    <IoLocationSharp className="flex-shrink-0 text-red-600 dark:text-red-400 text-lg" />
+                    <span className="text-base dark:text-red-100 truncate">
                       {selectedLocation.display_name}
                     </span>
                   </div>
@@ -216,19 +257,34 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
 
               {/* Popular Cities */}
               {!searchQuery && (
-                <div className="mb-6">
-                  <h4 className="text-sm font-medium text-gray-500 mb-3">Popular Cities</h4>
-                  <div className="grid grid-cols-2 gap-2">
+                <div className="mt-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <h4 className="text-base font-semibold text-gray-700 dark:text-gray-300">Trending Marketplace Cities</h4>
+                    <span className="px-2.5 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-full">
+                      11 cities
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                     {popularCities.map((city) => (
                       <button
                         key={city.display_name}
                         onClick={() => handleLocationSelect(city)}
-                        className="flex items-center gap-3 p-3 text-left hover:bg-gray-50 rounded-[4px] transition-colors dark:hover:bg-gray-800"
+                        className="group relative overflow-hidden rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 dark:hover:shadow-gray-800/50"
                       >
-                        <IoLocationSharp className="flex-shrink-0 text-gray-400 dark:text-gray-500" />
-                        <span className="text-sm dark:text-gray-200">
-                          {city.display_name.split(',').slice(0, 2).join(', ')}
-                        </span>
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/50 to-black/90 z-10" />
+                        <img 
+                          src={city.image} 
+                          alt={city.display_name}
+                          className="w-full h-32 sm:h-40 lg:h-44 object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
+                          <div className="flex items-center gap-2">
+                            <IoLocationSharp className="text-red-500 flex-shrink-0" size={18} />
+                            <div className="text-white font-medium text-base truncate">
+                              {city.display_name.split(',')[0]}
+                            </div>
+                          </div>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -236,18 +292,21 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
               )}
 
               {/* Search Results */}
-              <div className="max-h-[300px] overflow-y-auto">
-                {isLoading && <div className="p-4 text-center text-gray-500 dark:text-gray-400">Loading...</div>}
+              <div className="mt-4 max-h-[300px] overflow-y-auto">
+                {isLoading && (
+                  <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                    <div className="animate-spin w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                    Searching...
+                  </div>
+                )}
                 {suggestions.map((location) => (
                   <button
                     key={location.place_id}
                     onClick={() => handleLocationSelect(location)}
-                    className="w-full flex items-center gap-3 p-3 text-left hover:bg-gray-50 rounded-[4px] dark:hover:bg-gray-800"
+                    className="w-full flex items-center gap-3 p-4 text-left hover:bg-gray-50 rounded-xl transition-colors dark:hover:bg-gray-800"
                   >
-                    <IoLocationSharp className="flex-shrink-0 text-gray-400 dark:text-gray-500" />
-                    <div>
-                      <div className="text-sm font-medium dark:text-gray-200">{location.display_name}</div>
-                    </div>
+                    <IoLocationSharp className="flex-shrink-0 text-gray-400 dark:text-gray-500 text-lg" />
+                    <div className="text-base font-medium dark:text-gray-200">{location.display_name}</div>
                   </button>
                 ))}
               </div>

@@ -18,7 +18,7 @@ const LocationSelector = ({ isMobile = false }) => {
     lon: ''
   });
   
-  // Move cookie reading to useEffect to avoid hydration mismatch
+  // Modified useEffect to check for location and open modal if needed
   useEffect(() => {
     const displayName = Cookies.get('display_name') || '';
     const latitude = Cookies.get('latitude') || '';
@@ -29,6 +29,11 @@ const LocationSelector = ({ isMobile = false }) => {
       lat: latitude,
       lon: longitude
     });
+
+    // Open modal if latitude or longitude is not available
+    if (!latitude || !longitude) {
+      setIsModalOpen(true);
+    }
   }, []);
 
   const handleLocationSelect = (displayName) => {
