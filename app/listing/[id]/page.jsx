@@ -42,6 +42,39 @@ async function getRelatedListings(currentListingId) {
   }
 }
 
+// Metadata generation for the listing page
+export async function generateMetadata({ params }) {
+  try {
+    const listing = await getListing(params.id);
+    
+    return {
+      title: `${listing.title} - Available for Swap`,
+      description: `${listing.description.substring(0, 155)}...`,
+      openGraph: {
+        title: `${listing.title} - Available for Swap on Swapify`,
+        description: listing.description.substring(0, 155),
+        images: listing.images.map(image => ({
+          url: image,
+          width: 800,
+          height: 600,
+          alt: listing.title
+        }))
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${listing.title} - Available for Swap`,
+        description: listing.description.substring(0, 155),
+        images: listing.images[0]
+      }
+    };
+  } catch (error) {
+    return {
+      title: 'Listing - Swapify',
+      description: 'View this item available for swap on Swapify'
+    };
+  }
+}
+
 export default async function ListingPage({ params }) {
   const { id } = await params;
   try {
