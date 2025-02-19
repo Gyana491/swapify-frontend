@@ -564,8 +564,8 @@ const CreateListingForm = () => {
       </div>
 
       {/* Main Content */}
-      <div className="bg-white dark:bg-gray-800/95 rounded-xl shadow-lg overflow-hidden transition-all duration-300
-        border border-gray-100 dark:border-gray-700/75 backdrop-blur-sm">
+      <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-lg overflow-hidden transition-all duration-300
+        border border-gray-100 dark:border-gray-800 backdrop-blur-sm">
         <div className="p-4 md:p-8">
           {/* Step Title */}
           <div className="mb-6 animate-fadeIn">
@@ -974,7 +974,12 @@ const CreateListingForm = () => {
                         type="text"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="w-full px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent"
+                        className="w-full px-3 py-2 md:px-4 md:py-2 text-sm md:text-base rounded-lg 
+                          border border-gray-300 dark:border-gray-700 
+                          bg-white dark:bg-gray-900
+                          text-gray-900 dark:text-gray-100
+                          focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent
+                          placeholder:text-gray-400 dark:placeholder:text-gray-500"
                         placeholder="Enter a clear, descriptive title"
                       />
                     </div>
@@ -985,12 +990,17 @@ const CreateListingForm = () => {
                         Price
                       </label>
                       <div className="relative">
-                        <span className="absolute left-3 top-2 text-gray-500">₹</span>
+                        <span className="absolute left-3 top-2 text-gray-500 dark:text-gray-400">₹</span>
                         <input
                           type="number"
                           value={price}
                           onChange={(e) => setPrice(e.target.value)}
-                          className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent"
+                          className="w-full pl-8 pr-4 py-2 rounded-lg 
+                            border border-gray-300 dark:border-gray-700 
+                            bg-white dark:bg-gray-900
+                            text-gray-900 dark:text-gray-100
+                            focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent
+                            placeholder:text-gray-400 dark:placeholder:text-gray-500"
                           placeholder="0.00"
                         />
                       </div>
@@ -1005,7 +1015,9 @@ const CreateListingForm = () => {
                         type="button"
                         onClick={() => setIsLocationModalOpen(true)}
                         className="w-full flex items-center gap-3 p-3 
-                          bg-white dark:bg-gray-800 active:bg-gray-100
+                          bg-white dark:bg-gray-900 
+                          hover:bg-gray-50 dark:hover:bg-gray-800
+                          active:bg-gray-100 dark:active:bg-gray-700
                           border border-gray-300 dark:border-gray-700 rounded-lg text-left
                           focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 
                           transition-all duration-200 group"
@@ -1057,7 +1069,13 @@ const CreateListingForm = () => {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       rows={12}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 resize-none"
+                      className="w-full px-4 py-3 rounded-lg 
+                        border border-gray-300 dark:border-gray-700 
+                        bg-white dark:bg-gray-900
+                        text-gray-900 dark:text-gray-100
+                        focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 
+                        resize-none
+                        placeholder:text-gray-400 dark:placeholder:text-gray-500"
                       placeholder="Describe your product in detail..."
                     />
                   </div>
@@ -1087,7 +1105,13 @@ const CreateListingForm = () => {
                       type="tel"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
-                      className="w-full pl-12 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 text-sm placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                      className="w-full pl-12 pr-4 py-2 rounded-lg 
+                        border border-gray-300 dark:border-gray-700 
+                        bg-white dark:bg-gray-900
+                        text-gray-900 dark:text-gray-100
+                        focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 
+                        text-sm 
+                        placeholder:text-gray-400 dark:placeholder:text-gray-500"
                       placeholder="Enter your WhatsApp number"
                       maxLength="10"
                       pattern="[0-9]{10}"
@@ -1146,8 +1170,9 @@ const CreateListingForm = () => {
                       />
                       <label 
                         htmlFor="free-listing"
-                        className="block p-4 bg-white dark:bg-gray-800 border-2 border-indigo-600 dark:border-indigo-500 rounded-xl cursor-pointer
+                        className="block p-4 bg-white dark:bg-gray-900 border-2 border-indigo-600 dark:border-indigo-500 rounded-xl cursor-pointer
                           transition-all duration-200
+                          hover:bg-gray-50 dark:hover:bg-gray-800
                           peer-checked:border-indigo-600 dark:peer-checked:border-indigo-500 
                           peer-checked:bg-gradient-to-r peer-checked:from-indigo-50 peer-checked:to-purple-50
                           dark:peer-checked:from-indigo-900/30 dark:peer-checked:to-purple-900/30"
@@ -1253,7 +1278,7 @@ const CreateListingForm = () => {
 
             {/* Navigation Buttons - Fixed to bottom on mobile */}
             <div className="sticky bottom-0 left-0 right-0 z-50 mt-8 pb-4 md:pb-0">
-              <div className="px-4 py-3 bg-white dark:bg-gray-800/95 border-t border-gray-200 dark:border-gray-700/75 shadow-lg md:shadow-none md:border-0 md:bg-transparent backdrop-blur-sm">
+              <div className="px-4 py-3 bg-white dark:bg-gray-900/95 border-t border-gray-200 dark:border-gray-700/75 shadow-lg md:shadow-none md:border-0 md:bg-transparent backdrop-blur-sm">
                 <div className="container mx-auto max-w-5xl">
                   <div className="flex gap-3 md:gap-4">
                     <button
@@ -1304,7 +1329,7 @@ const CreateListingForm = () => {
             </div>
           </form>
           {/* Draft Status - Moved to top with better styling */}
-          <div className="mt-6 p-3 bg-white dark:bg-gray-800/50 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700/50 backdrop-blur-sm">
+          <div className="mt-6 p-3 bg-white dark:bg-gray-900/50 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800/50 backdrop-blur-sm">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <span className="flex h-1.5 w-1.5 relative">
@@ -1321,7 +1346,10 @@ const CreateListingForm = () => {
                     window.location.reload();
                   }
                 }}
-                className="text-[11px] text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 flex items-center space-x-1 px-2 py-0.5 rounded-md hover:bg-red-50/50 dark:hover:bg-red-900/20"
+                className="text-[11px] text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 
+                  flex items-center space-x-1 px-2 py-0.5 rounded-md 
+                  hover:bg-red-50/50 dark:hover:bg-red-900/20 
+                  active:scale-95 transition-all duration-200"
               >
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

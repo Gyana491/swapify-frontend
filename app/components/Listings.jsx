@@ -116,13 +116,13 @@ const Listings = () => {
     }, []); // Only fetch on mount
 
     return (
-        <div className="bg-gray-900 min-h-screen pb-8">
+        <div className=" min-h-screen pb-8">
             {/* Filters Container */}
             <div className="max-w-screen-xl mx-auto px-4 pt-6 space-y-4">
                 {/* Category Filter */}
                 <div className="relative">
-                    <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-900 to-transparent z-10 pointer-events-none"></div>
-                    <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-900 to-transparent z-10 pointer-events-none"></div>
+                    <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r  dark:from-gray-900 to-transparent z-10 pointer-events-none"></div>
+                    <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l dark:from-gray-900 to-transparent z-10 pointer-events-none"></div>
                     <div className="overflow-x-auto scrollbar-hide">
                         <div className="flex gap-3 pb-2 min-w-min">
                             {categories.map((category) => (
@@ -134,7 +134,7 @@ const Listings = () => {
                                         whitespace-nowrap flex items-center gap-2.5
                                         ${selectedCategory === category.id
                                             ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/25'
-                                            : 'bg-gray-800/50 text-gray-300 hover:bg-gray-800 backdrop-blur-sm'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 backdrop-blur-sm'
                                         }
                                     `}
                                 >
@@ -148,8 +148,8 @@ const Listings = () => {
 
                 {/* Distance Filter */}
                 <div className="relative">
-                    <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-900 to-transparent z-10 pointer-events-none"></div>
-                    <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-900 to-transparent z-10 pointer-events-none"></div>
+                    <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r dark:from-gray-900 to-transparent z-10 pointer-events-none"></div>
+                    <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l dark:from-gray-900 to-transparent z-10 pointer-events-none"></div>
                     <div className="overflow-x-auto scrollbar-hide">
                         <div className="flex gap-3 pb-2 min-w-min">
                             {DISTANCE_OPTIONS.map((option) => (
@@ -161,7 +161,7 @@ const Listings = () => {
                                         whitespace-nowrap
                                         ${selectedDistance === option.value
                                             ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                                            : 'bg-gray-800/50 text-gray-300 hover:bg-gray-800 backdrop-blur-sm'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-800 backdrop-blur-sm'
                                         }
                                     `}
                                 >
