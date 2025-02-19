@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function GET(request, { params }) {
   try {
     // Await params before destructuring
-    const { id } = await params;
+    const { id } = await params; // Awaiting params as per instructions
 
     if (!id) {
       return NextResponse.json(
@@ -22,7 +22,7 @@ export async function GET(request, { params }) {
     const data = await response.json();
 
     return NextResponse.json(data);
-  } catch (error) {
+  } catch (error) { // Added error parameter
     console.error('Error fetching listing:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to fetch listing' },
@@ -33,7 +33,7 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params; // Awaiting params as per instructions
     const token = request.headers.get('authorization')?.split(' ')[1];
     
     if (!token) {
@@ -59,10 +59,8 @@ export async function PUT(request, { params }) {
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to update listing' },
+      { error: error.message || 'Failed to update listing' },
       { status: 500 }
     );
   }
 }
-
-
