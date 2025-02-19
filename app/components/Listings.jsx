@@ -27,13 +27,13 @@ const formatDistance = (distance) => {
 // Distance options in kilometers
 const DISTANCE_OPTIONS = [
     { label: 'Within 5km', value: 5000 },
-    { label: 'Within 10km', value: 10000 },
-    { label: 'Within 25km', value: 25000 },
-    { label: 'Within 50km', value: 50000 },
-    { label: 'Within 100km', value: 100000 },
-    { label: 'Within 250km', value: 250000 },
-    { label: 'Within 500km', value: 500000 },
-    { label: 'Within 1000km', value: 1000000 }
+    { label: '10km', value: 10000 },
+    { label: '25km', value: 25000 },
+    { label: '50km', value: 50000 },
+    { label: '100km', value: 100000 },
+    { label: '250km', value: 250000 },
+    { label: '500km', value: 500000 },
+    { label: '1000km', value: 1000000 }
 ];
 
 const Listings = () => {
