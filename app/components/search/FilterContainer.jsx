@@ -1,17 +1,12 @@
 'use client';
 import { useCallback } from 'react';
-import categories from '../../data/categories.json';
 
 const FilterContainer = ({ searchParams, setSearchParams }) => {
   const handleInputChange = useCallback((field, value) => {
-    setSearchParams(prev => {
-      const newParams = { ...prev, [field]: value };
-      // Reset subcategory when category changes
-      if (field === 'category') {
-        newParams.subcategory = '';
-      }
-      return newParams;
-    });
+    setSearchParams(prev => ({
+      ...prev,
+      [field]: value
+    }));
   }, [setSearchParams]);
 
   return (
@@ -35,29 +30,6 @@ const FilterContainer = ({ searchParams, setSearchParams }) => {
         <option value="50">Within 50km</option>
         <option value="100">Within 100km</option>
         <option value="500">Within State</option>
-      </select>
-      <select
-        value={searchParams.category}
-        onChange={(e) => handleInputChange('category', e.target.value)}
-        className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-      >
-        <option value="">All Categories</option>
-        {categories.map(cat => (
-          <option key={cat.id} value={cat.id}>{cat.name}</option>
-        ))}
-      </select>
-      <select
-        value={searchParams.subcategory}
-        onChange={(e) => handleInputChange('subcategory', e.target.value)}
-        className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-        disabled={!searchParams.category}
-      >
-        <option value="">All Subcategories</option>
-        {searchParams.category && categories
-          .find(cat => cat.id === searchParams.category)
-          ?.subcategories.map(sub => (
-            <option key={sub} value={sub}>{sub}</option>
-          ))}
       </select>
     </div>
   );

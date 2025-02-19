@@ -1,42 +1,54 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 
 // Helper function to format distance
 const formatDistance = (distance) => {
   if (!distance) return null;
+  if (distance === 0) {
+    return "On Spot";
+  }
   if (distance < 1) {
     return `${Math.round(distance * 1000)}m away`;
   }
   return `${Math.round(distance * 10) / 10}km away`;
 };
 
+// Helper function to format price
+const formatPrice = (price) => {
+  if (!price) return '₹0';
+  return `₹${price.toLocaleString('en-IN')}`;
+};
+
 export default function ListingCard({ listing }) {
   const [imageError, setImageError] = useState(false)
   
-  const handleImageError = () => {
-    setImageError(true)
-  }
-
   const imageUrl = listing.cover_image 
     ? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${listing.cover_image}`
     : '/assets/listing-placeholder.jpg'
 
   return (
-    <Link href={`/listing/${listing._id}`}>
-      <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800">
-        {/* Image */}
+    <Link 
+      href={`/listing/${listing._id}`}
+      className="block focus:outline-none focus:ring-2 focus:ring-purple-500 rounded-lg"
+    >
+      <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800">
+        {/* Image Container */}
         <div className="relative aspect-video">
-          <img
+          <Image
             src={imageError ? '/assets/listing-placeholder.jpg' : imageUrl}
-            alt={listing.title}
-            onError={handleImageError}
-            className="w-full h-full object-cover"
+            alt={`Image of ${listing.title}`}
+            onError={() => setImageError(true)}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover"
+            priority={false}
           />
           <div className="absolute top-2 right-2">
-            <span className="bg-purple-600 text-white px-2 py-1 rounded-full text-sm font-semibold">
-              ₹{listing.price}
+            <span className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
+              {formatPrice(listing.price)}
             </span>
           </div>
         </div>
@@ -53,12 +65,13 @@ export default function ListingCard({ listing }) {
 
           {/* Location */}
           {listing.location_display_name && (
-            <div className="flex items-center text-gray-500 text-sm dark:text-gray-400 mb-1">
+            <div className="flex items-center text-gray-500 text-sm dark:text-gray-400 mb-1" aria-label="Location">
               <svg 
-                className="w-4 h-4 mr-1" 
+                className="w-4 h-4 mr-1 flex-shrink-0" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path 
                   strokeLinecap="round" 
@@ -79,14 +92,15 @@ export default function ListingCard({ listing }) {
             </div>
           )}
 
-          {/* Distance - Only show if distance exists */}
+          {/* Distance */}
           {listing.distance && (
-            <div className="flex items-center text-blue-600 text-sm dark:text-blue-400 mb-2">
+            <div className="flex items-center text-blue-600 text-sm dark:text-blue-400 mb-2" aria-label="Distance">
               <svg 
-                className="w-4 h-4 mr-1" 
+                className="w-4 h-4 mr-1 flex-shrink-0" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path 
                   strokeLinecap="round" 
@@ -100,11 +114,14 @@ export default function ListingCard({ listing }) {
           )}
 
           {/* Date */}
-          <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+          <time 
+            className="block mt-2 text-xs text-gray-500 dark:text-gray-400"
+            dateTime={new Date(listing.created_at).toISOString()}
+          >
             Listed on {new Date(listing.created_at).toLocaleDateString()}
-          </div>
+          </time>
         </div>
-      </div>
+      </article>
     </Link>
   )
 } 

@@ -1,16 +1,12 @@
 'use client';
 import { useCallback } from 'react';
-import categories from '../../data/categories.json';
 
 const MobileFilter = ({ searchParams, setSearchParams }) => {
   const handleInputChange = useCallback((field, value) => {
-    setSearchParams(prev => {
-      const newParams = { ...prev, [field]: value };
-      if (field === 'category') {
-        newParams.subcategory = '';
-      }
-      return newParams;
-    });
+    setSearchParams(prev => ({
+      ...prev,
+      [field]: value
+    }));
   }, [setSearchParams]);
 
   const ranges = [
@@ -74,74 +70,6 @@ const MobileFilter = ({ searchParams, setSearchParams }) => {
             ))}
           </div>
         </div>
-
-        {/* Section Label - Categories */}
-        <div className="px-1">
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2.5">
-            Categories
-          </h3>
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            <button
-              onClick={() => handleInputChange('category', '')}
-              className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all
-                ${!searchParams.category
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-gray-50 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-                }`}
-            >
-              All Categories
-            </button>
-            {categories.map(cat => (
-              <button
-                key={cat.id}
-                onClick={() => handleInputChange('category', cat.id)}
-                className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all
-                  ${searchParams.category === cat.id
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-                  }`}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Subcategories - Only show if category is selected */}
-        {searchParams.category && (
-          <div className="px-1">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2.5">
-              Subcategories
-            </h3>
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-              <button
-                onClick={() => handleInputChange('subcategory', '')}
-                className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all
-                  ${!searchParams.subcategory
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-                  }`}
-              >
-                All Subcategories
-              </button>
-              {categories
-                .find(cat => cat.id === searchParams.category)
-                ?.subcategories.map(sub => (
-                  <button
-                    key={sub}
-                    onClick={() => handleInputChange('subcategory', sub)}
-                    className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all
-                      ${searchParams.subcategory === sub
-                        ? 'bg-blue-600 text-white shadow-md'
-                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-                      }`}
-                  >
-                    {sub}
-                  </button>
-                ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

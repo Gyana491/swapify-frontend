@@ -1,6 +1,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+// Helper function to format distance
+const formatDistance = (distance) => {
+  if (!distance) return null;
+  if (distance === 0) {
+    return "On Spot";
+  }
+  if (distance < 1) {
+    return `${Math.round(distance * 1000)}m away`;
+  }
+  return `${Math.round(distance * 10) / 10}km away`;
+};
+
 const SearchListingCard = ({ listing }) => {
   return (
     <Link 
@@ -40,7 +52,7 @@ const SearchListingCard = ({ listing }) => {
               <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 mr-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
-              <span>{listing.distance}</span>
+              <span>{formatDistance(listing.distance)}</span>
             </div>
           )}
         </div>
