@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { BiSearch, BiX, BiCurrentLocation } from 'react-icons/bi';
 import { IoLocationSharp } from 'react-icons/io5';
-import Cookies from 'js-cookie';
 import { createPortal } from 'react-dom';
 
 const popularCities = [
@@ -28,7 +27,7 @@ const popularCities = [
     }
 ];
 
-const LocationModal = ({ isOpen, onClose, onSelect }) => {
+const ListingLocationModal = ({ isOpen, onClose, onSelect }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,21 +36,40 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
   
   // State for selected location
   const [selectedLocation, setSelectedLocation] = useState({
-    display_name: Cookies.get('display_name') || '',
-    lat: Cookies.get('latitude') || '',
-    lon: Cookies.get('longitude') || ''
+    display_name: '',
+    lat: '',
+    lon: ''
   });
 
   // Function to fetch locations from Nominatim API
   const fetchLocations = async (query) => {
     if (query.length < 3) return;
     setIsLoading(true);
+    setError(null);
+    
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${query}, India&limit=5`
       );
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch locations');
+      }
+
       const data = await response.json();
-      setSuggestions(data);
+      
+      // Validate and format the data
+      const validLocations = data.filter(location => 
+        location.lat && 
+        location.lon && 
+        location.display_name
+      ).map(location => ({
+        display_name: location.display_name,
+        lat: location.lat,
+        lon: location.lon
+      }));
+
+      setSuggestions(validLocations);
     } catch (err) {
       setError('Failed to fetch locations');
       console.error(err);
@@ -73,25 +91,22 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
   }, [searchQuery]);
 
   const handleLocationSelect = (location) => {
+    // Only require display_name as mandatory
+    if (!location.display_name) {
+      setError('Invalid location data');
+      return;
+    }
+
     const selectedData = {
       display_name: location.display_name,
-      lat: location.lat,
-      lon: location.lon
+      lat: location.lat || '',  // Use empty string if not available
+      lon: location.lon || ''   // Use empty string if not available
     };
     
     setSelectedLocation(selectedData);
-    
-    // Set cookies
-    Cookies.set('display_name', location.display_name, { expires: 30 });
-    Cookies.set('latitude', location.lat, { expires: 30 });
-    Cookies.set('longitude', location.lon, { expires: 30 });
-    
-    onSelect(location.display_name);
+    onSelect(selectedData);
     setSearchQuery('');
     setSuggestions([]);
-    
-    // Reload the page after selecting a location
-    window.location.reload();
   };
 
   // Add auto-detect location function
@@ -100,13 +115,30 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
     setError(null);
 
     try {
-      // Request location permission
+      if (!navigator.geolocation) {
+        throw new Error('Geolocation is not supported by your browser');
+      }
+
       const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0
-        });
+        const locationTimeout = setTimeout(() => {
+          reject(new Error('Location request timed out. Please try again.'));
+        }, 10000);
+
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            clearTimeout(locationTimeout);
+            resolve(pos);
+          },
+          (err) => {
+            clearTimeout(locationTimeout);
+            reject(err);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          }
+        );
       });
 
       const { latitude, longitude } = position.coords;
@@ -116,26 +148,38 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
         `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
       );
 
-      if (!response.ok) throw new Error('Failed to fetch location details');
+      if (!response.ok) {
+        throw new Error('Failed to fetch location details');
+      }
 
       const data = await response.json();
       
-      // Create location object
+      if (!data || !data.display_name) {
+        throw new Error('Unable to determine your location');
+      }
+
       const detectedLocation = {
         display_name: data.display_name,
         lat: latitude.toString(),
         lon: longitude.toString()
       };
 
-      handleLocationSelect(detectedLocation);
+      setSelectedLocation(detectedLocation);
+      onSelect(detectedLocation);
+      setSearchQuery('');
+      setSuggestions([]);
+
     } catch (err) {
       console.error('Location detection error:', err);
+      
       if (err.code === 1) {
-        setError('Location permission denied. Please enable location access.');
+        setError('Location access denied. Please enable location access in your browser settings and try again.');
       } else if (err.code === 2) {
-        setError('Location unavailable. Please try again.');
+        setError('Unable to determine your location. Please check your device\'s location settings.');
+      } else if (err.code === 3) {
+        setError('Location request timed out. Please try again.');
       } else {
-        setError('Failed to detect location. Please try again.');
+        setError(err.message || 'Failed to detect location. Please try again or enter location manually.');
       }
     } finally {
       setIsDetecting(false);
@@ -185,9 +229,18 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
 
                 {/* Auto-detect button */}
                 <button
+                  type="button"
                   onClick={detectLocation}
                   disabled={isDetecting}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-[4px] text-sm font-medium text-gray-700 transition-colors duration-200 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`
+                    w-full flex items-center justify-center gap-2 px-4 py-2.5 
+                    ${isDetecting 
+                      ? 'bg-gray-100 text-gray-600' 
+                      : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
+                    }
+                    border border-gray-200 rounded-[4px] text-sm font-medium 
+                    transition-colors duration-200 disabled:cursor-wait
+                  `}
                 >
                   <BiCurrentLocation className={`h-5 w-5 ${isDetecting ? 'animate-spin' : ''}`} />
                   {isDetecting ? 'Detecting location...' : 'Auto-detect my location'}
@@ -260,4 +313,4 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
   );
 };
 
-export default LocationModal;
+export default ListingLocationModal;

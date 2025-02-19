@@ -11,13 +11,32 @@ export async function POST(req) {
     }
   
     try {
+      // Validate location data
+      if (!body.location?.lat || !body.location?.lon) {
+        return Response.json({ 
+          error: 'Location coordinates are required' 
+        }, { status: 400 });
+      }
+
+      const transformedBody = {
+        ...body,
+        phoneNumber: body.phoneNumber,
+        coverImageName: body.coverImageName,
+        additionalImageNames: body.additionalImageNames,
+        location: {
+          lat: parseFloat(body.location.lat),
+          lon: parseFloat(body.location.lon),
+          display_name: body.location.display_name
+        }
+      };
+
       const response = await fetch(`${process.env.BACKEND}/create-listing`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(transformedBody)
       });
 
       if (!response.ok) {

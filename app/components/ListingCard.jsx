@@ -43,7 +43,7 @@ export default function ListingCard({ listing }) {
           </p>
 
           {/* Location */}
-          {(listing.city || listing.state) && (
+          {(listing.location_display_name) && (
             <div className="flex items-center text-gray-500 text-sm dark:text-gray-400">
               <svg 
                 className="w-4 h-4 mr-1" 
@@ -65,7 +65,7 @@ export default function ListingCard({ listing }) {
                 />
               </svg>
               <span className="truncate">
-                {[listing.city, listing.state].filter(Boolean).join(', ')}
+                {listing.location_display_name}
               </span>
             </div>
           )}

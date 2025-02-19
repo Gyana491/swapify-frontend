@@ -28,21 +28,28 @@ const UserMenu = () => {
           headers: {
             'Authorization': `Bearer ${token}`
           }
-        })
-        const data = await response.json()
-        console.log(data)
-        setUserAvatar(
-          data.user_avatar
-            ? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${data.user_avatar}`
-            : data.google_user_avatar.replace('=s96-c', '')
-        )
+        });
+        const data = await response.json();
+        
+        // Safely determine the avatar URL with proper checks
+        let avatarUrl = null;
+        if (data.user_avatar) {
+          avatarUrl = `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${data.user_avatar}`;
+        } else if (data.google_user_avatar) {
+          avatarUrl = data.google_user_avatar.includes('=s96-c') 
+            ? data.google_user_avatar.replace('=s96-c', '') 
+            : data.google_user_avatar;
+        }
+        
+        setUserAvatar(avatarUrl);
       } catch (error) {
-        console.error("Error fetching the user avatar:", error)
+        console.error("Error fetching the user avatar:", error);
+        setUserAvatar(null); // Set to null on error
       }
-    }
+    };
 
-    fetchUserAvatar()
-  }, [token])
+    fetchUserAvatar();
+  }, [token]);
 
   if (!token) {
     return (
@@ -57,7 +64,7 @@ const UserMenu = () => {
         }}
         className="relative inline-flex items-center justify-center overflow-hidden rounded-xl group transition-all hover:scale-105"
       >
-        <span className="px-6 py-3 text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl font-semibold rounded-xl text-sm transition-all">
+        <span className="px-4 py-2 lg:px-6 lg:py-3 text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl font-semibold rounded-xl text-sm transition-all">
           Sign In
         </span>
       </Link>
@@ -72,7 +79,7 @@ const UserMenu = () => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative z-40">
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         aria-label="User menu"
@@ -82,13 +89,13 @@ const UserMenu = () => {
             setIsDropdownOpen(!isDropdownOpen)
           }
         }}
-        className="flex items-center gap-1.5 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500"
+        className="flex items-center gap-1 p-1.5 lg:p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500"
       >
         {userAvatar ? (
-          <img src={userAvatar} alt="User Avatar" width={35} height={35} className="rounded-xl shadow-sm" />
+          <img src={userAvatar} alt="User Avatar" width={32} height={32} className="rounded-xl shadow-sm lg:w-[35px] lg:h-[35px]" />
         ) : (
-          <div className="w-[35px] h-[35px] rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
-            <svg width="20" height="20" className="text-white" viewBox="0 0 32 32">
+          <div className="w-8 h-8 lg:w-[35px] lg:h-[35px] rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
+            <svg width="16" height="16" className="text-white lg:w-5 lg:h-5" viewBox="0 0 32 32">
               <path fill="currentColor" d="M16,2A14,14,0,1,0,30,16,14,14,0,0,0,16,2ZM10,26.39a6,6,0,0,1,11.94,0,11.87,11.87,0,0,1-11.94,0Zm13.74-1.26a8,8,0,0,0-15.54,0,12,12,0,1,1,15.54,0ZM16,8a5,5,0,1,0,5,5A5,5,0,0,0,16,8Zm0,8a3,3,0,1,1,3-3A3,3,0,0,1,16,16Z" />
             </svg>
           </div>
@@ -100,10 +107,10 @@ const UserMenu = () => {
       </button>
 
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800/95 backdrop-blur-md rounded-xl shadow-lg py-2 border border-gray-100 dark:border-gray-700">
+        <div className="absolute right-0 mt-2 w-48 lg:w-56 bg-white dark:bg-gray-800/95 backdrop-blur-md rounded-xl shadow-lg py-2 border border-gray-100 dark:border-gray-700 z-50">
           <Link
             href="/my-listings"
-            className="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+            className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
           >
             <svg className="w-4 h-4 mr-3 text-gray-500 dark:text-gray-400" viewBox="0 0 24 24">
               <path fill="currentColor" d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z" />
@@ -112,7 +119,7 @@ const UserMenu = () => {
           </Link>
           <Link
             href="/my-profile"
-            className="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+            className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
           >
             <svg className="w-4 h-4 mr-3 text-gray-500 dark:text-gray-400" viewBox="0 0 32 32">
               <path fill="currentColor" d="M16,2A14,14,0,1,0,30,16,14,14,0,0,0,16,2Z" />
@@ -121,7 +128,7 @@ const UserMenu = () => {
           </Link>
           <Link
             href="/chat"
-            className="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+            className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
           >
             <svg className="w-4 h-4 mr-3 text-gray-500 dark:text-gray-400" viewBox="0 0 24 24">
               <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
@@ -131,14 +138,7 @@ const UserMenu = () => {
           <div className="h-[1px] bg-gray-100 dark:bg-gray-700 my-1.5"></div>
           <button
             onClick={handleLogout}
-            aria-label="Logout"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                handleLogout()
-              }
-            }}
-            className="flex w-full items-center px-4 py-2.5 text-sm text-red-500 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors focus:outline-none"
+            className="flex w-full items-center px-4 py-2 text-sm text-red-500 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
           >
             <svg className="w-4 h-4 mr-3" viewBox="0 0 24 24">
               <path fill="currentColor" d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 012-2h9z" />

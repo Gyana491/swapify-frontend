@@ -3,342 +3,375 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { getToken } from '@/app/utils/getToken';
+import { IoLocationSharp, IoImageOutline, IoTrashOutline } from 'react-icons/io5';
+import dynamic from 'next/dynamic';
+
+// Dynamically import LocationModal
+const LocationModal = dynamic(() => import('../../create-listing/ListingLocationModal'), {
+  ssr: false
+});
+
+// Add constants
+const MAX_ADDITIONAL_IMAGES = 9;
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 const EditListingForm = ({ listingId }) => {
   const router = useRouter();
-
-  const [validationMessage, setValidationMessage] = useState('');
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
-  const [city, setCity] = useState('');
-  const [pincode, setPincode] = useState('');
-  const [state, setState] = useState('');
-  const [country, setCountry] = useState('India');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [category, setCategory] = useState('');
+  const [subcategory, setSubcategory] = useState('');
   const [coverImage, setCoverImage] = useState('');
-  const [imagePreview, setImagePreview] = useState('/assets/place-holder.jpg');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
   const [coverImageName, setCoverImageName] = useState('');
+  const [additionalImages, setAdditionalImages] = useState([]);
+  const [additionalImageNames, setAdditionalImageNames] = useState([]);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState({
+    display_name: '',
+    lat: '',
+    lon: ''
+  });
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
   useEffect(() => {
-    // Fetch existing listing data
     const fetchListing = async () => {
       try {
         const token = getToken();
-        if (!token) {
-          toast.error('Authentication required');
-          return;
-        }
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/listings/${listingId}`, {
-          headers: {
-            'Authorization': `bearer ${token}`
-          }
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/listings/${listingId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        if (!response.ok) throw new Error('Failed to fetch listing');
         const data = await response.json();
+
+        // Update form fields
+        setTitle(data.title);
+        setPrice(data.price);
+        setCategory(data.category);
+        setSubcategory(data.subcategory);
+        setDescription(data.description);
+        setPhoneNumber(data.seller_no);
+        setCoverImageName(data.cover_image);
+        setAdditionalImageNames(data.additional_images || []);
         
-        if (response.ok) {
-          setTitle(data.title);
-          setPrice(data.price);
-          setCategory(data.category_id);
-          setDescription(data.description);
-          setCity(data.city);
-          setPincode(data.pincode);
-          setState(data.state);
-          setCountry(data.country);
-          setPhoneNumber(data.seller_no);
-          setCoverImageName(data.cover_image);
-          if (data.cover_image) {
-            const imageUrl = `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${data.cover_image}`;
-            setCoverImage(imageUrl);
-            setImagePreview(imageUrl);
-          }
+        // Set location data
+        setSelectedLocation({
+          display_name: data.location_display_name,
+          lat: data.location.coordinates[1],
+          lon: data.location.coordinates[0]
+        });
+
+        // Set images with CDN URLs
+        if (data.cover_image) {
+          setCoverImage(`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${data.cover_image}`);
+        }
+        
+        if (data.additional_images?.length) {
+          setAdditionalImages(
+            data.additional_images.map(img => 
+              `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${img}`
+            )
+          );
         }
       } catch (error) {
-        console.error('Error fetching listing:', error);
         toast.error('Failed to load listing details');
       }
     };
 
-    if (listingId) {
-      fetchListing();
-    }
+    fetchListing();
   }, [listingId]);
-
-  const handleImageChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setIsLoading(true);
-      const loadingToast = toast.loading('Uploading image...');
-      
-      try {
-        const formData = new FormData();
-        formData.append('files', file);
-
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!response.ok) {
-          throw new Error('Upload failed');
-        }
-
-        const data = await response.json();
-        const filename = data.files[0].filename;
-        const imageUrl = `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${filename}`;
-        setCoverImageName(filename);
-        setCoverImage(imageUrl);
-        setImagePreview(imageUrl);
-        toast.success('Image uploaded successfully!', { id: loadingToast });
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        toast.error('Failed to upload image. Please try again.', { id: loadingToast });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsUpdating(true);
-    
-    const loadingToast = toast.loading('Updating your listing...');
-    
+
     try {
       const token = getToken();
-      if (!token) {
-        throw new Error('Authentication required');
-      }
+      if (!token) throw new Error('Authentication required');
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/listings/${listingId}`, {
+      const response = await fetch(`/api/listings/${listingId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `bearer ${token}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           title,
-          seller_no: phoneNumber,
-          category_id: category,
           price,
           description,
-          cover_image: coverImageName,
-          country,
-          state,
-          city,
-          pincode
+          phoneNumber,
+          coverImageName,
+          additionalImageNames,
+          category,
+          subcategory,
+          location: selectedLocation
         })
       });
-      
+
       const data = await response.json();
       
-      if (response.ok) {
-        toast.success('Listing updated successfully!', { id: loadingToast });
-        router.push('/my-listings');
-      } else {
-        toast.error(data.error || 'Failed to update listing', { id: loadingToast });
-      }
+      if (!response.ok) throw new Error(data.message || 'Failed to update listing');
+      
+      toast.success('Listing updated successfully!');
+      router.push('/my-listings');
     } catch (error) {
-      console.error('Error updating listing:', error);
-      toast.error(error.message || 'Failed to update listing. Please try again.', { id: loadingToast });
+      toast.error(error.message || 'Failed to update listing');
     } finally {
       setIsUpdating(false);
     }
   };
 
-  // Rest of your form JSX goes here (copy the form JSX from the original page)
+  // Add image handling functions
+  const handleCoverImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      toast.error('Please upload JPG, PNG or WebP images only');
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setCoverImage(reader.result);
+      setCoverImageName(file.name);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleAdditionalImagesChange = (e) => {
+    const files = Array.from(e.target.files || []);
+    
+    if (files.length + additionalImages.length > MAX_ADDITIONAL_IMAGES) {
+      toast.error(`You can only upload up to ${MAX_ADDITIONAL_IMAGES} additional images`);
+      return;
+    }
+
+    const invalidFile = files.find(file => 
+      !ALLOWED_FILE_TYPES.includes(file.type) || file.size > MAX_FILE_SIZE
+    );
+
+    if (invalidFile) {
+      toast.error('All images must be JPG, PNG or WebP and less than 5MB');
+      return;
+    }
+
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAdditionalImages(prev => [...prev, reader.result]);
+        setAdditionalImageNames(prev => [...prev, file.name]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeAdditionalImage = (index) => {
+    setAdditionalImages(prev => prev.filter((_, i) => i !== index));
+    setAdditionalImageNames(prev => prev.filter((_, i) => i !== index));
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
-    {/* Image Upload Section */}
-    <div className="mx-auto bg-white rounded-lg shadow-md mb-4 items-center dark:bg-gray-800">
-      <div className="p-6 mb-4 rounded-lg items-center mx-auto text-center cursor-pointer max-w-xl">
-        <label htmlFor="upload" className="cursor-pointer relative">
-          {isLoading && (
-            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center bg-white shadow-sm dark:text-white dark:bg-gray-800 p-4 rounded">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gray-100 m-auto" style={{ background: 'linear-gradient(to right, #ff00cc, #3333ff)' }}></div>
-              <p>Uploading Image...</p>
+    <form onSubmit={handleSubmit} className="max-w-7xl mx-auto p-4">
+      <div className="flex flex-col lg:grid lg:grid-cols-[65fr_45fr] lg:gap-8">
+        {/* Images Section - Will appear first on mobile */}
+        <div className="order-1 lg:order-2 space-y-6 bg-white rounded-xl shadow-lg p-6 mb-6 lg:mb-0">
+          {/* Cover Image */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Cover Image
+            </label>
+            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+              {coverImage ? (
+                <div className="relative">
+                  <img 
+                    src={coverImage} 
+                    alt="Cover preview" 
+                    className="h-48 w-auto object-contain"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCoverImage('');
+                      setCoverImageName('');
+                    }}
+                    className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                  >
+                    <IoTrashOutline className="w-5 h-5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-1 text-center">
+                  <IoImageOutline className="mx-auto h-12 w-12 text-gray-400" />
+                  <div className="flex text-sm text-gray-600">
+                    <label className="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500">
+                      <span>Upload a cover image</span>
+                      <input
+                        type="file"
+                        className="sr-only"
+                        accept="image/*"
+                        onChange={handleCoverImageChange}
+                      />
+                    </label>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-          <img 
-            src={imagePreview} 
-            className="mb-4 rounded-lg w-full object-center object-cover aspect-[4/3] mx-auto" 
-            alt="Image preview" 
-          />
-          <h5 className="w-full text-white bg-[#050708] hover:bg-[#050708]/90 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center justify-center mr-2 mb-2 cursor-pointer">
-            Upload Cover Image
-          </h5>
-          <span className="text-gray-500 bg-gray-200 z-50">{coverImage}</span>
-        </label>
-        <input 
-          id="upload" 
-          type="file" 
-          className="hidden" 
-          accept="image/*"
-          onChange={handleImageChange}
-        />
-      </div>
-    </div>
+          </div>
 
-    {/* Title and Price Section */}
-    <div className="p-4 mb-4 w-full bg-gray-100 rounded-lg cursor-pointer dark:bg-gray-800">
-      <div className="w-full">
-        <label htmlFor="title" className="block my-2 text-sm font-bold text-gray-900 dark:text-white">
-          Listing Title
-        </label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="Type product name"
-          required
-        />
+          {/* Additional Images */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Additional Images ({additionalImages.length}/{MAX_ADDITIONAL_IMAGES})
+            </label>
+            <div className="mt-1 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-1.5">
+              {additionalImages.map((image, index) => (
+                <div key={index} className="relative aspect-square w-16 sm:w-20">
+                  <img 
+                    src={image} 
+                    alt={`Additional ${index + 1}`} 
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeAdditionalImage(index)}
+                    className="absolute -top-1 -right-1 p-0.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-sm"
+                  >
+                    <IoTrashOutline className="w-2.5 h-2.5" />
+                  </button>
+                </div>
+              ))}
+              {additionalImages.length < MAX_ADDITIONAL_IMAGES && (
+                <label className="cursor-pointer aspect-square w-16 sm:w-20 flex items-center justify-center border border-gray-300 border-dashed rounded-md hover:border-indigo-500">
+                  <div className="space-y-0.5 text-center">
+                    <IoImageOutline className="mx-auto h-5 w-5 text-gray-400" />
+                    <div className="text-[10px] text-gray-600">Add</div>
+                  </div>
+                  <input
+                    type="file"
+                    className="sr-only"
+                    accept="image/*"
+                    multiple
+                    onChange={handleAdditionalImagesChange}
+                  />
+                </label>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Details Section - Will appear second on mobile */}
+        <div className="order-2 lg:order-1 space-y-6 bg-white rounded-xl shadow-lg p-6">
+          {/* Title Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Product Title
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-500"
+              placeholder="Enter product title"
+            />
+          </div>
+
+          {/* Price Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Price
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-2 text-gray-500">₹</span>
+              <input
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                className="w-full pl-8 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-500"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+
+          {/* Location Selector */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Location
+            </label>
+            <button
+              type="button"
+              onClick={() => setIsLocationModalOpen(true)}
+              className="w-full flex items-center gap-3 p-3 bg-white hover:bg-gray-50 border rounded-lg text-left focus:ring-2 focus:ring-indigo-500 transition-all duration-200"
+            >
+              <div className="relative w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
+                <IoLocationSharp className={`h-5 w-5 ${selectedLocation.display_name ? 'text-indigo-600' : 'text-indigo-400'}`} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm font-medium ${selectedLocation.display_name ? 'text-gray-900' : 'text-gray-500'}`}>
+                  {selectedLocation.display_name || 'Select Location'}
+                </p>
+              </div>
+            </button>
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Description
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
+              className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-500"
+              placeholder="Describe your product"
+            />
+          </div>
+
+          {/* Phone Number */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              WhatsApp Number
+            </label>
+            <input
+              type="tel"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-500"
+              placeholder="Enter your WhatsApp number"
+            />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isUpdating}
+            className="w-full px-4 py-3 text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 transition-all duration-200"
+          >
+            {isUpdating ? 'Updating...' : 'Update Listing'}
+          </button>
+        </div>
       </div>
 
-      <div className="w-full">
-        <label htmlFor="price" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-          Price
-        </label>
-        <input
-          type="number"
-          id="price"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="Ex. ₹2,999"
-          required
-        />
-      </div>
-
-      {/* Category Selection */}
-      <div>
-        <label htmlFor="category" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-          Category
-        </label>
-        <select
-          id="category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >
-          <option value="">Select a category</option>
-          {/* Add your category options here */}
-        </select>
-      </div>
-
-      {/* Description */}
-      <div className="w-full">
-        <label htmlFor="description" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-          Description
-        </label>
-        <textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={8}
-          className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="Add Additional Information about Your Product here..."
-        />
-      </div>
-    </div>
-
-    {/* Phone Number Section */}
-    <div className="p-4 mb-4 w-full bg-gray-100 rounded-lg cursor-pointer dark:bg-gray-800">
-      <div className="w-full">
-        <label htmlFor="phone" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-          Your Whatsapp Number
-        </label>
-        <input
-          type="tel"
-          id="phone"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="987654321"
-          pattern="[0-9]{10}"
-          required
-        />
-      </div>
-    </div>
-
-    {/* Location Details */}
-    <div className="grid gap-4 mb-4 grid-cols-2 sm:gap-6 sm:mb-5 p-4 w-full bg-gray-100 rounded-lg cursor-pointer dark:bg-gray-800">
-      <div className="w-full">
-        <label htmlFor="country" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-          Country
-        </label>
-        <input
-          type="text"
-          id="country"
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="India"
-          required
-        />
-      </div>
-      <div className="w-full">
-        <label htmlFor="state" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-          State
-        </label>
-        <input
-          type="text"
-          id="state"
-          value={state}
-          onChange={(e) => setState(e.target.value)}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="Enter state"
-          required
-        />
-      </div>
-      <div className="w-full">
-        <label htmlFor="city" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-          City
-        </label>
-        <input
-          type="text"
-          id="city"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="Enter city"
-          required
-        />
-      </div>
-      <div className="w-full">
-        <label htmlFor="pincode" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-          Pincode
-        </label>
-        <input
-          type="number"
-          id="pincode"
-          value={pincode}
-          onChange={(e) => setPincode(e.target.value)}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="753001"
-          required
-        />
-      </div>
-    </div>
-
-    {/* Submit Button */}
-    <div className="flex items-center justify-center space-x-4">
-      <button
-        type="submit"
-        disabled={isUpdating}
-        className="w-3/4 text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-primary-800"
-      >
-        {isUpdating ? 'Updating Listing...' : 'Update Listing'}
-      </button>
-    </div>
-  </form>
-
+      {/* Location Modal */}
+      <LocationModal
+        isOpen={isLocationModalOpen}
+        onClose={() => setIsLocationModalOpen(false)}
+        onSelect={(location) => {
+          setSelectedLocation(location);
+          setIsLocationModalOpen(false);
+        }}
+        selectedLocation={selectedLocation}
+      />
+    </form>
   );
 };
 

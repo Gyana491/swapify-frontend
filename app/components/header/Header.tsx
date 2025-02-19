@@ -84,9 +84,9 @@ const Header = async () => {
           </div>
         </div>
 
-        {/* Mobile View - New Design */}
+        {/* Mobile View - Updated */}
         <div className="lg:hidden space-y-3">
-          {/* Top Row with Logo and Swap Button */}
+          {/* Top Row with Logo, Swap Button, and User Menu */}
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center transition-transform hover:scale-105">
@@ -100,14 +100,20 @@ const Header = async () => {
               </div>
             </Link>
 
-            {/* Swap It Button */}
-            <Link href="/create-listing">
-              <button className="relative inline-flex items-center justify-center overflow-hidden rounded-lg sm:rounded-xl group transition-all hover:scale-105">
-                <span className="px-3 py-2 sm:px-6 sm:py-3 text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl font-semibold rounded-lg sm:rounded-xl text-xs sm:text-sm transition-all">
-                  + Swap It
-                </span>
-              </button>
-            </Link>
+            {/* Right side actions group */}
+            <div className="flex items-center gap-2">
+              {/* Swap It Button */}
+              <Link href="/create-listing">
+                <button className="relative inline-flex items-center justify-center overflow-hidden rounded-lg group transition-all hover:scale-105">
+                  <span className="px-3 py-2 text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl font-semibold rounded-lg text-xs transition-all">
+                    + Swap It
+                  </span>
+                </button>
+              </Link>
+
+              {/* User Menu */}
+              <UserMenu />
+            </div>
           </div>
 
           {/* Combined Search and Location Bar */}

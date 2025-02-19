@@ -33,25 +33,14 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
   try {
-    // Await params before destructuring
-    const { id } = await params;
-
-    if (!id) {
-      return NextResponse.json(
-        { error: 'Listing ID is required' },
-        { status: 400 }
-      );
-    }
-
-    // Get the authorization header from the request
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('bearer ')) {
+    const { id } = params;
+    const token = request.headers.get('authorization')?.split(' ')[1];
+    
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
-    const token = authHeader.split(' ')[1];
-    const body = await request.json();
 
+    const body = await request.json();
     const response = await fetch(`${process.env.BACKEND}/listings/${id}`, {
       method: 'PUT',
       headers: {
@@ -69,7 +58,6 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error updating listing:', error);
     return NextResponse.json(
       { error: 'Failed to update listing' },
       { status: 500 }

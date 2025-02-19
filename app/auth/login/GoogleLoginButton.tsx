@@ -1,6 +1,4 @@
 const GoogleLoginButton = () => {
-  
-
   const handleGoogleLogin = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_BACKEND}/auth/google`;
   };
@@ -8,7 +6,7 @@ const GoogleLoginButton = () => {
   return (
     <button
       onClick={handleGoogleLogin}
-      className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-white text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline"
+      className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline"
     >
       <div className="bg-white p-2 rounded-full">
         <svg className="w-4" viewBox="0 0 533.5 544.3">
@@ -30,7 +28,7 @@ const GoogleLoginButton = () => {
           />
         </svg>
       </div>
-      <span className="ml-4">Sign in with Google</span>
+      <span className="ml-4 font-medium">Sign in with Google</span>
     </button>
   );
 };

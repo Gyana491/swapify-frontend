@@ -139,7 +139,7 @@ export default async function ListingPage({ params }) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 font-medium">
-                      {listing.city}, {listing.state}
+                      {listing.location_display_name}
                     </p>
                   </div>
 

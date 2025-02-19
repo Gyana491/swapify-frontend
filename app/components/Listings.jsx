@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
 import Image from "next/image";
+import Cookies from 'js-cookie';
 
 // Helper function to format price in Indian currency
 const formatIndianPrice = (price) => {
@@ -12,6 +13,14 @@ const formatIndianPrice = (price) => {
         currency: 'INR',
         maximumFractionDigits: 0
     }).format(price);
+};
+
+// Helper function to format distance
+const formatDistance = (distance) => {
+    if (distance < 1) {
+        return `${Math.round(distance * 1000)}m away`;
+    }
+    return `${Math.round(distance * 10) / 10}km away`;
 };
 
 const Listings = () => {
@@ -23,8 +32,18 @@ const Listings = () => {
     useEffect(() => {
         const fetchListings = async () => {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/listings`);
-                setListings(response.data);
+                const latitude = Cookies.get('latitude');
+                const longitude = Cookies.get('longitude');
+
+                // If location is set, fetch nearby listings
+                if (latitude && longitude) {
+                    const response = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/listings/nearby`);
+                    setListings(response.data);
+                } else {
+                    // Fallback to regular listings if no location
+                    const response = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/listings`);
+                    setListings(response.data);
+                }
             } catch (err) {
                 console.error("Error fetching listings:", err);
                 setError("Failed to load listings");
@@ -90,11 +109,21 @@ const Listings = () => {
                         <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 sm:mb-3 capitalize">
                             {item.category_id}
                         </p>
-                        <div className="flex items-center mb-2 sm:mb-4 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4c3.865 0 7 3.134 7 7 0 3.337-3 8-7 13-4-5-7-9.663-7-13 0-3.866 3.135-7 7-7zM12 6a2 2 0 100 4 2 2 0 000-4z" />
-                            </svg>
-                            <p className="truncate">{item.city}, {item.state}</p>
+                        <div className="flex flex-col gap-1 mb-2 sm:mb-4">
+                            <div className="flex items-center text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4c3.865 0 7 3.134 7 7 0 3.337-3 8-7 13-4-5-7-9.663-7-13 0-3.866 3.135-7 7-7zM12 6a2 2 0 100 4 2 2 0 000-4z" />
+                                </svg>
+                                <p className="truncate">{item.location_display_name}</p>
+                            </div>
+                            {item.distance && (
+                                <div className="flex items-center text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-medium">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                    </svg>
+                                    <span>{formatDistance(item.distance)}</span>
+                                </div>
+                            )}
                         </div>
                         <Link 
                             href={`/listing/${item._id}`} 
