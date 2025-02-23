@@ -94,7 +94,7 @@ Swapify will generate revenue through:
 - **Subscription Plans** – Pro users can access **premium features**.
 - **Logistics Partnerships** – Collaborating with delivery services for safe transactions.
 
-## **Call to Action: Join the Swapify Revolution!**
+## **Join the Swapify Revolution!**
 ### **Why Invest in Swapify?**
 - **Market Potential** – A rapidly growing **₹2,20,000+ crore industry**.
 - **User Demand** – 30+ crore Indians engage in second-hand trading.
