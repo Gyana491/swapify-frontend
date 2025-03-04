@@ -41,7 +41,7 @@ const Listings = () => {
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedDistance, setSelectedDistance] = useState(50000);
+    const [selectedDistance, setSelectedDistance] = useState(1000000);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
     const fetchListings = async (maxDistance, category) => {

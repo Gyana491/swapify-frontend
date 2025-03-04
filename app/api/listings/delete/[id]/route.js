@@ -16,14 +16,18 @@ export async function DELETE(req, { params }) {
             }
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to delete listing');
+            throw new Error(data.message || 'Failed to delete listing');
         }
 
-        return Response.json({ message: 'Listing deleted successfully' });
+        return Response.json(data);
     } catch (error) {
         console.error('Error deleting listing:', error);
-        return Response.json({ error: error.message || 'Failed to delete listing' }, { status: 500 });
+        return Response.json(
+            { error: error.message || 'Failed to delete listing' }, 
+            { status: 500 }
+        );
     }
 } 

@@ -20,45 +20,35 @@ const DeleteModal = ({listingId, onDeleteSuccess}) => {
     }, [listingId]);
 
     const handleDelete = async () => {
-        if (isDeleting) return;
+        if (isDeleting || !listingId) return;
         
-        console.log('Starting deletion process for listing ID:', listingId);
         setIsDeleting(true);
         const loadingToast = toast.loading('Deleting listing...');
         
         try {
-            console.log('Sending DELETE request with payload:', { id: listingId });
-            const response = await fetch('/api/listings/delete', {
-                method: 'POST',
+            const response = await fetch(`/api/listings/delete/${listingId}`, {
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: listingId }),
+                }
             });
 
-            console.log('Response status:', response.status);
             const data = await response.json();
-            console.log('Response data:', data);
 
             if (!response.ok) {
-                console.error('Response not OK:', response.status, data);
                 throw new Error(data.error || 'Failed to delete listing');
             }
 
-            console.log('Deletion successful, refreshing page');
             toast.success('Listing deleted successfully!', { id: loadingToast });
-            router.refresh();
             setIsVisible(false);
-            onDeleteSuccess();
+            if (onDeleteSuccess) {
+                onDeleteSuccess();
+            }
+            router.refresh();
         } catch (error) {
-            console.error('Detailed error in deletion:', {
-                error: error,
-                message: error.message,
-                stack: error.stack
-            });
-            toast.error(error.message || 'Failed to delete listing. Please try again.', { id: loadingToast });
+            console.error('Error deleting listing:', error);
+            toast.error(error.message || 'Failed to delete listing', { id: loadingToast });
         } finally {
-            console.log('Deletion process completed');
             setIsDeleting(false);
         }
     };

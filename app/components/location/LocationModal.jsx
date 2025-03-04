@@ -9,65 +9,54 @@ const popularCities = [
   {
     "display_name": "Mumbai, Maharashtra, India",
     "lat": "19.0760",
-    "lon": "72.8777",
-    "image": "https://images.unsplash.com/photo-1595658658481-d53d3f999875"
+    "lon": "72.8777"
   },
   {
     "display_name": "Bangalore, Karnataka, India",
     "lat": "12.9716",
-    "lon": "77.5946",
-    "image": "https://images.unsplash.com/photo-1596176530529-78163a4f7af2"
+    "lon": "77.5946"
   },
   {
     "display_name": "Delhi, India",
     "lat": "28.7041",
-    "lon": "77.1025",
-    "image": "https://images.unsplash.com/photo-1587474260584-136574528ed5"
+    "lon": "77.1025"
   },
   {
     "display_name": "Chennai, Tamil Nadu, India",
     "lat": "13.0827",
-    "lon": "80.2707",
-    "image": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220"
+    "lon": "80.2707"
   },
   {
     "display_name": "Hyderabad, Telangana, India",
     "lat": "17.3850",
-    "lon": "78.4867",
-    "image": "https://images.unsplash.com/photo-1572445271230-a78b5944a659"
+    "lon": "78.4867"
   },
   {
     "display_name": "Pune, Maharashtra, India",
     "lat": "18.5204",
-    "lon": "73.8567",
-    "image": "https://images.unsplash.com/photo-1572445271230-a78b5944a659"
+    "lon": "73.8567"
   },
   {
     "display_name": "Kolkata, West Bengal, India",
     "lat": "22.5726",
-    "lon": "88.3639",
-    "image": "https://images.unsplash.com/photo-1558431382-27e303142255"
+    "lon": "88.3639"
   },
   {
     "display_name": "Ahmedabad, Gujarat, India",
     "lat": "23.0225",
-    "lon": "72.5714",
-    "image": "https://images.unsplash.com/photo-1599940824399-b87987ceb72a"
+    "lon": "72.5714"
   },
   {
     "display_name": "Jaipur, Rajasthan, India",
     "lat": "26.9124",
-    "lon": "75.7873",
-    "image": "https://images.unsplash.com/photo-1477587458883-47145ed94245"
+    "lon": "75.7873"
   },
   {
     "display_name": "Chandigarh, India",
     "lat": "30.7333",
-    "lon": "76.7794",
-    "image": "https://images.unsplash.com/photo-1587474260584-136574528ed5"
+    "lon": "76.7794"
   }
-]
-;
+];
 
 const LocationModal = ({ isOpen, onClose, onSelect }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -269,21 +258,16 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
                       <button
                         key={city.display_name}
                         onClick={() => handleLocationSelect(city)}
-                        className="group relative overflow-hidden rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 dark:hover:shadow-gray-800/50"
+                        className="group p-5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl transition-all duration-300 hover:shadow-md hover:-translate-y-1 border border-gray-200 dark:border-gray-700"
                       >
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/50 to-black/90 z-10" />
-                        <img 
-                          src={city.image} 
-                          alt={city.display_name}
-                          className="w-full h-32 sm:h-40 lg:h-44 object-cover transition-transform duration-300 group-hover:scale-110"
-                        />
-                        <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
-                          <div className="flex items-center gap-2">
-                            <IoLocationSharp className="text-red-500 flex-shrink-0" size={18} />
-                            <div className="text-white font-medium text-base truncate">
-                              {city.display_name.split(',')[0]}
-                            </div>
+                        <div className="flex items-center gap-2">
+                          <IoLocationSharp className="text-red-500 flex-shrink-0" size={18} />
+                          <div className="text-gray-800 dark:text-white font-medium text-base truncate">
+                            {city.display_name.split(',')[0]}
                           </div>
+                        </div>
+                        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {city.display_name.split(',').slice(1).join(',')}
                         </div>
                       </button>
                     ))}
