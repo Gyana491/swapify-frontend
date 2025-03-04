@@ -176,137 +176,81 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
 
   return createPortal(
     <div className="fixed inset-0 z-[99999] overflow-hidden">
-      {/* Enhanced backdrop with better dark mode blur */}
       <div 
-        className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md transition-opacity duration-300"
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
       <div className="fixed inset-0 z-[99999] overflow-y-auto">
         <div className="flex min-h-screen items-center justify-center p-4">
-          <div className="relative w-full max-w-4xl transform overflow-hidden rounded-3xl 
-            bg-white dark:bg-gray-900 shadow-2xl dark:shadow-2xl-dark
-            transition-all duration-300 
-            border border-gray-100 dark:border-gray-800">
-            
-            {/* Enhanced Modal Header with better dark mode gradient */}
-            <div className="flex items-center justify-between p-6 border-b 
-              border-gray-100 dark:border-gray-800/80
-              bg-gradient-to-r from-gray-50/80 to-white/95 
-              dark:from-gray-900 dark:to-gray-900/95
-              backdrop-blur-sm">
-              <div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 
-                  dark:from-white dark:to-gray-200 bg-clip-text text-transparent">
-                  Select Location
-                </h3>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Choose your preferred location or search for a specific area
-                </p>
-              </div>
+          <div className="relative w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all dark:bg-gray-900 dark:border dark:border-gray-800">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b dark:border-gray-800">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                Select Location
+              </h3>
               <button
                 onClick={onClose}
-                className="rounded-full p-2 text-gray-400 
-                  hover:bg-gray-100 hover:text-gray-600 
-                  dark:hover:bg-gray-800/80 dark:hover:text-gray-300
-                  transition-all duration-200 active:scale-95"
-                aria-label="Close modal"
+                className="rounded-full p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 <BiX className="w-6 h-6" />
               </button>
             </div>
 
-            {/* Enhanced Modal Body with better dark mode transitions */}
-            <div className="p-6 space-y-6">
+            {/* Modal Body */}
+            <div className="p-6">
+              {/* Search and Auto-detect section */}
               <div className="space-y-4 max-w-2xl mx-auto">
-                {/* Enhanced Search input with better dark mode states */}
-                <div className="relative group">
-                  <BiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 
-                    text-gray-400 dark:text-gray-500 text-lg 
-                    transition-colors group-hover:text-red-500 dark:group-hover:text-red-400" />
+                {/* Search input */}
+                <div className="relative">
+                  <BiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg" />
                   <input
                     type="text"
                     placeholder="Search for a location..."
-                    className="w-full pl-12 pr-4 py-4 
-                      bg-gray-50 dark:bg-gray-800/80 
-                      border border-gray-200 dark:border-gray-700/80 
-                      rounded-2xl text-base 
-                      transition-all duration-200 
-                      focus:outline-none focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 focus:border-transparent 
-                      hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600
-                      text-gray-900 dark:text-gray-100
-                      placeholder-gray-500 dark:placeholder-gray-400"
+                    className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
 
-                {/* Enhanced Auto-detect button with better dark mode gradient */}
+                {/* Auto-detect button */}
                 <button
                   onClick={detectLocation}
                   disabled={isDetecting}
-                  className="w-full flex items-center justify-center gap-3 px-4 py-4 
-                    bg-gradient-to-r from-red-500 to-red-600 
-                    dark:from-red-600 dark:to-red-700
-                    hover:from-red-600 hover:to-red-700
-                    dark:hover:from-red-700 dark:hover:to-red-800
-                    text-white rounded-2xl text-base font-semibold 
-                    transition-all duration-300 
-                    hover:shadow-lg hover:-translate-y-0.5 
-                    active:translate-y-0
-                    disabled:opacity-50 disabled:cursor-not-allowed 
-                    disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl text-base font-medium text-gray-700 transition-colors duration-200 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <BiCurrentLocation className={`h-5 w-5 ${isDetecting ? 'animate-spin' : ''}`} />
                   {isDetecting ? 'Detecting location...' : 'Auto-detect my location'}
                 </button>
               </div>
 
-              {/* Enhanced Error message */}
+              {/* Error message */}
               {error && (
-                <div className="mt-4 p-4 text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/30 rounded-2xl max-w-2xl mx-auto border border-red-100 dark:border-red-800/30">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
-                    {error}
-                  </div>
+                <div className="mt-4 p-3 text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/30 rounded-xl max-w-2xl mx-auto">
+                  {error}
                 </div>
               )}
 
-              {/* Enhanced Selected Location with better dark mode gradient */}
+              {/* Selected Location */}
               {selectedLocation.display_name && (
                 <div className="my-6 max-w-2xl mx-auto">
-                  <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
-                    Selected Location
-                  </h4>
-                  <div className="flex items-center gap-3 p-4 
-                    bg-gradient-to-r from-red-50 to-red-100/80 
-                    dark:from-red-900/20 dark:to-red-800/20 
-                    text-red-600 dark:text-red-300 
-                    rounded-2xl border border-red-100/80 
-                    dark:border-red-800/20">
-                    <IoLocationSharp className="flex-shrink-0 text-red-500 dark:text-red-400 text-xl" />
-                    <span className="text-base font-medium dark:text-red-100 truncate">
+                  <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Selected Location</h4>
+                  <div className="flex items-center gap-3 p-4 bg-red-50 text-red-600 rounded-xl border border-red-100 dark:bg-red-900/30 dark:border-red-800/30 dark:text-red-300">
+                    <IoLocationSharp className="flex-shrink-0 text-red-600 dark:text-red-400 text-lg" />
+                    <span className="text-base dark:text-red-100 truncate">
                       {selectedLocation.display_name}
                     </span>
                   </div>
                 </div>
               )}
 
-              {/* Enhanced Popular Cities with better dark mode support */}
+              {/* Popular Cities */}
               {!searchQuery && (
                 <div className="mt-8">
                   <div className="flex items-center justify-between mb-6">
-                    <h4 className="text-lg font-bold 
-                      text-gray-800 dark:text-gray-200">
-                      Popular Cities
-                    </h4>
-                    <span className="px-3 py-1.5 text-xs font-semibold 
-                      text-red-600 dark:text-red-400 
-                      bg-red-50 dark:bg-red-900/30 
-                      rounded-full">
-                      {popularCities.length} cities
+                    <h4 className="text-base font-semibold text-gray-700 dark:text-gray-300">Trending Marketplace Cities</h4>
+                    <span className="px-2.5 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-full">
+                      11 cities
                     </span>
                   </div>
                   <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
@@ -314,27 +258,15 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
                       <button
                         key={city.display_name}
                         onClick={() => handleLocationSelect(city)}
-                        className="group p-5 
-                          bg-white dark:bg-gray-800/50
-                          hover:bg-gray-50 dark:hover:bg-gray-800 
-                          rounded-2xl transition-all duration-300 
-                          hover:shadow-lg dark:hover:shadow-lg-dark
-                          hover:-translate-y-1 
-                          border border-gray-100 dark:border-gray-700/50 
-                          hover:border-gray-200 dark:hover:border-gray-600 
-                          active:translate-y-0"
+                        className="group p-5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl transition-all duration-300 hover:shadow-md hover:-translate-y-1 border border-gray-200 dark:border-gray-700"
                       >
                         <div className="flex items-center gap-2">
-                          <IoLocationSharp className="text-red-500 dark:text-red-400 
-                            group-hover:text-red-600 dark:group-hover:text-red-300 
-                            transition-colors flex-shrink-0" 
-                            size={20} 
-                          />
-                          <div className="text-gray-900 dark:text-white font-semibold text-base truncate">
+                          <IoLocationSharp className="text-red-500 flex-shrink-0" size={18} />
+                          <div className="text-gray-800 dark:text-white font-medium text-base truncate">
                             {city.display_name.split(',')[0]}
                           </div>
                         </div>
-                        <div className="mt-2 text-sm text-gray-500 dark:text-gray-400 truncate">
+                        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 truncate">
                           {city.display_name.split(',').slice(1).join(',')}
                         </div>
                       </button>
@@ -343,25 +275,22 @@ const LocationModal = ({ isOpen, onClose, onSelect }) => {
                 </div>
               )}
 
-              {/* Enhanced Search Results */}
+              {/* Search Results */}
               <div className="mt-4 max-h-[300px] overflow-y-auto">
                 {isLoading && (
-                  <div className="p-6 text-center text-gray-500 dark:text-gray-400">
-                    <div className="animate-spin w-8 h-8 border-3 border-red-500 border-t-transparent rounded-full mx-auto mb-3"></div>
-                    <p className="text-sm font-medium">Searching locations...</p>
+                  <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                    <div className="animate-spin w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                    Searching...
                   </div>
                 )}
                 {suggestions.map((location) => (
                   <button
                     key={location.place_id}
                     onClick={() => handleLocationSelect(location)}
-                    className="w-full flex items-center gap-3 p-4 text-left hover:bg-gray-50 rounded-xl transition-all duration-200 
-                    dark:hover:bg-gray-800 hover:shadow-sm group"
+                    className="w-full flex items-center gap-3 p-4 text-left hover:bg-gray-50 rounded-xl transition-colors dark:hover:bg-gray-800"
                   >
-                    <IoLocationSharp className="flex-shrink-0 text-gray-400 group-hover:text-red-500 transition-colors text-lg" />
-                    <div className="text-base font-medium text-gray-700 group-hover:text-gray-900 dark:text-gray-300 dark:group-hover:text-white transition-colors">
-                      {location.display_name}
-                    </div>
+                    <IoLocationSharp className="flex-shrink-0 text-gray-400 dark:text-gray-500 text-lg" />
+                    <div className="text-base font-medium dark:text-gray-200">{location.display_name}</div>
                   </button>
                 ))}
               </div>
