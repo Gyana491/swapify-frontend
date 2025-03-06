@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
+import PWAInstallPromptWrapper from './components/PWAInstallPromptWrapper';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,7 +14,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: '#6366f1',
+}
+
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_HOST || 'https://swapify.com'),
   title: {
     default: "Swapify - Buy and Sell Used Products Near You!",
     template: "%s | Swapify"
@@ -47,6 +53,20 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true
+  },
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Swapify'
+  },
+  icons: {
+    apple: [
+      { url: '/favicon.ico' }
+    ]
+  },
+  formatDetection: {
+    telephone: true
   }
 };
 
@@ -63,6 +83,7 @@ export default function RootLayout({
       >
         <Toaster position="top-center" />
         {children}
+        <PWAInstallPromptWrapper />
       </body>
     </html>
   );

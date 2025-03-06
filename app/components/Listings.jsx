@@ -10,6 +10,9 @@ import categories from '../data/categories.json';
 
 // Helper function to format price in Indian currency
 const formatIndianPrice = (price) => {
+    if (price === 0) {
+        return "Free";
+    }
     return new Intl.NumberFormat('en-IN', {
         style: 'currency',
         currency: 'INR',
@@ -208,7 +211,11 @@ const Listings = () => {
                                 </Link>
                                 <div className="p-2 sm:p-4">
                                     <Link href={`/listing/${item._id}`} aria-label={`View details of ${item.title}`} tabIndex="0">
-                                        <h5 className="text-base sm:text-xl font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2">
+                                        <h5 className={`text-base sm:text-xl font-semibold mb-1 sm:mb-2 ${
+                                            item.price === 0 
+                                                ? 'text-green-600 dark:text-green-400' 
+                                                : 'text-gray-900 dark:text-white'
+                                        }`}>
                                             {formatIndianPrice(item.price)}
                                         </h5>
                                     </Link>
