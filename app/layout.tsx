@@ -19,7 +19,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_HOST || 'https://swapify.com'),
+  metadataBase: new URL('https://swapify.club'),
   title: {
     default: "Swapify - Buy and Sell Used Products Near You!",
     template: "%s | Swapify"
@@ -77,9 +77,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="manifest" href="/manifest.json" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         style={{ position: 'relative', zIndex: 1 }}
