@@ -2,7 +2,8 @@ const GoogleRegisterButton = () => {
 
 
   const handleGoogleLogin = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND}/auth/google`;
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND_URL || 'http://localhost:5000';
+    window.location.href = `${backendUrl}/auth/google`;
   };
 
   return (
