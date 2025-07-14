@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'phpstack-1415499-5269973.cloudwaysapps.com',
+        hostname: 'phpstack-1490755-5685488.cloudwaysapps.com',
       },
       {
         protocol: 'https',
