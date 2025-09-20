@@ -17,14 +17,13 @@ export function compressImage(file: File, options: CompressOptions = {}): Promis
     convertSize = 500 * 1024, // 500KB
   } = options
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     // Skip compression for very small files (< 100KB) to save time
     if (file.size < 100 * 1024) {
       return resolve(file)
     }
 
     try {
-      // eslint-disable-next-line no-new
       new Compressor(file, {
         quality,
         maxWidth,
