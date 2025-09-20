@@ -81,7 +81,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased pb-20 lg:pb-0`}
         style={{ position: 'relative', zIndex: 1 }}
       >
-        <div className="pb-40">
+        <div className="pb-20">
         <script
           dangerouslySetInnerHTML={{
             __html: `
