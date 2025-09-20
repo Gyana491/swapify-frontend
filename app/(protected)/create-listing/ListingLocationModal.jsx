@@ -199,13 +199,13 @@ const ListingLocationModal = ({ isOpen, onClose, onSelect }) => {
         <div className="flex min-h-screen items-center justify-center p-4">
           <div className="relative w-full max-w-lg transform overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:border dark:border-gray-800">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-medium text-gray-900">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                 Select Location
               </h3>
               <button
                 onClick={onClose}
-                className="p-1 text-gray-400 hover:text-gray-500"
+                className="p-1 text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400"
               >
                 <BiX className="w-6 h-6" />
               </button>
@@ -217,11 +217,11 @@ const ListingLocationModal = ({ isOpen, onClose, onSelect }) => {
               <div className="space-y-4">
                 {/* Search input */}
                 <div className="relative">
-                  <BiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <BiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500" />
                   <input
                     type="text"
                     placeholder="Search for a location..."
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-[4px] text-sm focus:outline-none focus:ring-2 focus:ring-[#FF3B30] focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[4px] text-sm text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FF3B30] focus:border-transparent"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -235,10 +235,10 @@ const ListingLocationModal = ({ isOpen, onClose, onSelect }) => {
                   className={`
                     w-full flex items-center justify-center gap-2 px-4 py-2.5 
                     ${isDetecting 
-                      ? 'bg-gray-100 text-gray-600' 
-                      : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
+                      ? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300' 
+                      : 'bg-gray-50 hover:bg-gray-100 text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200'
                     }
-                    border border-gray-200 rounded-[4px] text-sm font-medium 
+                    border border-gray-200 dark:border-gray-700 rounded-[4px] text-sm font-medium 
                     transition-colors duration-200 disabled:cursor-wait
                   `}
                 >
@@ -270,16 +270,16 @@ const ListingLocationModal = ({ isOpen, onClose, onSelect }) => {
               {/* Popular Cities */}
               {!searchQuery && (
                 <div className="mb-6">
-                  <h4 className="text-sm font-medium text-gray-500 mb-3">Popular Cities</h4>
+                  <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Popular Cities</h4>
                   <div className="grid grid-cols-2 gap-2">
                     {popularCities.map((city) => (
                       <button
                         key={city.display_name}
                         onClick={() => handleLocationSelect(city)}
-                        className="flex items-center gap-3 p-3 text-left hover:bg-gray-50 rounded-[4px] transition-colors dark:hover:bg-gray-800"
+                        className="flex items-center gap-3 p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 rounded-[4px] transition-colors"
                       >
                         <IoLocationSharp className="flex-shrink-0 text-gray-400 dark:text-gray-500" />
-                        <span className="text-sm dark:text-gray-200">
+                        <span className="text-sm text-gray-700 dark:text-gray-200">
                           {city.display_name.split(',').slice(0, 2).join(', ')}
                         </span>
                       </button>
@@ -291,15 +291,15 @@ const ListingLocationModal = ({ isOpen, onClose, onSelect }) => {
               {/* Search Results */}
               <div className="max-h-[300px] overflow-y-auto">
                 {isLoading && <div className="p-4 text-center text-gray-500 dark:text-gray-400">Loading...</div>}
-                {suggestions.map((location) => (
+                {suggestions.map((location, idx) => (
                   <button
-                    key={location.place_id}
+                    key={`${location.display_name}-${idx}`}
                     onClick={() => handleLocationSelect(location)}
-                    className="w-full flex items-center gap-3 p-3 text-left hover:bg-gray-50 rounded-[4px] dark:hover:bg-gray-800"
+                    className="w-full flex items-center gap-3 p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 rounded-[4px]"
                   >
                     <IoLocationSharp className="flex-shrink-0 text-gray-400 dark:text-gray-500" />
                     <div>
-                      <div className="text-sm font-medium dark:text-gray-200">{location.display_name}</div>
+                      <div className="text-sm font-medium text-gray-700 dark:text-gray-200">{location.display_name}</div>
                     </div>
                   </button>
                 ))}

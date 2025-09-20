@@ -337,22 +337,22 @@ const EditListingForm = ({ listingId }) => {
         
         {/* Left Column - Product Details */}
         <div className="space-y-6 order-2 lg:order-1">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-200">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 hover:shadow-md transition-shadow duration-200">
             
             {/* Title Input */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Product Title *
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className={`w-full px-4 py-3.5 rounded-xl border-2 transition-all duration-200 text-base
+                className={`w-full px-4 py-3.5 rounded-xl border-2 transition-all duration-200 text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
                   ${errors.title 
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                    : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-200'
-                  } focus:ring-4 focus:outline-none placeholder-gray-400`}
+                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200 dark:border-red-500' 
+                    : 'border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-200 dark:focus:border-indigo-400'
+                  } focus:ring-4 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500`}
                 placeholder="What are you selling?"
                 maxLength={100}
               />
@@ -362,11 +362,11 @@ const EditListingForm = ({ listingId }) => {
             {/* Pricing */}
             <div className="mb-6 space-y-3">
               {/* Free listing toggle */}
-              <div className="flex items-center justify-between p-3 border rounded-xl bg-white">
+              <div className="flex items-center justify-between p-3 border rounded-xl bg-white dark:bg-gray-800 dark:border-gray-700">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-700">List for free</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-200">List for free</span>
                   {isFreeListing && (
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700">Price set to ₹0</span>
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">Price set to ₹0</span>
                   )}
                 </div>
                 <button
@@ -384,29 +384,29 @@ const EditListingForm = ({ listingId }) => {
                       return next;
                     });
                   }}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isFreeListing ? 'bg-green-500' : 'bg-gray-300'}`}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isFreeListing ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}
                 >
-                  <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${isFreeListing ? 'translate-x-5' : 'translate-x-1'}`} />
+                  <span className={`inline-block h-5 w-5 transform rounded-full bg-white dark:bg-gray-200 transition-transform ${isFreeListing ? 'translate-x-5' : 'translate-x-1'}`} />
                 </button>
               </div>
 
               {/* Price Input (hidden when free) */}
               {!isFreeListing && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     Price *
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg font-medium">₹</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 text-lg font-medium">₹</span>
                     <input
                       type="number"
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
-                      className={`w-full pl-10 pr-4 py-3.5 rounded-xl border-2 transition-all duration-200 text-base
+                      className={`w-full pl-10 pr-4 py-3.5 rounded-xl border-2 transition-all duration-200 text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
                         ${errors.price 
-                          ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                          : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-200'
-                        } focus:ring-4 focus:outline-none placeholder-gray-400`}
+                          ? 'border-red-300 focus:border-red-500 focus:ring-red-200 dark:border-red-500' 
+                          : 'border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-200 dark:focus:border-indigo-400'
+                        } focus:ring-4 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500`}
                       placeholder="0"
                       min="1"
                       inputMode="numeric"
@@ -420,7 +420,7 @@ const EditListingForm = ({ listingId }) => {
             {/* Category Selection */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Category *
                 </label>
                 <div className="relative">
@@ -430,10 +430,10 @@ const EditListingForm = ({ listingId }) => {
                       setCategory(e.target.value);
                       setSubcategory('');
                     }}
-                    className={`w-full px-4 py-3.5 rounded-xl border-2 transition-all duration-200 appearance-none text-base bg-white
+                    className={`w-full px-4 py-3.5 rounded-xl border-2 transition-all duration-200 appearance-none text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
                       ${errors.category 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                        : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-200'
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-200 dark:border-red-500' 
+                        : 'border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-200 dark:focus:border-indigo-400'
                       } focus:ring-4 focus:outline-none`}
                   >
                     <option value="">Select Category</option>
@@ -443,13 +443,13 @@ const EditListingForm = ({ listingId }) => {
                       </option>
                     ))}
                   </select>
-                  <IoChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none w-5 h-5" />
+                  <IoChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none w-5 h-5" />
                 </div>
                 {errors.category && <p className="text-red-500 text-sm mt-2">{errors.category}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Subcategory *
                 </label>
                 <div className="relative">
@@ -457,10 +457,10 @@ const EditListingForm = ({ listingId }) => {
                     value={subcategory}
                     onChange={(e) => setSubcategory(e.target.value)}
                     disabled={!category}
-                    className={`w-full px-4 py-3.5 rounded-xl border-2 transition-all duration-200 appearance-none text-base bg-white disabled:bg-gray-50 disabled:cursor-not-allowed
+                    className={`w-full px-4 py-3.5 rounded-xl border-2 transition-all duration-200 appearance-none text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:cursor-not-allowed
                       ${errors.subcategory 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                        : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-200'
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-200 dark:border-red-500' 
+                        : 'border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-200 dark:focus:border-indigo-400'
                       } focus:ring-4 focus:outline-none`}
                   >
                     <option value="">Select Subcategory</option>
@@ -470,7 +470,7 @@ const EditListingForm = ({ listingId }) => {
                       </option>
                     ))}
                   </select>
-                  <IoChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none w-5 h-5" />
+                  <IoChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none w-5 h-5" />
                 </div>
                 {errors.subcategory && <p className="text-red-500 text-sm mt-2">{errors.subcategory}</p>}
               </div>
@@ -478,41 +478,41 @@ const EditListingForm = ({ listingId }) => {
 
             {/* Description */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Description *
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
-                className={`w-full px-4 py-3.5 rounded-xl border-2 transition-all duration-200 resize-none text-base
+                className={`w-full px-4 py-3.5 rounded-xl border-2 transition-all duration-200 resize-none text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
                   ${errors.description 
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                    : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-200'
-                  } focus:ring-4 focus:outline-none placeholder-gray-400`}
+                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200 dark:border-red-500' 
+                    : 'border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-200 dark:focus:border-indigo-400'
+                  } focus:ring-4 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500`}
                 placeholder="Describe your product in detail..."
                 maxLength={1000}
               />
               <div className="flex justify-between items-center mt-2">
                 {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
-                <span className="text-xs text-gray-400 ml-auto">{description.length}/1000</span>
+                <span className="text-xs text-gray-400 dark:text-gray-500 ml-auto">{description.length}/1000</span>
               </div>
             </div>
 
             {/* Phone Number */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 WhatsApp Number *
               </label>
               <input
                 type="tel"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                className={`w-full px-4 py-3.5 rounded-xl border-2 transition-all duration-200 text-base
+                className={`w-full px-4 py-3.5 rounded-xl border-2 transition-all duration-200 text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
                   ${errors.phoneNumber 
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                    : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-200'
-                  } focus:ring-4 focus:outline-none placeholder-gray-400`}
+                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200 dark:border-red-500' 
+                    : 'border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-200 dark:focus:border-indigo-400'
+                  } focus:ring-4 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500`}
                 placeholder="Enter your WhatsApp number"
                 inputMode="tel"
                 maxLength={15}
@@ -522,23 +522,23 @@ const EditListingForm = ({ listingId }) => {
 
             {/* Location Selector */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Location *
               </label>
               <button
                 type="button"
                 onClick={() => setIsLocationModalOpen(true)}
-                className={`w-full flex items-center gap-3 p-4 bg-white hover:bg-gray-50 border-2 rounded-xl text-left transition-all duration-200 min-h-[56px]
+                className={`w-full flex items-center gap-3 p-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border-2 rounded-xl text-left transition-all duration-200 min-h-[56px]
                   ${errors.location 
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                    : 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-200'
+                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200 dark:border-red-500' 
+                    : 'border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-200 dark:focus:border-indigo-400'
                   } focus:ring-4 focus:outline-none`}
               >
-                <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <IoLocationSharp className={`h-5 w-5 ${selectedLocation.display_name ? 'text-indigo-600' : 'text-indigo-400'}`} />
+                <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <IoLocationSharp className={`h-5 w-5 ${selectedLocation.display_name ? 'text-indigo-600' : 'text-indigo-400 dark:text-indigo-300'}`} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-base font-medium truncate ${selectedLocation.display_name ? 'text-gray-900' : 'text-gray-500'}`}>
+                  <p className={`text-base font-medium truncate ${selectedLocation.display_name ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}>
                     {selectedLocation.display_name || 'Select your location'}
                   </p>
                 </div>
@@ -550,11 +550,11 @@ const EditListingForm = ({ listingId }) => {
 
   {/* Right Column - Images */}
   <div className="space-y-6 order-1 lg:order-2">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-200">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 hover:shadow-md transition-shadow duration-200">
             
             {/* Cover Image */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-3">
                 Cover Image *
               </label>
               <div className="relative">
@@ -563,7 +563,7 @@ const EditListingForm = ({ listingId }) => {
                     <img 
                       src={coverImage} 
                       alt="Cover preview" 
-                      className="w-full h-64 sm:h-72 object-cover rounded-xl border-2 border-gray-200"
+                      className="w-full h-64 sm:h-72 object-cover rounded-xl border-2 border-gray-200 dark:border-gray-700"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-xl flex items-center justify-center">
                       <button
@@ -577,10 +577,10 @@ const EditListingForm = ({ listingId }) => {
                   </div>
                 ) : (
                   <label className="cursor-pointer block">
-                    <div className="w-full h-64 sm:h-72 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-indigo-400 hover:bg-indigo-50 transition-all duration-200 active:scale-[0.99]">
-                      <IoImageOutline className="w-12 h-12 text-gray-400 mb-3" />
-                      <p className="text-base font-medium text-gray-600">Click to upload cover image</p>
-                      <p className="text-sm text-gray-400 mt-1">JPG, PNG or WebP (Max 5MB)</p>
+                    <div className="w-full h-64 sm:h-72 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl flex flex-col items-center justify-center hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all duration-200 active:scale-[0.99]">
+                      <IoImageOutline className="w-12 h-12 text-gray-400 dark:text-gray-500 mb-3" />
+                      <p className="text-base font-medium text-gray-600 dark:text-gray-300">Click to upload cover image</p>
+                      <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">JPG, PNG or WebP (Max 5MB)</p>
                     </div>
                     <input
                       type="file"
@@ -595,7 +595,7 @@ const EditListingForm = ({ listingId }) => {
 
             {/* Additional Images */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-3">
                 Additional Images ({additionalImages.length}/{MAX_ADDITIONAL_IMAGES})
               </label>
               <div className="grid grid-cols-3 gap-3 mb-4">
@@ -604,7 +604,7 @@ const EditListingForm = ({ listingId }) => {
                     <img 
                       src={image} 
                       alt={`Additional ${index + 1}`} 
-                      className="w-full h-full object-cover rounded-lg border-2 border-gray-200"
+                      className="w-full h-full object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">
                       <button
@@ -619,10 +619,10 @@ const EditListingForm = ({ listingId }) => {
                 ))}
                 
                 {additionalImages.length < MAX_ADDITIONAL_IMAGES && (
-                  <label className="cursor-pointer aspect-square border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-indigo-400 hover:bg-indigo-50 transition-all duration-200 active:scale-[0.99] min-h-[80px]">
+                  <label className="cursor-pointer aspect-square border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg flex items-center justify-center hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all duration-200 active:scale-[0.99] min-h-[80px]">
                     <div className="text-center">
-                      <IoAdd className="w-6 h-6 text-gray-400 mx-auto mb-1" />
-                      <p className="text-xs text-gray-600">Add Image</p>
+                      <IoAdd className="w-6 h-6 text-gray-400 dark:text-gray-500 mx-auto mb-1" />
+                      <p className="text-xs text-gray-600 dark:text-gray-300">Add Image</p>
                     </div>
                     <input
                       type="file"

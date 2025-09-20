@@ -78,9 +78,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased pb-20 lg:pb-0`}
         style={{ position: 'relative', zIndex: 1 }}
       >
+        <div className="pb-40">
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -97,6 +98,7 @@ export default function RootLayout({
         <Toaster position="top-center" />
         {children}
         <PWAInstallPromptWrapper />
+        </div>
       </body>
     </html>
   );
