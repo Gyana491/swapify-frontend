@@ -21,13 +21,32 @@ async function getProfile(username) {
 }
 
 export default async function UserProfile({ params }) {
-  const profile = await getProfile(params.username)
+  const { username } = await params
+  const profile = await getProfile(username)
   
   if (!profile) {
     notFound()
   }
 
-  const { user, listings } = profile
+  const user = profile?.user || {}
+  const listings = Array.isArray(profile?.listings) ? profile.listings : []
+
+  const userAvatar = user?.user_avatar
+    ? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${user.user_avatar}`
+    : '/assets/place-holder.jpg'
+  const userAlt = user?.full_name || user?.username || 'User avatar'
+  const userNameHeading = user?.full_name || user?.username || 'User'
+  const userHandle = user?.username ? `@${user.username}` : ''
+  const joinedText = (() => {
+    try {
+      if (!user?.created_at) return null
+      const d = new Date(user.created_at)
+      if (isNaN(d.getTime())) return null
+      return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+    } catch {
+      return null
+    }
+  })()
 
   return (
     <>
@@ -42,8 +61,8 @@ export default async function UserProfile({ params }) {
             <div className="relative h-32 bg-gradient-to-br from-violet-500 via-purple-500 to-pink-500">
               <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
                 <img
-                  src={user.user_avatar ? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${user.user_avatar}` : '/assets/place-holder.jpg'}
-                  alt={user.full_name}
+                  src={userAvatar}
+                  alt={userAlt}
                   className="w-32 h-32 rounded-full border-4 border-white object-cover shadow-lg"
                 />
               </div>
@@ -52,8 +71,8 @@ export default async function UserProfile({ params }) {
             {/* Mobile Profile Info */}
             <div className="pt-20 px-6 pb-6">
               <div className="text-center">
-                <h1 className="text-2xl font-bold text-gray-900">{user.full_name}</h1>
-                <p className="text-gray-600">@{user.username}</p>
+                <h1 className="text-2xl font-bold text-gray-900">{userNameHeading}</h1>
+                {userHandle && <p className="text-gray-600">{userHandle}</p>}
               </div>
               
               {/* Stats */}
@@ -64,21 +83,21 @@ export default async function UserProfile({ params }) {
                 </div>
                 <div className="bg-gray-50 rounded-xl p-4 transition-all hover:bg-gray-100">
                   <p className="text-2xl font-bold text-gray-900 text-center">
-                    {new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                    {joinedText || '—'}
                   </p>
                   <p className="text-gray-600 text-center text-sm">Joined</p>
                 </div>
               </div>
               
               {/* Location Info */}
-              {(user.city || user.state) && (
+              {(user?.city || user?.state || user?.country) && (
                 <div className="mt-6 flex items-center text-gray-600 bg-gray-50 p-4 rounded-xl">
                   <svg className="h-5 w-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   <span className="text-sm">
-                    {[user.city, user.state, user.country].filter(Boolean).join(', ')}
+                    {[user?.city, user?.state, user?.country].filter(Boolean).join(', ')}
                   </span>
                 </div>
               )}
@@ -99,8 +118,8 @@ export default async function UserProfile({ params }) {
               <div className="relative h-32 bg-gradient-to-br from-violet-500 via-purple-500 to-pink-500">
                 <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 lg:left-8 lg:transform-none">
                   <img
-                    src={user.user_avatar ? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${user.user_avatar}` : '/assets/place-holder.jpg'}
-                    alt={user.full_name}
+                    src={userAvatar}
+                    alt={userAlt}
                     className="w-32 h-32 rounded-full border-4 border-white object-cover shadow-lg"
                   />
                 </div>
@@ -109,8 +128,8 @@ export default async function UserProfile({ params }) {
               {/* Profile Info */}
               <div className="pt-20 px-8 pb-8">
                 <div className="text-center lg:text-left">
-                  <h1 className="text-3xl font-bold text-gray-900">{user.full_name}</h1>
-                  <p className="text-gray-600">@{user.username}</p>
+                  <h1 className="text-3xl font-bold text-gray-900">{userNameHeading}</h1>
+                  {userHandle && <p className="text-gray-600">{userHandle}</p>}
                 </div>
                 
                 {/* Stats */}
@@ -121,21 +140,21 @@ export default async function UserProfile({ params }) {
                   </div>
                   <div className="bg-gray-50 rounded-xl p-4 transition-all hover:bg-gray-100">
                     <p className="text-2xl font-bold text-gray-900 text-center">
-                      {new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                      {joinedText || '—'}
                     </p>
                     <p className="text-gray-600 text-center text-sm">Joined</p>
                   </div>
                 </div>
                 
                 {/* Location Info */}
-                {(user.city || user.state) && (
+                {(user?.city || user?.state || user?.country) && (
                   <div className="mt-6 flex items-center text-gray-600 bg-gray-50 p-4 rounded-xl">
                     <svg className="h-5 w-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     <span className="text-sm">
-                      {[user.city, user.state, user.country].filter(Boolean).join(', ')}
+                      {[user?.city, user?.state, user?.country].filter(Boolean).join(', ')}
                     </span>
                   </div>
                 )}

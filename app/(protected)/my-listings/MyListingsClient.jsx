@@ -67,10 +67,12 @@ const MyListingsClient = () => {
   }
 
   return (
-    <section className="bg-white dark:bg-gray-900 pb-20 md:pb-4">
-      <h1 className="text-2xl text-center font-bold tracking-tight text-gray-900 dark:text-white my-4">
-        My Listings
-      </h1>
+    <section className="bg-white dark:bg-gray-900 pt-3 md:pt-4 pb-24 md:pb-6">
+      <div className="mx-auto max-w-screen-xl px-4">
+        <h1 className="text-2xl text-center font-bold tracking-tight text-gray-900 dark:text-white my-4">
+          My Listings
+        </h1>
+      </div>
       <ListingsContainer initialListings={listings} />
     </section>
   );

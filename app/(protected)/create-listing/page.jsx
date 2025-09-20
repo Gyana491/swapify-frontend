@@ -1,4 +1,4 @@
-import CreateListingForm from './CreateListingForm';
+import CreateListing from './createListingNew';
 import Header from '@/app/components/header/Header';
 import MobileNavigation from '@/app/components/MobileNavigation';
 
@@ -17,7 +17,7 @@ const CreateListingPage = () => {
               Fill in the details below to create your listing
             </p>
           </div>
-          <CreateListingForm />
+          <CreateListing />
         </div>
       </section>
       

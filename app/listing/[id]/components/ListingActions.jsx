@@ -12,16 +12,28 @@ function formatDate(dateString) {
 }
 
 export default function ListingActions({ listing }) {
-  const seller = listing.seller_id;
+  const seller = listing?.seller_id || listing?.owner || listing?.user || null;
 
   // Get avatar - use Google avatar if available, else create initials avatar
-  const hasGoogleAvatar = seller?.google_user_avatar;
+  const hasGoogleAvatar = Boolean(seller?.google_user_avatar);
   const initials = seller?.full_name
     ?.split(' ')
-    .map(n => n[0])
+    .map(n => n?.[0])
     .join('')
     .toUpperCase()
     .slice(0, 2) || 'US';
+  const sellerName = seller?.full_name || seller?.name || 'Unknown seller';
+  const memberSince = (() => {
+    try {
+      if (!seller?.created_at) return null;
+      const options = { year: 'numeric', month: 'long' };
+      const d = new Date(seller.created_at);
+      if (isNaN(d.getTime())) return null;
+      return d.toLocaleDateString('en-US', options);
+    } catch {
+      return null;
+    }
+  })();
 
   return (
     <>
@@ -34,8 +46,8 @@ export default function ListingActions({ listing }) {
           {hasGoogleAvatar ? (
             <div className="w-16 h-16 rounded-full overflow-hidden shadow-lg">
               <Image
-                src={seller.google_user_avatar.replace('=s96-c', '=s400-c')}
-                alt={seller.full_name}
+                src={(seller?.google_user_avatar || '').replace('=s96-c', '=s400-c')}
+                alt={sellerName}
                 width={64}
                 height={64}
                 className="w-full h-full object-cover"
@@ -48,8 +60,8 @@ export default function ListingActions({ listing }) {
           )}
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-white">
-              {seller.full_name}
-              {seller.is_verified && (
+              {sellerName}
+              {seller?.is_verified && (
                 <span className="inline-flex items-center ml-2">
                   <svg className="w-4 h-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -58,9 +70,11 @@ export default function ListingActions({ listing }) {
               )}
             </h3>
             <div className="flex flex-col gap-1">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Member since {formatDate(seller.created_at)}
-              </p>
+              {memberSince && (
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Member since {memberSince}
+                </p>
+              )}
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Contact available after chat
               </p>

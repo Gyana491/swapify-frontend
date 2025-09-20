@@ -20,12 +20,13 @@ async function getListing(id) {
   }
 }
 
-async function getRelatedListings(currentListingId) {
+async function getRelatedListings(category, currentListingId) {
   try {
-    const response = await fetch(
-      `${process.env.BACKEND}/listings?limit=5`,
-      { cache: 'no-store' }
-    );
+    const url = new URL(`${process.env.BACKEND}/listings`);
+    url.searchParams.set('limit', '5');
+    if (category) url.searchParams.set('category', category);
+
+    const response = await fetch(url.toString(), { cache: 'no-store' });
     
     if (!response.ok) {
       throw new Error(`Failed to fetch related listings: ${response.statusText}`);
@@ -33,8 +34,8 @@ async function getRelatedListings(currentListingId) {
     
     const data = await response.json();
     // Filter out the current listing and limit to 4 items
-    return data
-      .filter(listing => listing._id !== currentListingId)
+    return (Array.isArray(data) ? data : [])
+      .filter(listing => listing?._id !== currentListingId)
       .slice(0, 4);
   } catch (error) {
     console.error('Error fetching related listings:', error);
@@ -45,27 +46,35 @@ async function getRelatedListings(currentListingId) {
 // Metadata generation for the listing page
 export async function generateMetadata({ params }) {
   try {
-    const listing = await getListing(params.id);
-    
+    const { id } = await params;
+    const listing = await getListing(id);
+    const baseTitle = listing?.title ? `${listing.title} - Available for Swap` : 'Listing - Swapify';
+    const descRaw = listing?.description || 'View this item available for swap on Swapify';
+    const description = descRaw.length > 155 ? `${descRaw.slice(0, 155)}...` : descRaw;
+
+    // Build images from cover/additional if "images" not present
+    const images = Array.isArray(listing?.images)
+      ? listing.images.filter(Boolean)
+      : [listing?.cover_image, ...(Array.isArray(listing?.additional_images) ? listing.additional_images : [])].filter(Boolean);
+
+    const ogImages = images.length
+      ? images.map(image => ({ url: image, width: 800, height: 600, alt: listing?.title || 'Listing image' }))
+      : undefined;
+
     return {
-      title: `${listing.title} - Available for Swap`,
-      description: `${listing.description.substring(0, 155)}...`,
+      title: baseTitle,
+      description,
       openGraph: {
-        title: `${listing.title} - Available for Swap on Swapify`,
-        description: listing.description.substring(0, 155),
-        images: listing.images.map(image => ({
-          url: image,
-          width: 800,
-          height: 600,
-          alt: listing.title
-        }))
+        title: listing?.title ? `${listing.title} - Available for Swap on Swapify` : 'Listing - Swapify',
+        description,
+        images: ogImages,
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${listing.title} - Available for Swap`,
-        description: listing.description.substring(0, 155),
-        images: listing.images[0]
-      }
+        title: baseTitle,
+        description,
+        images: images?.[0],
+      },
     };
   } catch (error) {
     return {

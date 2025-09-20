@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import { compressImage } from '@/app/utils/compressImage'
 
 export default function ProfileSetupForm({ initialData }) {
   const router = useRouter()
@@ -25,12 +26,14 @@ export default function ProfileSetupForm({ initialData }) {
     const file = e.target.files?.[0]
     if (!file) return
 
-    setImageLoading(true)
-    const loadingToast = toast.loading('Uploading image...')
+  setImageLoading(true)
+  const loadingToast = toast.loading('Compressing image...')
 
     try {
-      const uploadFormData = new FormData()
-      uploadFormData.append('files', file)
+  const compressed = await compressImage(file, { quality: 0.7, maxWidth: 1024, maxHeight: 1024, mimeType: 'image/jpeg' })
+  toast.loading('Uploading image...', { id: loadingToast })
+  const uploadFormData = new FormData()
+  uploadFormData.append('files', compressed)
 
       const response = await fetch('/api/upload', {
         method: 'POST',

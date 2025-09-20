@@ -18,9 +18,9 @@ const ListingCard = ({ listing }) => {
         return formatter.format(price);
     };
 
-    const imageUrl = listing.cover_image 
+    const imageUrl = listing.cover_image
         ? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${listing.cover_image}`
-        : '/assets/listing-placeholder.jpg';
+        : '/assets/place-holder.jpg';
 
     const handleDeleteClick = (e) => {
         e.stopPropagation();
@@ -29,16 +29,17 @@ const ListingCard = ({ listing }) => {
     };
 
     return (
-        <div className="group relative flex flex-row lg:flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg transition-all duration-300 hover:shadow-2xl dark:border-gray-700 dark:bg-gray-800 mb-6 lg:w-[280px]">
-            <Link href={`/listing/${listing._id}`} className="relative shrink-0">
-                <div className="h-[120px] w-[120px] lg:h-[200px] lg:w-full">
-                    <Image 
-                        src={imageError ? '/assets/listing-placeholder.jpg' : imageUrl}
+        <div className="group relative flex overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+            <Link href={`/listing/${listing._id}`} className="relative block shrink-0">
+                <div className="relative h-[96px] w-[128px] sm:h-[112px] sm:w-[150px] md:h-[128px] md:w-[170px]">
+                    <Image
+                        src={imageError ? '/assets/place-holder.jpg' : imageUrl}
                         alt={`Image of ${listing.title}`}
                         fill
-                        sizes="(max-width: 1024px) 120px, 280px"
+                        sizes="(max-width: 640px) 128px, (max-width: 1024px) 170px, 192px"
                         onError={() => setImageError(true)}
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        priority={false}
                     />
                 </div>
             </Link>
@@ -62,7 +63,7 @@ const ListingCard = ({ listing }) => {
                             </p>
                         </div>
                     </div>
-                    <div className="relative">
+                    <div className="relative z-10">
                         <button 
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -73,7 +74,7 @@ const ListingCard = ({ listing }) => {
                             <BsThreeDotsVertical className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                         </button>
                         {showMenu && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 dark:bg-gray-700">
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 dark:bg-gray-700">
                                 <button
                                     onClick={handleDeleteClick}
                                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-600"
@@ -84,22 +85,22 @@ const ListingCard = ({ listing }) => {
                         )}
                     </div>
                 </div>
-                <div className="flex flex-row justify-end gap-2 lg:mt-4">
-                    <Link href={`/edit/${listing._id}`}>
-                        <button 
+                <div className="flex flex-row justify-end gap-2 mt-3">
+                    <Link href={`/edit/${listing._id}`} className="inline-flex">
+                        <button
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
-                            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-1.5 text-center text-xs font-medium text-white transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 active:scale-95"
+                            className="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-1.5 text-center text-xs font-medium text-white transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 active:scale-95"
                             aria-label="Edit listing"
                         >
                             Edit
                         </button>
                     </Link>
-                    <Link href={`/listing/${listing._id}`}>
-                        <button 
+                    <Link href={`/listing/${listing._id}`} className="inline-flex">
+                        <button
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
-                            className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-1.5 text-center text-xs font-medium text-white transition-all duration-200 hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800 active:scale-95"
+                            className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-3 py-1.5 text-center text-xs font-medium text-white transition-all duration-200 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-300 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800 active:scale-95"
                             aria-label="View listing details"
                         >
                             View

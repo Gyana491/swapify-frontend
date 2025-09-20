@@ -46,5 +46,6 @@ public/uploads/*
 
 #env
 .env
+.env.local
 
 certificates
