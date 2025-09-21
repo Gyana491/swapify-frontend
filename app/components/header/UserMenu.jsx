@@ -126,15 +126,6 @@ const UserMenu = () => {
             </svg>
             My Profile
           </Link>
-          <Link
-            href="/chat"
-            className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-          >
-            <svg className="w-4 h-4 mr-3 text-gray-500 dark:text-gray-400" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
-            </svg>
-            Chats
-          </Link>
           <div className="h-[1px] bg-gray-100 dark:bg-gray-700 my-1.5"></div>
           <button
             onClick={handleLogout}
