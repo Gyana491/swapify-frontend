@@ -16,12 +16,12 @@ const FilterContainer = ({ searchParams, setSearchParams }) => {
         value={searchParams.query}
         onChange={(e) => handleInputChange('query', e.target.value)}
         placeholder="Search for items..."
-        className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+        className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
       />
       <select
         value={searchParams.range}
         onChange={(e) => handleInputChange('range', e.target.value)}
-        className="p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+        className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
       >
         <option value="1">Nearby</option>
         <option value="5">Within 5km</option>

@@ -69,11 +69,7 @@ const Listings = () => {
                     params.category = category;
                 }
 
-                console.log('Request URL:', url);
-                console.log('Request Params:', params);
-
                 const response = await axios.get(url, { params });
-                console.log('Response:', response.data);
                 
                 // Update listings state with the response data
                 const responseData = response.data;
@@ -108,7 +104,6 @@ const Listings = () => {
 
     // Handle category filter change
     const handleCategoryChange = async (categoryId) => {
-        console.log('Category changed to:', categoryId);
         const newCategory = categoryId === selectedCategory ? null : categoryId;
         setSelectedCategory(newCategory);
         await fetchListings(selectedDistance, newCategory);

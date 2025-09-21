@@ -23,7 +23,6 @@ export async function GET(request, { params }) {
 
     return NextResponse.json(data);
   } catch (error) { // Added error parameter
-    console.error('Error fetching listing:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to fetch listing' },
       { status: 500 }

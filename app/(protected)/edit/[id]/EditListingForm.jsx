@@ -502,7 +502,7 @@ const EditListingForm = ({ listingId }) => {
             {/* Phone Number */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                WhatsApp Number *
+                Contact Number *
               </label>
               <input
                 type="tel"
@@ -513,7 +513,7 @@ const EditListingForm = ({ listingId }) => {
                     ? 'border-red-300 focus:border-red-500 focus:ring-red-200 dark:border-red-500' 
                     : 'border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-200 dark:focus:border-indigo-400'
                   } focus:ring-4 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500`}
-                placeholder="Enter your WhatsApp number"
+                placeholder="Enter your contact number"
                 inputMode="tel"
                 maxLength={15}
               />

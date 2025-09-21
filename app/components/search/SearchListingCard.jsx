@@ -3,14 +3,16 @@ import Link from 'next/link';
 
 // Helper function to format distance
 const formatDistance = (distance) => {
-  if (!distance) return null;
-  if (distance === 0) {
+  if (!distance && distance !== 0) return null;
+  const numDistance = parseFloat(distance);
+  if (isNaN(numDistance)) return null;
+  if (numDistance === 0) {
     return "On Spot";
   }
-  if (distance < 1) {
-    return `${Math.round(distance * 1000)}m away`;
+  if (numDistance < 1) {
+    return `${Math.round(numDistance * 1000)}m away`;
   }
-  return `${Math.round(distance * 10) / 10}km away`;
+  return `${Math.round(numDistance * 10) / 10}km away`;
 };
 
 const SearchListingCard = ({ listing }) => {

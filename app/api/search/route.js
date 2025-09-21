@@ -37,16 +37,13 @@ export async function GET(request) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('Backend error response:', errorText);
             throw new Error(`Backend error: ${errorText}`);
         }
 
-        const data = await response.json();
-        console.log('Backend response data:', data);
+    const data = await response.json();
 
         return NextResponse.json(data);
     } catch (error) {
-        console.error('Error in search API:', error);
         
         return NextResponse.json({ 
             listings: [],

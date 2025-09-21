@@ -18,7 +18,7 @@ function GoogleCallbackContent() {
     }
 
     const handleCallback = async () => {
-        document.cookie = `token=${authToken}; path=/;`;
+        document.cookie = `token=${authToken}; path=/; max-age=${365 * 24 * 60 * 60}; secure; samesite=strict;`;
         
         toast.success('Successfully logged in with Google!');
         router.push('/');

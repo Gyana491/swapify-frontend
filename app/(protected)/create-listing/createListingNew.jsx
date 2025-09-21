@@ -345,15 +345,15 @@ const CreateListing = () => {
               </div>
             </div>
 
-            {/* WhatsApp Number */}
+            {/* Contact Number */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">WhatsApp Number *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Contact Number *</label>
               <input
                 type="tel"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 className={`w-full px-4 py-3.5 rounded-xl border-2 transition-all duration-200 text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 ${errors.phoneNumber ? 'border-red-300 focus:border-red-500 focus:ring-red-200 dark:border-red-500' : 'border-gray-200 dark:border-gray-700 focus:border-indigo-500 focus:ring-indigo-200 dark:focus:border-indigo-400'} focus:ring-4 focus:outline-none placeholder-gray-400 dark:placeholder-gray-500`}
-                placeholder="Enter your WhatsApp number"
+                placeholder="Enter your contact number"
                 inputMode="tel"
                 maxLength={15}
               />

@@ -13,8 +13,7 @@ export async function POST(request) {
       );
     }
 
-    // Log the request for debugging
-    console.log('Sending forgot password request to backend:', `${process.env.BACKEND}/forgot-password`);
+  // Request to backend
     
     const response = await axios.post(
       `${process.env.BACKEND}/forgot-password`,
@@ -27,10 +26,9 @@ export async function POST(request) {
       }
     );
 
-    console.log('Backend response:', response.data);
     return NextResponse.json(response.data);
   } catch (error) {
-    console.error('Forgot password error:', error);
+    // Swallow detailed logs in production
     
     if (axios.isAxiosError(error)) {
       if (error.code === 'ERR_NETWORK') {

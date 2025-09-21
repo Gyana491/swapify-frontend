@@ -23,11 +23,12 @@ const MobileNavigation = () => {
             <span className="tab tab-account block text-xs">Account</span>
           </Link>
 
-          <Link href="/chat" className="svg-body w-full focus:text-teal-500 hover:text-teal-500 justify-center inline-block text-center pt-2 pb-1">
+          <Link href="/offers" className="svg-body w-full focus:text-teal-500 hover:text-teal-500 justify-center inline-block text-center pt-2 pb-1">
             <svg width="25" height="25" viewBox="0 0 24 24" className="inline-block mb-1 dark:text-white">
-              <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+              <path fill="currentColor" d="M19 7h-3V6a2 2 0 0 0-2-2H10a2 2 0 0 0-2 2v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zM10 6h4v1h-4V6zm8 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9h2v1a1 1 0 0 0 2 0V9h4v1a1 1 0 0 0 2 0V9h2v10z"/>
+              <path d="M7 11h4v2H7zM13 11h4v2h-4zM7 15h4v2H7zM13 15h4v2h-4z"/>
             </svg>
-            <span className="tab tab-chats block text-xs">Chats</span>
+            <span className="tab tab-offers block text-xs">Offers</span>
           </Link>
         </div>
       </div>

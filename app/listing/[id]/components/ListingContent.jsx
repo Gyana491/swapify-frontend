@@ -3,10 +3,10 @@
 import dynamic from 'next/dynamic';
 
 const ImageGallery = dynamic(() => import('./ImageGallery'), { ssr: false });
-const ListingActions = dynamic(() => import('./ListingActions'));
 const ListingDescription = dynamic(() => import('./ListingDescription'));
 const SafetyTips = dynamic(() => import('./SafetyTips'));
 const RelatedListings = dynamic(() => import('./RelatedListings'));
+const MakeOffer = dynamic(() => import('./MakeOffer'));
 
 // Helper function to format date
 function formatDate(dateString) {
@@ -76,10 +76,61 @@ export default function ListingContent({ listing, relatedListings }) {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Images Only */}
-          <div>
+          {/* Left Column - Images and Seller Info */}
+          <div className="space-y-6">
             {/* Image Gallery */}
             <ImageGallery images={allImages} title={title || 'Listing image'} />
+            
+            {/* About the Seller Card */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+                About the Seller
+              </h2>
+              <div className="flex items-center gap-4">
+                {seller?.google_user_avatar ? (
+                  <div className="w-16 h-16 rounded-full overflow-hidden shadow-lg">
+                    <img
+                      src={seller.google_user_avatar.replace('=s96-c', '=s400-c')}
+                      alt={sellerName || 'Seller'}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+                    {sellerName?.split(' ').map(n => n?.[0]).join('').toUpperCase().slice(0, 2) || 'US'}
+                  </div>
+                )}
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {sellerName || 'Unknown seller'}
+                    {isVerified && (
+                      <span className="inline-flex items-center ml-2">
+                        <svg className="w-4 h-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                      </span>
+                    )}
+                  </h3>
+                  <div className="flex flex-col gap-1">
+                    {seller?.created_at && (() => {
+                      try {
+                        const memberSince = new Date(seller.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+                        return (
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Member since {memberSince}
+                          </p>
+                        );
+                      } catch {
+                        return null;
+                      }
+                    })()}
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Contact available after chat
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Right Column - Details, Description & Actions */}
@@ -159,6 +210,11 @@ export default function ListingContent({ listing, relatedListings }) {
                     </span>
                   </div>
                 )}
+
+                {/* Make Offer Button */}
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <MakeOffer listing={listing} />
+                </div>
               </div>
             </div>
 
@@ -172,9 +228,6 @@ export default function ListingContent({ listing, relatedListings }) {
               )}
             </div>
 
-            {/* Listing Actions (Chat, Offer, Message) */}
-            <ListingActions listing={listing} />
-
             {/* Safety Tips */}
             <SafetyTips />
           </div>
@@ -182,7 +235,7 @@ export default function ListingContent({ listing, relatedListings }) {
 
         {/* Related Listings Section */}
         {Array.isArray(relatedListings) && relatedListings.length > 0 && (
-          <RelatedListings listings={relatedListings} />
+          <RelatedListings listings={relatedListings} currentListing={listing} />
         )}
       </div>
     </main>

@@ -8,6 +8,11 @@ const ListingsContainer = ({ initialListings }) => {
     const [selectedListingId, setSelectedListingId] = useState(null);
     const [error, setError] = useState(null);
 
+    // Update listings when initialListings prop changes
+    useEffect(() => {
+        setListings(initialListings);
+    }, [initialListings]);
+
     useEffect(() => {
         const handleShowModal = (event) => {
             setSelectedListingId(event.detail);
@@ -20,12 +25,25 @@ const ListingsContainer = ({ initialListings }) => {
             setSelectedListingId(null);
         };
 
+        const handleStatusUpdate = (event) => {
+            const { listingId, newStatus } = event.detail;
+            setListings(prevListings =>
+                prevListings.map(listing =>
+                    listing._id === listingId
+                        ? { ...listing, status: newStatus }
+                        : listing
+                )
+            );
+        };
+
         window.addEventListener('showDeleteModal', handleShowModal);
         window.addEventListener('listingDeleted', handleDeleteSuccess);
+        window.addEventListener('listingStatusUpdated', handleStatusUpdate);
 
         return () => {
             window.removeEventListener('showDeleteModal', handleShowModal);
             window.removeEventListener('listingDeleted', handleDeleteSuccess);
+            window.removeEventListener('listingStatusUpdated', handleStatusUpdate);
         };
     }, [selectedListingId]);
     return (

@@ -37,7 +37,7 @@ export default function SignUp() {
       });
       
       const data = response.data;
-      document.cookie = `token=${data.token}; path=/;`;
+      document.cookie = `token=${data.token}; path=/; max-age=${365 * 24 * 60 * 60}; secure; samesite=strict;`;
       toast.success('Registration successful! Redirecting to profile setup...', { id: loadingToast });
       router.push('/my-profile');
     } catch (error) {

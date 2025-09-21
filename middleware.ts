@@ -36,7 +36,6 @@ export async function middleware(request: NextRequest) {
         
         return response;
     } catch (error) {
-        console.error('Middleware error:', error);
         // Only redirect on actual errors, not verification failures
         return NextResponse.next();
     }

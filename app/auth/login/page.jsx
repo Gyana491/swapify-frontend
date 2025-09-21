@@ -22,7 +22,7 @@ const Login = () => {
       setIsLoading(true);
       const response = await axios.post('/api/auth/login', { email, password });
       const data = response.data;
-      document.cookie = `token=${data.token}; path=/;`;
+      document.cookie = `token=${data.token}; path=/; max-age=${365 * 24 * 60 * 60}; secure; samesite=strict;`;
       toast.success('Login successful! Redirecting...', { id: loadingToast });
       window.location.href = '/';
     } catch (error) {

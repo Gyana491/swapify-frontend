@@ -48,7 +48,7 @@ export default function ImageGallery({ images, title }) {
 
   return (
     <>
-      <div className={`relative ${isLargeScreen ? 'lg:sticky lg:top-4' : ''}`}>
+      <div className="relative">
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-2 shadow-lg">
           {/* Main Swiper */}
           <Swiper

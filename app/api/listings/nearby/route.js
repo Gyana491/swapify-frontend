@@ -24,8 +24,6 @@ export async function GET(request) {
             url += `&category=${category}`;
         }
 
-        console.log('Fetching from backend:', url); // Debug log
-
         const response = await fetch(url);
         
         if (!response.ok) {
@@ -33,15 +31,9 @@ export async function GET(request) {
         }
 
         const data = await response.json();
-        
-        console.log('Backend response:', {
-            listingsCount: data.listings?.length,
-            message: data.message
-        }); // Debug log
 
         return NextResponse.json(data);
     } catch (error) {
-        console.error('Error in nearby-listings API:', error);
         return NextResponse.json({ 
             listings: [],
             message: 'Failed to fetch nearby listings',

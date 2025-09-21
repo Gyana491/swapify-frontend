@@ -33,7 +33,7 @@ const MobileFilter = ({ searchParams, setSearchParams }) => {
             dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
         />
         <svg 
-          className="absolute left-3.5 top-4 w-5 h-5 text-gray-400"
+          className="absolute left-3.5 top-4 w-5 h-5 text-gray-400 dark:text-gray-500"
           xmlns="http://www.w3.org/2000/svg" 
           viewBox="0 0 24 24"
           fill="none"

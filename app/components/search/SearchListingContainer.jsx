@@ -15,15 +15,6 @@ const formatIndianPrice = (price) => {
   }).format(price);
 };
 
-// Helper function for formatting distance
-const formatDistance = (distance) => {
-  if (!distance) return '';
-  if (distance < 1) {
-    return `${(distance * 1000).toFixed(0)}m away`;
-  }
-  return `${distance.toFixed(1)}km away`;
-};
-
 const SearchSkeleton = () => (
   <div className="animate-pulse flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
     <div className="bg-gray-200 dark:bg-gray-700 w-full aspect-[4/3]"></div>
@@ -59,9 +50,7 @@ const SearchListingContainer = ({ initialQuery }) => {
               }
             }));
           },
-          (error) => {
-            console.error('Error getting location:', error);
-          }
+          () => {}
         );
       }
     };
@@ -80,8 +69,6 @@ const SearchListingContainer = ({ initialQuery }) => {
         `&maxDistance=${range}` +  // range will always be a number now
         (location.latitude ? `&latitude=${location.latitude}&longitude=${location.longitude}` : '');
       
-      console.log('Searching with URL:', url);
-      
       const response = await fetch(url);
       
       if (!response.ok) {
@@ -90,10 +77,8 @@ const SearchListingContainer = ({ initialQuery }) => {
       }
 
       const data = await response.json();
-      console.log('Search results:', data);
       setSearchResults(data);
     } catch (error) {
-      console.error('Search error:', error);
       setError(error.message);
       setSearchResults({ listings: [], total: 0, message: error.message });
     } finally {
@@ -114,7 +99,8 @@ const SearchListingContainer = ({ initialQuery }) => {
   }, [searchParams]);
 
   return (
-    <div className="max-w-screen-xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-screen-xl mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
           Search Results
@@ -172,7 +158,7 @@ const SearchListingContainer = ({ initialQuery }) => {
                 price: formatIndianPrice(listing.price),
                 description: listing.description || '',
                 imageUrl: `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${listing.cover_image}`,
-                distance: listing.distance ? formatDistance(listing.distance) : null
+                distance: listing.distance
               }} 
             />
           ))
@@ -190,6 +176,7 @@ const SearchListingContainer = ({ initialQuery }) => {
           </div>
         ) : null}
       </div>
+    </div>
     </div>
   );
 };
