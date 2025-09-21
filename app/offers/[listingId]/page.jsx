@@ -185,10 +185,10 @@ export default function ListingOffersPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 pb-16">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
           </div>
         </div>
       </div>
@@ -196,34 +196,34 @@ export default function ListingOffersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-20">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 pb-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-3">
             <Link href="/offers" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </Link>
             
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               Offers for Listing
             </h1>
           </div>
           
           {listing && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-5 mb-6 shadow-sm">
-              <div className="flex flex-col sm:flex-row gap-5">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4 shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="flex gap-4">
                 {/* Cover Image */}
-                <div className="relative w-full sm:w-56 h-40 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
+                <div className="relative w-24 h-20 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
                   {listing.cover_image ? (
                     <Image
                       src={`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${listing.cover_image}`}
                       alt={listing.title}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 640px) 100vw, 224px"
+                      sizes="96px"
                     />
                   ) : (
                     <Image
@@ -233,8 +233,8 @@ export default function ListingOffersPage() {
                       className="object-cover"
                     />
                   )}
-                  <div className="absolute top-2 left-2">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                  <div className="absolute top-1 left-1">
+                    <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full ${
                       listing.status === 'active'
                         ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                         : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
@@ -246,48 +246,38 @@ export default function ListingOffersPage() {
 
                 {/* Main Details */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1 truncate">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1 truncate text-sm">
                     {listing.title}
                   </h3>
-                  <div className="text-xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+                  <div className="text-lg font-bold text-purple-600 dark:text-purple-400 mb-1">
                     {formatPrice(listing.price)}
                   </div>
-                  <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
                     {listing.location_display_name && (
                       <span className="inline-flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         {listing.location_display_name}
                       </span>
                     )}
                     {listing.category && (
-                      <span className="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full">
+                      <span className="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-xs">
                         {listing.category}
                       </span>
                     )}
                     {listing.subcategory && (
-                      <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full">
+                      <span className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs">
                         {listing.subcategory}
                       </span>
                     )}
                   </div>
-                  {/* Thumbnails if any */}
-                  {Array.isArray(listing.additional_images) && listing.additional_images.length > 0 && (
-                    <div className="mt-3 flex gap-2 overflow-x-auto">
-                      {listing.additional_images.slice(0, 5).map((img, idx) => (
-                        <div key={idx} className="relative w-16 h-16 rounded-md overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
-                          <Image src={`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${img}`} alt={`Additional ${idx+1}`} fill className="object-cover" sizes="64px" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
 
-                <div className="flex items-start">
+                <div className="flex items-start flex-shrink-0">
                   <Link
                     href={`/listing/${listingId}`}
-                    className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm whitespace-nowrap"
+                    className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-xs whitespace-nowrap"
                   >
-                    View Listing
+                    View
                   </Link>
                 </div>
               </div>
@@ -302,10 +292,10 @@ export default function ListingOffersPage() {
         )}
 
         {offers.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="max-w-md mx-auto">
+          <div className="text-center py-12">
+            <div className="max-w-sm mx-auto">
               <svg
-                className="mx-auto h-16 w-16 text-gray-400 mb-4"
+                className="mx-auto h-12 w-12 text-gray-400 mb-3"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -317,27 +307,27 @@ export default function ListingOffersPage() {
                   d="M19 7h-3V6a2 2 0 0 0-2-2H10a2 2 0 0 0-2 2v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1z"
                 />
               </svg>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-1">
                 No offers yet
               </h3>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 No one has made an offer on this listing yet.
               </p>
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white">
                 All Offers ({offers.length})
               </h2>
               <button
                 onClick={handleRefresh}
                 disabled={refreshing}
                 title="Refresh offers"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-xs"
               >
-                <svg className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <svg className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v6h6M20 20v-6h-6M20 8a8 8 0 00-15.5 2M4 16a8 8 0 0015.5-2" />
                 </svg>
                 {refreshing ? 'Refreshing...' : 'Refresh'}
@@ -347,102 +337,103 @@ export default function ListingOffersPage() {
             {offers.map((offer) => (
               <div
                 key={offer._id}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      {/* Avatar */}
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                        {offer?.buyer?.google_user_avatar ? (
-                          <img
-                            src={offer.buyer.google_user_avatar.replace('=s96-c', '=s200-c')}
-                            alt={offer?.buyer?.full_name || offer?.buyer?.username || 'Buyer'}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : offer?.buyer?.user_avatar ? (
-                          <img
-                            src={offer.buyer.user_avatar}
-                            alt={offer?.buyer?.full_name || offer?.buyer?.username || 'Buyer'}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-sm font-semibold text-gray-600 dark:text-gray-300">
-                            {(offer?.buyer?.full_name || offer?.buyer?.username || 'U').slice(0,1).toUpperCase()}
-                          </span>
-                        )}
-                      </div>
-                      
-                      <h3 className="font-semibold text-gray-900 dark:text-white">
-                        {offer.contactName || offer?.buyer?.full_name || offer?.buyer?.username || 'Anonymous'}
-                      </h3>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(offer.status)}`}>
-                        {offer.status}
+                <div className="flex items-start gap-3">
+                  {/* Avatar */}
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                    {offer?.buyer?.google_user_avatar ? (
+                      <img
+                        src={offer.buyer.google_user_avatar.replace('=s96-c', '=s200-c')}
+                        alt={offer?.buyer?.full_name || offer?.buyer?.username || 'Buyer'}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : offer?.buyer?.user_avatar ? (
+                      <img
+                        src={offer.buyer.user_avatar}
+                        alt={offer?.buyer?.full_name || offer?.buyer?.username || 'Buyer'}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
+                        {(offer?.buyer?.full_name || offer?.buyer?.username || 'U').slice(0,1).toUpperCase()}
                       </span>
+                    )}
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
+                          {offer.contactName || offer?.buyer?.full_name || offer?.buyer?.username || 'Anonymous'}
+                        </h3>
+                        <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full ${getStatusColor(offer.status)}`}>
+                          {offer.status}
+                        </span>
+                      </div>
+                      <div className="text-lg font-bold text-green-600 dark:text-green-400">
+                        {formatPrice(offer.offerAmount)}
+                      </div>
                     </div>
                     
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">
-                      {formatPrice(offer.offerAmount)}
-                    </div>
-                    
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                      Offered on {formatDate(offer.createdAt)}
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                      {formatDate(offer.createdAt)}
                     </p>
                     
                     {offer.message && (
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4">
-                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                      <div className="bg-gray-50 dark:bg-gray-700 rounded-md p-2 mb-3">
+                        <p className="text-xs text-gray-700 dark:text-gray-300">
                           "{offer.message}"
                         </p>
                       </div>
                     )}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
                       {offer.contactName && (
-                        <div className="text-sm">
-                          <span className="text-gray-500 dark:text-gray-400">Contact Name: </span>
+                        <div className="text-xs">
+                          <span className="text-gray-500 dark:text-gray-400">Name: </span>
                           <span className="text-gray-900 dark:text-white font-medium">{offer.contactName}</span>
                         </div>
                       )}
                       {offer.contactPhone && (
-                        <div className="text-sm">
+                        <div className="text-xs">
                           <span className="text-gray-500 dark:text-gray-400">Phone: </span>
                           <span className="text-gray-900 dark:text-white font-medium">{offer.contactPhone}</span>
                         </div>
                       )}
                     </div>
+
+                    {offer.status === 'pending' && (
+                      <div className="flex justify-end">
+                        <button
+                          onClick={() => handleOfferAction(offer._id, 'accepted')}
+                          disabled={processingOfferId === offer._id}
+                          className="bg-green-600 text-white py-1.5 px-3 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs font-medium"
+                        >
+                          {processingOfferId === offer._id ? 'Processing...' : 'Accept'}
+                        </button>
+                      </div>
+                    )}
+
+                    {offer.status === 'accepted' && (
+                      <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-xs font-medium">Accepted</span>
+                      </div>
+                    )}
+
+                    {offer.status === 'rejected' && (
+                      <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-xs font-medium">Rejected</span>
+                      </div>
+                    )}
                   </div>
                 </div>
-
-                {offer.status === 'pending' && (
-                  <div className="flex gap-3 justify-end">
-                    <button
-                      onClick={() => handleOfferAction(offer._id, 'accepted')}
-                      disabled={processingOfferId === offer._id}
-                      className="bg-green-600 text-white py-1.5 px-3 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                    >
-                      {processingOfferId === offer._id ? 'Processing...' : 'Accept Offer'}
-                    </button>
-                  </div>
-                )}
-
-                {offer.status === 'accepted' && (
-                  <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span className="text-sm font-medium">Offer Accepted</span>
-                  </div>
-                )}
-
-                {offer.status === 'rejected' && (
-                  <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                    <span className="text-sm font-medium">Offer Rejected</span>
-                  </div>
-                )}
               </div>
             ))}
           </div>

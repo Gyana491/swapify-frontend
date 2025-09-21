@@ -120,64 +120,68 @@ export default function OffersPage() {
             </div>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="space-y-4">
             {listings.map((listing) => (
               <div
                 key={listing._id}
                 className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
               >
-                {/* Listing Image */}
-                <div className="relative h-48 bg-gray-200 dark:bg-gray-700">
-                  {listing.cover_image && (
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${listing.cover_image}`}
-                      alt={listing.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                  )}
-                  
-                  {/* Status Badge */}
-                  <div className="absolute top-3 left-3">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      listing.status === 'active' 
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                        : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                    }`}>
-                      {listing.status}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Listing Details */}
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2 truncate">
-                    {listing.title}
-                  </h3>
-                  
-                  <div className="text-lg font-bold text-purple-600 dark:text-purple-400 mb-2">
-                    {formatPrice(listing.price)}
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex gap-2">
-                    <Link
-                      href={`/offers/${listing._id}`}
-                      className="flex-1 bg-purple-600 text-white text-center py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
-                    >
-                      Check Offers
-                    </Link>
+                <div className="flex">
+                  {/* Listing Image - Left Side */}
+                  <div className="relative w-32 h-24 bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                    {listing.cover_image && (
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${listing.cover_image}`}
+                        alt={listing.title}
+                        fill
+                        className="object-cover"
+                        sizes="128px"
+                      />
+                    )}
                     
-                    <Link
-                      href={`/listing/${listing._id}`}
-                      className="px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                    </Link>
+                    {/* Status Badge */}
+                    <div className="absolute top-2 left-2">
+                      <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full ${
+                        listing.status === 'active' 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                      }`}>
+                        {listing.status}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Listing Details - Right Side */}
+                  <div className="flex-1 p-4 flex flex-col justify-between">
+                    {/* Row 1: Title and Price */}
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="font-semibold text-gray-900 dark:text-white truncate flex-1 mr-4">
+                        {listing.title}
+                      </h3>
+                      <div className="text-lg font-bold text-purple-600 dark:text-purple-400 flex-shrink-0">
+                        {formatPrice(listing.price)}
+                      </div>
+                    </div>
+
+                    {/* Row 2: Actions */}
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/offers/${listing._id}`}
+                        className="bg-purple-600 text-white text-center py-1.5 px-3 rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+                      >
+                        Check Offers
+                      </Link>
+                      
+                      <Link
+                        href={`/listing/${listing._id}`}
+                        className="px-2 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
