@@ -6,7 +6,9 @@ export async function middleware(request: NextRequest) {
     
     // If no token, redirect to login
     if (!token) {
-        return NextResponse.redirect(new URL('/auth/login', request.url));
+        const loginUrl = new URL('/auth/login', request.url);
+        loginUrl.searchParams.set('next', new URL(request.url).pathname + new URL(request.url).search);
+        return NextResponse.redirect(loginUrl);
     }
 
     try {
@@ -23,7 +25,9 @@ export async function middleware(request: NextRequest) {
 
         // If verification failed
         if (!verifyResponse.ok || !data.isLoggedIn) {
-            const response = NextResponse.redirect(new URL('/auth/login', request.url));
+            const loginUrl = new URL('/auth/login', request.url);
+            loginUrl.searchParams.set('next', new URL(request.url).pathname + new URL(request.url).search);
+            const response = NextResponse.redirect(loginUrl);
             response.cookies.delete('token');
             return response;
         }
@@ -49,6 +53,8 @@ export const config = {
         '/create-listing/:path*',
         '/edit/:path*',
         '/my-listings',
-        '/my-listings/:path*'
+        '/my-listings/:path*',
+        '/offers',
+        '/offers/:path*'
     ]
 }

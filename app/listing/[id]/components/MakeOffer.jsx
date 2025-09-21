@@ -1,8 +1,10 @@
 "use client";
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
 export default function MakeOffer({ listing }) {
+  const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [userData, setUserData] = useState(null);
@@ -93,9 +95,18 @@ export default function MakeOffer({ listing }) {
 
   // Reset form when modal opens and pre-fill with user data
   const openModal = () => {
+    // Check auth token – if absent, redirect to login
+    const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('token='));
+    const token = tokenCookie ? tokenCookie.split('=')[1] : null;
+    if (!token) {
+      const next = typeof window !== 'undefined' ? `${window.location.pathname}${window.location.search}` : '/';
+      router.push(`/auth/login?next=${encodeURIComponent(next)}`);
+      return;
+    }
+
     setShowModal(true);
     setCurrentStep(1);
-    
+
     // Pre-fill form with user data if available
     const prefilledData = {
       offerPrice: '',

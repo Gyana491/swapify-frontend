@@ -6,7 +6,6 @@ import MarkSoldModal from './MarkSoldModal';
 
 const ListingCard = ({ listing }) => {
     const [imageError, setImageError] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [isMarkingSold, setIsMarkingSold] = useState(false);
     const [showMarkSoldModal, setShowMarkSoldModal] = useState(false);
@@ -39,29 +38,29 @@ const ListingCard = ({ listing }) => {
         return formatter.format(price);
     };
 
-    // Get status color and text
+    // Get status color and text with improved styling
     const getStatusInfo = (status) => {
         switch (status) {
             case 'active':
-                return { color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200', text: 'Active' };
+                return { color: 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700', text: 'Active' };
             case 'sold':
-                return { color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200', text: 'Sold' };
+                return { color: 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700', text: 'Sold' };
             case 'pending_review':
-                return { color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200', text: 'Pending Review' };
+                return { color: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700', text: 'Pending' };
             case 'draft':
-                return { color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200', text: 'Draft' };
+                return { color: 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-900/30 dark:text-gray-300 dark:border-gray-700', text: 'Draft' };
             case 'paused':
-                return { color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200', text: 'Paused' };
+                return { color: 'bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-700', text: 'Paused' };
             case 'reserved':
-                return { color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200', text: 'Reserved' };
+                return { color: 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700', text: 'Reserved' };
             case 'cancelled':
-                return { color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200', text: 'Cancelled' };
+                return { color: 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700', text: 'Cancelled' };
             case 'expired':
-                return { color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200', text: 'Expired' };
+                return { color: 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-900/30 dark:text-gray-300 dark:border-gray-700', text: 'Expired' };
             case 'archived':
-                return { color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200', text: 'Archived' };
+                return { color: 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-900/30 dark:text-gray-300 dark:border-gray-700', text: 'Archived' };
             default:
-                return { color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200', text: 'Unknown' };
+                return { color: 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-900/30 dark:text-gray-300 dark:border-gray-700', text: 'Unknown' };
         }
     };
 
@@ -116,126 +115,139 @@ const ListingCard = ({ listing }) => {
     };
 
     return (
-        <div className="group relative flex overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
-            <Link href={`/listing/${listing._id}`} className="relative block shrink-0">
-                <div className="relative h-[96px] w-[128px] sm:h-[112px] sm:w-[150px] md:h-[128px] md:w-[170px]">
-                    <Image
-                        src={imageError ? '/assets/place-holder.jpg' : imageUrl}
-                        alt={`Image of ${listing.title}`}
-                        fill
-                        sizes="(max-width: 640px) 128px, (max-width: 1024px) 170px, 192px"
-                        onError={() => setImageError(true)}
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        priority={false}
-                    />
-                    {listing.status === 'sold' && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                            <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">
-                                SOLD
-                            </span>
-                        </div>
-                    )}
-                </div>
-            </Link>
-            <div className="flex flex-col justify-between p-3 w-full">
-                <div className="flex justify-between items-start">
-                    <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <Link href={`/listing/${listing._id}`}>
-                                <h5 className="text-lg font-bold tracking-tight text-gray-900 transition-colors duration-200 hover:text-blue-600 dark:text-white dark:hover:text-blue-400">
-                                    {formatIndianPrice(listing.price)}
-                                </h5>
-                            </Link>
-                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusInfo(listing.status).color}`}>
-                                {getStatusInfo(listing.status).text}
-                            </span>
-                        </div>
-                        <p className="mb-2 text-sm font-medium line-clamp-1 text-gray-700 dark:text-gray-300">
-                            {listing.title}
-                        </p>
-                        <div className="mb-2 flex items-center text-gray-600 dark:text-gray-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4c3.865 0 7 3.134 7 7 0 3.337-3 8-7 13-4-5-7-9.663-7-13 0-3.866 3.135-7 7-7zM12 6a2 2 0 100 4 2 2 0 000-4z" />
-                            </svg>
-                            <p className="line-clamp-1 text-xs">
-                                {listing.location_display_name.length > 30 ? listing.location_display_name.substring(0, 30) + '...' : listing.location_display_name}
-                            </p>
-                        </div>
-                    </div>
-                    <div className="relative z-10" ref={menuRef}>
-                        <button 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setShowMenu(!showMenu);
-                            }}
-                            className="p-2 hover:bg-gray-100 rounded-full dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600"
-                            aria-label="Open menu"
-                        >
-                            <BsThreeDotsVertical className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-                        </button>
-                        {showMenu && (
-                            <div className="absolute right-0 mt-2 w-52 bg-white rounded-md shadow-lg py-2 z-20 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
-                                <button
-                                    onClick={handleDeleteClick}
-                                    className="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors duration-200 flex items-center gap-3 rounded-md mx-1"
-                                >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                    Delete Listing
-                                </button>
+        <div className="group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-lg dark:border-gray-600 dark:bg-gray-800">
+            {/* Main Content - Image and Info in Row */}
+            <div className="flex">
+                {/* Image Section */}
+                <div className="relative flex-shrink-0">
+                    <Link href={`/listing/${listing._id}`} className="block">
+                        <div className="relative h-32 w-32 sm:h-36 sm:w-36 md:h-40 md:w-40">
+                            <Image
+                                src={imageError ? '/assets/place-holder.jpg' : imageUrl}
+                                alt={`Image of ${listing.title}`}
+                                fill
+                                sizes="(max-width: 640px) 128px, (max-width: 768px) 144px, 160px"
+                                onError={() => setImageError(true)}
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                priority={false}
+                            />
+                            {listing.status === 'sold' && (
+                                <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+                                    <span className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold shadow-lg">
+                                        SOLD
+                                    </span>
+                                </div>
+                            )}
+                            {/* Status Badge */}
+                            <div className="absolute top-2 left-2">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border shadow-sm backdrop-blur-sm ${getStatusInfo(listing.status).color}`}>
+                                    {getStatusInfo(listing.status).text}
+                                </span>
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    </Link>
                 </div>
-                <div className="flex flex-row justify-end gap-2 mt-3">
-                    {listing.status === 'active' && (
-                        <Link href={`/offers/${listing._id}`} className="inline-flex">
-                            <button
-                                onMouseEnter={() => setIsHovered(true)}
-                                onMouseLeave={() => setIsHovered(false)}
-                                className="inline-flex items-center justify-center rounded-md bg-purple-600 px-3 py-1.5 text-center text-xs font-medium text-white transition-all duration-200 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-300 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800 active:scale-95"
-                                aria-label="Check offers for this listing"
+
+                {/* Content Section */}
+                <div className="flex flex-col flex-grow p-4 min-w-0">
+                    <div className="flex justify-between items-start mb-auto">
+                        <div className="flex-grow min-w-0">
+                            <Link href={`/listing/${listing._id}`}>
+                                <h3 className="text-lg sm:text-xl font-bold text-gray-900 transition-colors duration-200 hover:text-blue-600 dark:text-white dark:hover:text-blue-400 mb-1">
+                                    {formatIndianPrice(listing.price)}
+                                </h3>
+                            </Link>
+                            
+                            <Link href={`/listing/${listing._id}`}>
+                                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 line-clamp-2 hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-200">
+                                    {listing.title}
+                                </p>
+                            </Link>
+                            
+                            <div className="flex items-start text-gray-500 dark:text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="mr-1 h-3 w-3 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4c3.865 0 7 3.134 7 7 0 3.337-3 8-7 13-4-5-7-9.663-7-13 0-3.866 3.135-7 7-7zM12 6a2 2 0 100 4 2 2 0 000-4z" />
+                                </svg>
+                                <p className="text-xs line-clamp-2 leading-tight">
+                                    {listing.location_display_name.length > 45 ? listing.location_display_name.substring(0, 45) + '...' : listing.location_display_name}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Menu Button */}
+                        <div className="relative ml-2 flex-shrink-0" ref={menuRef}>
+                            <button 
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setShowMenu(!showMenu);
+                                }}
+                                className="p-1.5 bg-gray-50 hover:bg-gray-100 rounded-full dark:bg-gray-700 dark:hover:bg-gray-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600"
+                                aria-label="Open menu"
                             >
-                                Check Offers
+                                <BsThreeDotsVertical className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                             </button>
-                        </Link>
-                    )}
-                    {listing.status !== 'sold' && (
-                        <button
-                            onClick={handleMarkAsSoldClick}
-                            disabled={isMarkingSold}
-                            onMouseEnter={() => setIsHovered(true)}
-                            onMouseLeave={() => setIsHovered(false)}
-                            className="inline-flex items-center justify-center rounded-md bg-green-600 px-3 py-1.5 text-center text-xs font-medium text-white transition-all duration-200 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                            aria-label="Mark listing as sold"
-                        >
-                            Mark as Sold
-                        </button>
-                    )}
-                    <Link href={`/edit/${listing._id}`} className="inline-flex">
-                        <button
-                            onMouseEnter={() => setIsHovered(true)}
-                            onMouseLeave={() => setIsHovered(false)}
-                            className="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-1.5 text-center text-xs font-medium text-white transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 active:scale-95"
-                            aria-label="Edit listing"
-                        >
-                            Edit
-                        </button>
-                    </Link>
-                    <Link href={`/listing/${listing._id}`} className="inline-flex">
-                        <button
-                            onMouseEnter={() => setIsHovered(true)}
-                            onMouseLeave={() => setIsHovered(false)}
-                            className="inline-flex items-center justify-center rounded-md bg-emerald-600 px-3 py-1.5 text-center text-xs font-medium text-white transition-all duration-200 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-300 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800 active:scale-95"
-                            aria-label="View listing details"
-                        >
-                            View
-                        </button>
-                    </Link>
+                            {showMenu && (
+                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-20 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+                                    <button
+                                        onClick={handleDeleteClick}
+                                        className="w-full text-left px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors duration-200 flex items-center gap-2"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                        Delete Listing
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
-            
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 px-4 pb-4 border-t border-gray-100 dark:border-gray-700 pt-3">
+                {listing.status === 'active' && (
+                    <Link href={`/offers/${listing._id}`} className="flex-1">
+                        <button
+                            className="w-full inline-flex items-center justify-center rounded-lg bg-purple-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-300 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800 active:scale-95"
+                            aria-label="Check offers for this listing"
+                        >
+                            Offers
+                        </button>
+                    </Link>
+                )}
+
+                {listing.status !== 'sold' && (
+                    <button
+                        onClick={handleMarkAsSoldClick}
+                        disabled={isMarkingSold}
+                        className="flex-1 inline-flex items-center justify-center rounded-lg bg-green-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        aria-label="Mark listing as sold"
+                    >
+                        {isMarkingSold ? 'Processing...' : 'Mark Sold'}
+                    </button>
+                )}
+
+                <Link href={`/edit/${listing._id}`} className="flex-1">
+                    <button
+                        className="w-full inline-flex items-center justify-center rounded-lg bg-blue-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 active:scale-95"
+                        aria-label="Edit listing"
+                    >
+                        Edit
+                    </button>
+                </Link>
+
+                <Link href={`/listing/${listing._id}`} className="flex-1">
+                    <button
+                        className="w-full inline-flex items-center justify-center rounded-lg bg-emerald-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-300 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800 active:scale-95"
+                        aria-label="View listing details"
+                    >
+                        View
+                    </button>
+                </Link>
+            </div>
+
             <MarkSoldModal
                 isOpen={showMarkSoldModal}
                 onClose={handleCloseMarkSoldModal}
