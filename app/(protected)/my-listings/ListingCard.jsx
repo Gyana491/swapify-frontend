@@ -206,47 +206,51 @@ const ListingCard = ({ listing }) => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-2 px-4 pb-4 border-t border-gray-100 dark:border-gray-700 pt-3">
-                {listing.status === 'active' && (
-                    <Link href={`/offers/${listing._id}`} className="flex-1">
+            {listing.status !== 'sold' && (
+                <div className="flex gap-2 px-4 pb-4 border-t border-gray-100 dark:border-gray-700 pt-3">
+                    {listing.status === 'active' && (
+                        <Link href={`/offers/${listing._id}`} className="flex-1">
+                            <button
+                                className="w-full inline-flex items-center justify-center rounded-lg bg-purple-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-300 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800 active:scale-95"
+                                aria-label="Check offers for this listing"
+                            >
+                                Offers
+                            </button>
+                        </Link>
+                    )}
+
+                    {listing.status === 'active' && (
                         <button
-                            className="w-full inline-flex items-center justify-center rounded-lg bg-purple-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-300 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800 active:scale-95"
-                            aria-label="Check offers for this listing"
+                            onClick={handleMarkAsSoldClick}
+                            disabled={isMarkingSold}
+                            className="flex-1 inline-flex items-center justify-center rounded-lg bg-green-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                            aria-label="Mark listing as sold"
                         >
-                            Offers
+                            {isMarkingSold ? 'Processing...' : 'Mark Sold'}
+                        </button>
+                    )}
+
+                    {listing.status !== 'sold' && (
+                        <Link href={`/edit/${listing._id}`} className="flex-1">
+                            <button
+                                className="w-full inline-flex items-center justify-center rounded-lg bg-blue-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 active:scale-95"
+                                aria-label="Edit listing"
+                            >
+                                Edit
+                            </button>
+                        </Link>
+                    )}
+
+                    <Link href={`/listing/${listing._id}`} className="flex-1">
+                        <button
+                            className="w-full inline-flex items-center justify-center rounded-lg bg-emerald-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-300 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800 active:scale-95"
+                            aria-label="View listing details"
+                        >
+                            View
                         </button>
                     </Link>
-                )}
-
-                {listing.status !== 'sold' && (
-                    <button
-                        onClick={handleMarkAsSoldClick}
-                        disabled={isMarkingSold}
-                        className="flex-1 inline-flex items-center justify-center rounded-lg bg-green-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label="Mark listing as sold"
-                    >
-                        {isMarkingSold ? 'Processing...' : 'Mark Sold'}
-                    </button>
-                )}
-
-                <Link href={`/edit/${listing._id}`} className="flex-1">
-                    <button
-                        className="w-full inline-flex items-center justify-center rounded-lg bg-blue-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 active:scale-95"
-                        aria-label="Edit listing"
-                    >
-                        Edit
-                    </button>
-                </Link>
-
-                <Link href={`/listing/${listing._id}`} className="flex-1">
-                    <button
-                        className="w-full inline-flex items-center justify-center rounded-lg bg-emerald-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-300 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800 active:scale-95"
-                        aria-label="View listing details"
-                    >
-                        View
-                    </button>
-                </Link>
-            </div>
+                </div>
+            )}
 
             <MarkSoldModal
                 isOpen={showMarkSoldModal}

@@ -65,18 +65,9 @@ export default function OffersPage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80">
-              <Image
-                src="/assets/Swapify.jpg"
-                alt="Swapify Logo"
-                width={40}
-                height={40}
-                className="rounded-lg"
-              />
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Offers
-              </h1>
-            </Link>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Offers
+            </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-400">
             Your active listings — open each to check offers
