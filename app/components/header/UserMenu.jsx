@@ -3,11 +3,12 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import toast from "react-hot-toast"
+import UserAvatar from '../UserAvatar'
 
 const UserMenu = () => {
   const router = useRouter()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [userAvatar, setUserAvatar] = useState(null)
+  const [userData, setUserData] = useState(null)
   const [token, setToken] = useState(null)
 
   // Safely extract the token from document.cookie
@@ -17,11 +18,11 @@ const UserMenu = () => {
     setToken(extractedToken)
   }, [])
 
-  // Fetch the user avatar if logged in
+  // Fetch the user data if logged in
   useEffect(() => {
     if (!token) return;
 
-    const fetchUserAvatar = async () => {
+    const fetchUserData = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/auth/verify-token`, {
           method: 'POST',
@@ -30,25 +31,14 @@ const UserMenu = () => {
           }
         });
         const data = await response.json();
-        
-        // Safely determine the avatar URL with proper checks
-        let avatarUrl = null;
-        if (data.user_avatar) {
-          avatarUrl = `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${data.user_avatar}`;
-        } else if (data.google_user_avatar) {
-          avatarUrl = data.google_user_avatar.includes('=s96-c') 
-            ? data.google_user_avatar.replace('=s96-c', '') 
-            : data.google_user_avatar;
-        }
-        
-        setUserAvatar(avatarUrl);
+        setUserData(data);
       } catch (error) {
-        console.error("Error fetching the user avatar:", error);
-        setUserAvatar(null); // Set to null on error
+        console.error("Error fetching user data:", error);
+        setUserData(null);
       }
     };
 
-    fetchUserAvatar();
+    fetchUserData();
   }, [token]);
 
   if (!token) {
@@ -91,15 +81,11 @@ const UserMenu = () => {
         }}
         className="flex items-center gap-1 p-1.5 lg:p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500"
       >
-        {userAvatar ? (
-          <img src={userAvatar} alt="User Avatar" width={32} height={32} className="rounded-xl shadow-sm lg:w-[35px] lg:h-[35px]" />
-        ) : (
-          <div className="w-8 h-8 lg:w-[35px] lg:h-[35px] rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
-            <svg width="16" height="16" className="text-white lg:w-5 lg:h-5" viewBox="0 0 32 32">
-              <path fill="currentColor" d="M16,2A14,14,0,1,0,30,16,14,14,0,0,0,16,2ZM10,26.39a6,6,0,0,1,11.94,0,11.87,11.87,0,0,1-11.94,0Zm13.74-1.26a8,8,0,0,0-15.54,0,12,12,0,1,1,15.54,0ZM16,8a5,5,0,1,0,5,5A5,5,0,0,0,16,8Zm0,8a3,3,0,1,1,3-3A3,3,0,0,1,16,16Z" />
-            </svg>
-          </div>
-        )}
+        <UserAvatar 
+          user={userData} 
+          size={35}
+          className="lg:w-[35px] lg:h-[35px] w-8 h-8" 
+        />
 
         <svg className="w-4 h-4 dark:text-white" viewBox="0 0 24 24">
           <path fill="currentColor" d="M7 10l5 5 5-5z" />

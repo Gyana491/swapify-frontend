@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { useListingOffersCount } from '@/app/hooks/useListingOffersCount';
 import MarkSoldModal from './MarkSoldModal';
 
 const ListingCard = ({ listing }) => {
@@ -114,6 +115,11 @@ const ListingCard = ({ listing }) => {
         }
     };
 
+    const { count: offersCount, loading: offersLoading } = useListingOffersCount(listing?._id, {
+        enabled: listing?.status === 'active',
+        refreshOnFocus: true,
+    });
+
     return (
         <div className="group relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:shadow-lg dark:border-gray-600 dark:bg-gray-800">
             {/* Main Content - Image and Info in Row */}
@@ -211,10 +217,13 @@ const ListingCard = ({ listing }) => {
                     {listing.status === 'active' && (
                         <Link href={`/offers/${listing._id}`} className="flex-1">
                             <button
-                                className="w-full inline-flex items-center justify-center rounded-lg bg-purple-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-300 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800 active:scale-95"
+                                className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-purple-600 px-2 py-2 text-xs font-medium text-white transition-all duration-200 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-300 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800 active:scale-95"
                                 aria-label="Check offers for this listing"
                             >
-                                Offers
+                                <span>Offers</span>
+                                <span className="inline-flex items-center justify-center h-5 px-1 rounded-full text-[10px] font-semibold bg-white/20">
+                                    {offersLoading ? '…' : offersCount}
+                                </span>
                             </button>
                         </Link>
                     )}

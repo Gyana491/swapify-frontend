@@ -1,6 +1,7 @@
 export async function GET() {
   try {
-    const data = await fetch(`${process.env.BACKEND}/listings`);
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+    const data = await fetch(`${API_BASE_URL}/listings`);
 
     if (!data.ok) {
       throw new Error('Failed to fetch listings');

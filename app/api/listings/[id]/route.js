@@ -13,7 +13,8 @@ export async function GET(request, { params }) {
     }
 
     // Fetch listing from backend
-    const response = await fetch(`${process.env.BACKEND}/listings/${id}`);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+  const response = await fetch(`${API_BASE_URL}/listings/${id}`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch listing');
@@ -40,7 +41,8 @@ export async function PUT(request, { params }) {
     }
 
     const body = await request.json();
-    const response = await fetch(`${process.env.BACKEND}/listings/${id}`, {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+  const response = await fetch(`${API_BASE_URL}/listings/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

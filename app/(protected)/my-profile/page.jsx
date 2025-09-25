@@ -49,7 +49,7 @@ export default async function ProfileSetup() {
       <Header />
       <MobileNavigation />
       <div className="pb-20 md:pb-4">
-        <ProfileSetupForm initialData={profileData} />
+        <ProfileSetupForm initialData={profileData} userId={userId} />
       </div>
     </>
   )

@@ -1,6 +1,9 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import SocialShare from '@/app/components/SocialShare';
+import UserAvatar from '@/app/components/UserAvatar';
 
 const ImageGallery = dynamic(() => import('./ImageGallery'), { ssr: false });
 const ListingDescription = dynamic(() => import('./ListingDescription'));
@@ -35,6 +38,44 @@ export default function ListingContent({ listing, relatedListings }) {
   const seller = listing?.seller_id || listing?.owner || listing?.user || null;
   const sellerName = seller?.full_name || seller?.name || null;
   const isVerified = Boolean(seller?.is_verified);
+  const status = listing?.status || 'active';
+
+  // Status messages
+  const getStatusMessage = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'sold':
+        return {
+          message: 'This item has been sold',
+          icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+          color: 'text-green-600 dark:text-green-400',
+          bgColor: 'bg-green-50 dark:bg-green-900/20'
+        };
+      case 'pending':
+        return {
+          message: 'This listing is pending approval',
+          icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+          color: 'text-yellow-600 dark:text-yellow-400',
+          bgColor: 'bg-yellow-50 dark:bg-yellow-900/20'
+        };
+      case 'inactive':
+        return {
+          message: 'This listing is no longer available',
+          icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z',
+          color: 'text-red-600 dark:text-red-400',
+          bgColor: 'bg-red-50 dark:bg-red-900/20'
+        };
+      default:
+        return {
+          message: 'This listing is not available',
+          icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z',
+          color: 'text-gray-600 dark:text-gray-400',
+          bgColor: 'bg-gray-50 dark:bg-gray-900/20'
+        };
+    }
+  };
+
+  const statusInfo = getStatusMessage(status);
+  const isActive = status === 'active';
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -87,22 +128,18 @@ export default function ListingContent({ listing, relatedListings }) {
                 About the Seller
               </h2>
               <div className="flex items-center gap-4">
-                {seller?.google_user_avatar ? (
-                  <div className="w-16 h-16 rounded-full overflow-hidden shadow-lg">
-                    <img
-                      src={seller.google_user_avatar.replace('=s96-c', '=s400-c')}
-                      alt={sellerName || 'Seller'}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-                    {sellerName?.split(' ').map(n => n?.[0]).join('').toUpperCase().slice(0, 2) || 'US'}
-                  </div>
-                )}
+                <Link href={`/u/${seller?._id || ''}`}>
+                  <UserAvatar 
+                    user={seller} 
+                    size={64} 
+                    className="shadow-lg"
+                  />
+                </Link>
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white">
-                    {sellerName || 'Unknown seller'}
+                    <Link href={`/u/${seller?._id || ''}`} className="hover:underline">
+                      {sellerName || 'Unknown seller'}
+                    </Link>
                     {isVerified && (
                       <span className="inline-flex items-center ml-2">
                         <svg className="w-4 h-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
@@ -135,106 +172,141 @@ export default function ListingContent({ listing, relatedListings }) {
 
           {/* Right Column - Details, Description & Actions */}
           <div className="space-y-6">
-            {/* Main Details Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
-              <div className="space-y-4">
-                {title && (
-                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                    {title}
-                  </h1>
-                )}
-                
-                {price !== null && (
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400">
-                      ₹{price.toLocaleString('en-IN')}
-                    </span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      Inclusive of all taxes
-                    </span>
-                  </div>
-                )}
+            {/* Status Message for Non-Active Listings */}
+            {!isActive && (
+              <div className={`rounded-2xl p-6 shadow-lg ${statusInfo.bgColor}`}>
+                <div className="flex items-center gap-3">
+                  <svg className={`w-6 h-6 ${statusInfo.color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={statusInfo.icon} />
+                  </svg>
+                  <h2 className={`text-xl font-semibold ${statusInfo.color}`}>
+                    {statusInfo.message}
+                  </h2>
+                </div>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  {status === 'sold' ? 'This item is no longer available for offers.' : 
+                   status === 'pending' ? 'Please check back later once the listing is approved.' :
+                   'This listing may have been removed or deactivated.'}
+                </p>
+              </div>
+            )}
 
-                {/* Location */}
-                {location && (
-                  <div className="flex items-start gap-2 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 dark:text-gray-300 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <div>
-                      <h3 className="font-medium text-gray-900 dark:text-white mb-1">Pickup Location</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
-                        {location}
-                      </p>
+            {/* Main Details Card - Only for Active Listings */}
+            {isActive && (
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+                <div className="space-y-4">
+                  {title && (
+                    <div className="flex items-start justify-between gap-4">
+                      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex-1">
+                        {title}
+                      </h1>
+                      <div className="flex-shrink-0 mt-1">
+                        <SocialShare 
+                          title={`${title} - Available for Swap on Swapify`}
+                          text={`Check out this ${category || 'item'} available for swap: ${title}`}
+                          url={typeof window !== 'undefined' ? window.location.href : ''}
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
-
-                {/* Category & Subcategory */}
-                {(category || subcategory) && (
-                  <div className="flex flex-wrap gap-2">
-                    {category && (
-                      <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium">
-                        {category}
+                  )}
+                  
+                  {price !== null && (
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400">
+                        ₹{price.toLocaleString('en-IN')}
                       </span>
-                    )}
-                    {subcategory && (
-                      <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
-                        {subcategory}
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        Inclusive of all taxes
                       </span>
-                    )}
-                  </div>
-                )}
+                    </div>
+                  )}
 
-                {/* Posted Date */}
-                {postedOn && (
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Posted on {postedOn}
-                  </div>
-                )}
+                  {/* Location */}
+                  {location && (
+                    <div className="flex items-start gap-2 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 dark:text-gray-300 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <div>
+                        <h3 className="font-medium text-gray-900 dark:text-white mb-1">Pickup Location</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                          {location}
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
-                {/* Seller Quick Info */}
-                {sellerName && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                    <span>Listed by</span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {sellerName}
-                      {isVerified && (
-                        <span className="inline-flex items-center ml-1">
-                          <svg className="w-4 h-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
+                  {/* Category & Subcategory */}
+                  {(category || subcategory) && (
+                    <div className="flex flex-wrap gap-2">
+                      {category && (
+                        <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium">
+                          {category}
                         </span>
                       )}
-                    </span>
-                  </div>
-                )}
+                      {subcategory && (
+                        <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
+                          {subcategory}
+                        </span>
+                      )}
+                    </div>
+                  )}
 
-                {/* Make Offer Button */}
-                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <MakeOffer listing={listing} />
+                  {/* Posted Date */}
+                  {postedOn && (
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      Posted on {postedOn}
+                    </div>
+                  )}
+
+                  {/* Seller Quick Info */}
+                  {sellerName && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                      <span>Listed by</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        <Link href={`/u/${seller?._id || ''}`} className="hover:underline">
+                          {sellerName}
+                        </Link>
+                        {isVerified && (
+                          <span className="inline-flex items-center ml-1">
+                            <svg className="w-4 h-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Make Offer Button */}
+                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <MakeOffer listing={listing} />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Description Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-                About this item
-              </h2>
-              {listing?.description && (
-                <ListingDescription description={listing.description} />
-              )}
-            </div>
+            {/* Description Card - Only for Active Listings */}
+            {isActive && (
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+                  About this item
+                </h2>
+                {listing?.description && (
+                  <ListingDescription description={listing.description} />
+                )}
+              </div>
+            )}
 
-            {/* Safety Tips */}
-            <SafetyTips />
+            {/* Safety Tips - Only for Active Listings */}
+            {isActive && <SafetyTips />}
           </div>
         </div>
 
-        {/* Related Listings Section */}
-        {Array.isArray(relatedListings) && relatedListings.length > 0 && (
+        {/* Related Listings Section - Only for Active Listings */}
+        {isActive && Array.isArray(relatedListings) && relatedListings.length > 0 && (
           <RelatedListings listings={relatedListings} currentListing={listing} />
         )}
       </div>

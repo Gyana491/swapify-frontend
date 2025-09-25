@@ -7,11 +7,17 @@ const PWAInstallPrompt = () => {
   const [isInstallable, setIsInstallable] = useState(false)
   const [isIOS, setIsIOS] = useState(false)
   const [isStandalone, setIsStandalone] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // Check if running as standalone PWA
       setIsStandalone(window.matchMedia('(display-mode: standalone)').matches)
+      // Load dismissed state
+      try {
+        const stored = window.localStorage.getItem('pwaPromptDismissed')
+        if (stored === 'true') setDismissed(true)
+      } catch {}
       
       // Check if iOS
       const isIOSDevice = /iPad|iPhone|iPod/.test(window.navigator.userAgent) && !window.MSStream
@@ -42,14 +48,22 @@ const PWAInstallPrompt = () => {
     if (outcome === 'accepted') {
       setDeferredPrompt(null)
       setIsInstallable(false)
+      // Hide prompt after successful install prompt
+      try { window.localStorage.setItem('pwaPromptDismissed', 'true') } catch {}
+      setDismissed(true)
     }
   }
 
-  if (isStandalone || (!isInstallable && !isIOS)) return null
+  const handleClose = () => {
+    try { window.localStorage.setItem('pwaPromptDismissed', 'true') } catch {}
+    setDismissed(true)
+  }
+
+  if (dismissed || isStandalone || (!isInstallable && !isIOS)) return null
 
   return (
     <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg z-50">
-      <div className="max-w-screen-xl mx-auto flex items-center justify-between">
+      <div className="max-w-screen-xl mx-auto flex items-center justify-between gap-3">
         <div className="flex-1">
           <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
             Install Swapify App
@@ -61,7 +75,7 @@ const PWAInstallPrompt = () => {
             }
           </p>
         </div>
-        
+        <div className="flex items-center gap-2">
         {!isIOS && isInstallable && (
           <button
             onClick={handleInstallClick}
@@ -70,6 +84,14 @@ const PWAInstallPrompt = () => {
             Install
           </button>
         )}
+          <button
+            onClick={handleClose}
+            aria-label="Close install prompt"
+            className="ml-1 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   )

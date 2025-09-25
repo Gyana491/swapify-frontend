@@ -158,7 +158,8 @@ const SearchListingContainer = ({ initialQuery }) => {
                 price: formatIndianPrice(listing.price),
                 description: listing.description || '',
                 imageUrl: `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${listing.cover_image}`,
-                distance: listing.distance
+                distance: listing.distance,
+                seller: listing.seller_id || listing.seller || listing.owner || null
               }} 
             />
           ))

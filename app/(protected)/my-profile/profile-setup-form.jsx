@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { compressImage } from '@/app/utils/compressImage'
 
-export default function ProfileSetupForm({ initialData }) {
+export default function ProfileSetupForm({ initialData, userId }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [imageLoading, setImageLoading] = useState(false)
-  const initialPreviewImage = initialData.user_avatar? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${initialData.user_avatar}` : initialData.google_user_avatar.replace('=s96-c', '') || '/assets/place-holder.jpg'
+  const initialPreviewImage = initialData.user_avatar
+    ? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${initialData.user_avatar}`
+    : (initialData.google_user_avatar?.replace('=s96-c', '') || '/assets/place-holder.jpg')
   const [previewImage, setPreviewImage] = useState(initialPreviewImage)
   const [imageName, setImageName] = useState(initialData.user_avatar || '')
   const [formData, setFormData] = useState({
@@ -53,7 +55,32 @@ export default function ProfileSetupForm({ initialData }) {
         ...prev,
         user_avatar: filename
       }))
-      toast.success('Image uploaded successfully!', { id: loadingToast })
+      // Immediately persist avatar change to profile
+      toast.loading('Updating profile photo...', { id: loadingToast })
+      try {
+        const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1]
+        const saveRes = await fetch('/api/profile-setup', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            ...formData,
+            user_avatar: filename
+          })
+        })
+        const saveData = await saveRes.json()
+        if (!saveRes.ok) {
+          throw new Error(saveData?.error || 'Failed to update profile photo')
+        }
+        toast.success('Profile photo updated', { id: loadingToast })
+        // Refresh the page data to reflect new avatar globally
+        router.refresh()
+      } catch (saveErr) {
+        console.error('Error saving profile photo:', saveErr)
+        toast.error(saveErr.message || 'Failed to update profile photo', { id: loadingToast })
+      }
     } catch (error) {
       console.error('Error uploading image:', error)
       toast.error('Failed to upload image. Please try again.', { id: loadingToast })
@@ -103,78 +130,110 @@ export default function ProfileSetupForm({ initialData }) {
   }
 
   return (
-    <section className="bg-white dark:bg-gray-900">
-      <div className="max-w-2xl px-4 py-8 mx-auto lg:py-16">
-        <form onSubmit={handleSubmit}>
-          {/* Profile Image Upload */}
-          <div className="mx-auto bg-white rounded-lg shadow-md mb-4 items-center dark:bg-gray-700">
-            <div className="w-[250px] p-4 rounded-lg items-center mx-auto text-center cursor-pointer">
-              <label htmlFor="upload" className="cursor-pointer">
-                <img
-                  src={previewImage}
-                  alt="Profile preview"
-                  width={250}
-                  height={250}
-                  className="mb-4 rounded-full object-cover object-center w-full aspect-square mx-auto"
-                />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">My Profile</h1>
+          <p className="text-gray-600 dark:text-gray-400">Manage your personal information and preferences</p>
+          {userId && (
+            <div className="mt-4">
+              <a
+                href={`/u/${userId}`}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+                View Public Profile
+              </a>
+            </div>
+          )}
+        </div>
 
-                <h5 className="w-full text-white bg-[#050708] hover:bg-[#050708]/90 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center justify-center mr-2 mb-2 cursor-pointer">
-                  Upload Profile Photo
-                </h5>
-              </label>
-              <input
-                id="upload"
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Profile Avatar Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="relative h-32 bg-gradient-to-r from-violet-500 to-purple-600">
+              <div className="absolute inset-0 bg-black/10"></div>
+            </div>
+            <div className="px-6 pb-6">
+              <div className="flex flex-col items-center -mt-16">
+                <div className="relative">
+                  <img
+                    src={previewImage}
+                    alt="Profile"
+                    className="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 object-cover shadow-xl"
+                  />
+                  {imageLoading && (
+                    <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
+                      <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                </div>
+                <label htmlFor="upload" className="mt-4 cursor-pointer">
+                  <span className="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors shadow-sm">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    {imageLoading ? 'Processing...' : 'Change Photo'}
+                  </span>
+                </label>
+                <input
+                  id="upload"
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+              </div>
             </div>
           </div>
 
-          {/* Form Fields */}
-          <div className="grid gap-4 mb-4 p-4 sm:grid-cols-2 sm:gap-6 sm:mb-5 bg-gray-100 rounded-lg dark:bg-gray-800">
-            {/* Name Field */}
-            <div className="sm:col-span-2">
-              <label htmlFor="username" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-                Full Name
-              </label>
-              <div className="flex">
-                <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-e-0 border-gray-300 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
-                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
-                  </svg>
-                </span>
+          {/* Personal Information Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-violet-100 dark:bg-violet-900/30 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Personal Information</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Your basic profile details</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Full Name
+                </label>
                 <input
                   type="text"
                   id="username"
                   name="username"
-                  className="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                  placeholder="Ex. Gyana Ranjan"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-colors"
+                  placeholder="Enter your full name"
                   value={formData.username}
                   onChange={(e) => setFormData({...formData, username: e.target.value})}
                   required
                 />
               </div>
-            </div>
 
-            {/* Phone Number Field */}
-            <div className="sm:col-span-2">
-              <label htmlFor="phone-number" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-                Phone Number
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                  <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" id="phone">
-                    <path fill="currentColor" d="M12.2 10c-1.1-.1-1.7 1.4-2.5 1.8C8.4 12.5 6 10 6 10S3.5 7.6 4.1 6.3c.5-.8 2-1.4 1.9-2.5-.1-1-2.3-4.6-3.4-3.6C.2 2.4 0 3.3 0 5.1c-.1 3.1 3.9 7 3.9 7 .4.4 3.9 4 7 3.9 1.8 0 2.7-.2 4.9-2.6 1-1.1-2.5-3.3-3.6-3.4z"></path>
-                  </svg>
-                </div>
+              <div>
+                <label htmlFor="phone-number" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Phone Number
+                </label>
                 <input
                   type="tel"
                   id="phone-number"
                   name="phone_number"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                  placeholder="9876543210"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-colors"
+                  placeholder="Enter your phone number"
                   value={formData.phone_number}
                   onChange={(e) => setFormData({...formData, phone_number: e.target.value})}
                   required
@@ -183,93 +242,107 @@ export default function ProfileSetupForm({ initialData }) {
             </div>
           </div>
 
-          {/* Location Fields */}
-          <div className="grid gap-4 mb-4 grid-cols-2 sm:gap-6 sm:mb-5 p-4 w-full bg-gray-100 rounded-lg dark:bg-gray-800">
-            <div className="w-full">
-              <label htmlFor="country" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-                Country
-              </label>
-              <input
-                type="text"
-                id="country"
-                name="country"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                value={formData.country}
-                onChange={(e) => setFormData({...formData, country: e.target.value})}
-                placeholder="India"
-                required
-              />
+          {/* Location Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Location Details</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Where you're located</p>
+              </div>
             </div>
 
-            <div className="w-full">
-              <label htmlFor="state" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-                State
-              </label>
-              <input
-                type="text"
-                id="state"
-                name="state"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                value={formData.state}
-                onChange={(e) => setFormData({...formData, state: e.target.value})}
-                placeholder="odisha"
-                required
-              />
-            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="country" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  id="country"
+                  name="country"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-colors"
+                  value={formData.country}
+                  onChange={(e) => setFormData({...formData, country: e.target.value})}
+                  placeholder="India"
+                  required
+                />
+              </div>
 
-            <div className="w-full">
-              <label htmlFor="city" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-                City
-              </label>
-              <input
-                type="text"
-                id="city"
-                name="city"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                value={formData.city}
-                onChange={(e) => setFormData({...formData, city: e.target.value})}
-                placeholder="Cuttack"
-                required
-              />
-            </div>
+              <div>
+                <label htmlFor="state" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  State
+                </label>
+                <input
+                  type="text"
+                  id="state"
+                  name="state"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-colors"
+                  value={formData.state}
+                  onChange={(e) => setFormData({...formData, state: e.target.value})}
+                  placeholder="Odisha"
+                  required
+                />
+              </div>
 
-            <div className="w-full">
-              <label htmlFor="pincode" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">
-                Pincode
-              </label>
-              <input
-                type="number"
-                id="pincode"
-                name="pincode"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                value={formData.pincode}
-                onChange={(e) => setFormData({...formData, pincode: e.target.value})}
-                placeholder="753001"
-                required
-              />
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  City
+                </label>
+                <input
+                  type="text"
+                  id="city"
+                  name="city"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-colors"
+                  value={formData.city}
+                  onChange={(e) => setFormData({...formData, city: e.target.value})}
+                  placeholder="Cuttack"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="pincode" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Pincode
+                </label>
+                <input
+                  type="number"
+                  id="pincode"
+                  name="pincode"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-colors"
+                  value={formData.pincode}
+                  onChange={(e) => setFormData({...formData, pincode: e.target.value})}
+                  placeholder="753001"
+                  required
+                />
+              </div>
             </div>
           </div>
 
-          {/* Submit and Logout Buttons */}
-          <div className="flex justify-center items-center space-x-4">
+          {/* Action Buttons */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <button
               type="submit"
               disabled={loading}
-              className="w-3/4 text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-purple-600 dark:hover:bg-purple-700"
+              className="w-full bg-violet-600 hover:bg-violet-700 disabled:bg-violet-400 text-white font-semibold py-3 px-6 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
             >
-              {loading ? 'Updating...' : 'Update Profile'}
-            </button>
-            
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="w-1/4 text-red-600 inline-flex items-center justify-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-2 sm:px-5 py-2.5 text-center whitespace-nowrap"
-            >
-              Log Out
+              {loading ? (
+                <span className="inline-flex items-center">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Updating...
+                </span>
+              ) : (
+                'Save Changes'
+              )}
             </button>
           </div>
         </form>
       </div>
-    </section>
+    </div>
   )
 } 

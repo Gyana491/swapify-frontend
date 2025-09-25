@@ -13,7 +13,8 @@ export async function middleware(request: NextRequest) {
 
     try {
         // Verify token with backend
-        const verifyResponse = await fetch(`${process.env.BACKEND}/verify-token`, {
+        const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+        const verifyResponse = await fetch(`${API_BASE_URL}/verify-token`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

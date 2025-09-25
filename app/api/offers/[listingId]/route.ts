@@ -17,7 +17,7 @@ export async function GET(
         { status: 401 }
       );
     }
-  const { listingId } = await params;
+    const { listingId } = await params;
 
     const response = await fetch(`${API_BASE_URL}/api/offers/listing/${listingId}`, {
       method: 'GET',

@@ -13,7 +13,8 @@ export async function PATCH(request, { params }) {
             );
         }
 
-        const response = await fetch(`${process.env.BACKEND}/listings/${id}/mark-sold`, {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+    const response = await fetch(`${API_BASE_URL}/listings/${id}/mark-sold`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${token}`,

@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
+import { SmallAvatar } from '@/app/components/UserAvatar';
 
 export default function ListingOffersPage() {
   const router = useRouter();
@@ -115,7 +116,7 @@ export default function ListingOffersPage() {
 
     // If accepting, confirm with a toast UI
     if (action === 'accepted') {
-      const confirmed = await confirmAccept('Are you sure you want to accept this offer?');
+      const confirmed = await confirmAccept('Are you sure you want to accept this offer? Your Contact Details Will Be Shared With the buyer.');
       if (!confirmed) return;
     }
 
@@ -341,24 +342,8 @@ export default function ListingOffersPage() {
               >
                 <div className="flex items-start gap-3">
                   {/* Avatar */}
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-                    {offer?.buyer?.google_user_avatar ? (
-                      <img
-                        src={offer.buyer.google_user_avatar.replace('=s96-c', '=s200-c')}
-                        alt={offer?.buyer?.full_name || offer?.buyer?.username || 'Buyer'}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : offer?.buyer?.user_avatar ? (
-                      <img
-                        src={offer.buyer.user_avatar}
-                        alt={offer?.buyer?.full_name || offer?.buyer?.username || 'Buyer'}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
-                        {(offer?.buyer?.full_name || offer?.buyer?.username || 'U').slice(0,1).toUpperCase()}
-                      </span>
-                    )}
+                  <div className="flex-shrink-0">
+                    <SmallAvatar user={offer?.buyer} />
                   </div>
                   
                   <div className="flex-1 min-w-0">

@@ -1,5 +1,10 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { CompactAvatar } from '../UserAvatar';
 
 // Helper function to format distance
 const formatDistance = (distance) => {
@@ -15,7 +20,44 @@ const formatDistance = (distance) => {
   return `${Math.round(numDistance * 10) / 10}km away`;
 };
 
+const resolveSellerMeta = (rawSeller) => {
+  if (!rawSeller) return null;
+
+  const name = rawSeller.full_name
+    || [rawSeller.first_name, rawSeller.last_name].filter(Boolean).join(' ')
+    || rawSeller.username
+    || rawSeller.name
+    || (typeof rawSeller.email === 'string' ? rawSeller.email.split('@')[0] : '');
+
+  if (!name) return null;
+
+  const profileId = rawSeller._id || rawSeller.id || rawSeller.user_id || rawSeller.userId || null;
+
+  const user = {
+    ...rawSeller,
+    user_avatar: rawSeller.user_avatar || rawSeller.avatar || rawSeller.profile_image || rawSeller.profileImage || rawSeller.photo,
+    google_user_avatar: rawSeller.google_user_avatar || rawSeller.googleAvatar || rawSeller.picture || rawSeller.photoUrl,
+  };
+
+  return { name, profileId, user };
+};
+
 const SearchListingCard = ({ listing }) => {
+  const router = useRouter();
+  const sellerMeta = resolveSellerMeta(listing?.seller);
+
+  const handleSellerActivate = useCallback((event, profileId) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!profileId) return;
+    router.push(`/u/${profileId}`);
+  }, [router]);
+
+  const handleSellerKeyDown = useCallback((event, profileId) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      handleSellerActivate(event, profileId);
+    }
+  }, [handleSellerActivate]);
   return (
     <Link 
       href={`/listing/${listing.id}`}
@@ -58,6 +100,37 @@ const SearchListingCard = ({ listing }) => {
             </div>
           )}
         </div>
+
+        {sellerMeta && (
+          <div className="mt-2.5 md:mt-3 flex items-center gap-2.5">
+            <CompactAvatar 
+              user={sellerMeta.user} 
+              className="flex-shrink-0 ring-1 ring-gray-200/80 dark:ring-gray-600/50 shadow-sm" 
+              showBorder={true}
+            />
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] md:text-[11px] uppercase tracking-wider font-medium text-gray-500 dark:text-gray-400 mb-0.5">
+                Listed by
+              </p>
+              {sellerMeta.profileId ? (
+                <span
+                  role="link"
+                  tabIndex={0}
+                  onClick={(event) => handleSellerActivate(event, sellerMeta.profileId)}
+                  onKeyDown={(event) => handleSellerKeyDown(event, sellerMeta.profileId)}
+                  className="block text-sm md:text-base font-semibold text-gray-900 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400 truncate cursor-pointer transition-colors duration-150"
+                  title={sellerMeta.name}
+                >
+                  {sellerMeta.name}
+                </span>
+              ) : (
+                <p className="text-sm md:text-base font-semibold text-gray-900 dark:text-gray-100 truncate" title={sellerMeta.name}>
+                  {sellerMeta.name}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </Link>
   );

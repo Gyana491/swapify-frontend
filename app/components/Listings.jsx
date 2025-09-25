@@ -7,25 +7,77 @@ import Image from "next/image";
 import Cookies from 'js-cookie';
 import SkeletonLoader from './SkeletonLoader';
 import categories from '../data/categories.json';
+import { CompactAvatar } from './UserAvatar';
 
-// Helper function to format price in Indian currency
+// Helper function to format price in Indian currency (human-readable)
 const formatIndianPrice = (price) => {
-    if (price === 0) {
-        return "Free";
+    if (price === 0) return "Free";
+    if (price === undefined || price === null) return '—';
+    try {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            maximumFractionDigits: 0
+        }).format(price);
+    } catch {
+        return `₹${Number(price).toLocaleString('en-IN')}`;
     }
-    return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        maximumFractionDigits: 0
-    }).format(price);
 };
 
 // Helper function to format distance
 const formatDistance = (distance) => {
-    if (distance < 1) {
-        return `${Math.round(distance * 1000)}m away`;
-    }
+    if (distance === undefined || distance === null) return null;
+    if (Number(distance) === 0) return 'On Spot';
+    if (distance < 1) return `${Math.round(distance * 1000)}m away`;
     return `${Math.round(distance * 10) / 10}km away`;
+};
+
+// Human-readable relative time like "45 seconds ago", "2 months ago"
+const formatRelativeTime = (dateLike) => {
+    try {
+        const d = new Date(dateLike);
+        if (isNaN(d.getTime())) return '';
+        const diffMs = Date.now() - d.getTime();
+        const sec = Math.floor(diffMs / 1000);
+        if (sec < 5) return 'just now';
+        if (sec < 60) return `${sec} ${sec === 1 ? 'second' : 'seconds'} ago`;
+        const min = Math.floor(sec / 60);
+        if (min < 60) return `${min} ${min === 1 ? 'minute' : 'minutes'} ago`;
+        const hr = Math.floor(min / 60);
+        if (hr < 24) return `${hr} ${hr === 1 ? 'hour' : 'hours'} ago`;
+        const day = Math.floor(hr / 24);
+        if (day < 30) return `${day} ${day === 1 ? 'day' : 'days'} ago`;
+        const month = Math.floor(day / 30);
+        if (month < 12) return `${month} ${month === 1 ? 'month' : 'months'} ago`;
+        const year = Math.floor(month / 12);
+        return `${year} ${year === 1 ? 'year' : 'years'} ago`;
+    } catch {
+        return '';
+    }
+};
+
+const resolveSellerMeta = (record = {}) => {
+    const rawSeller = record?.seller_id || record?.seller || record?.owner || null;
+
+    if (!rawSeller) return null;
+
+    const name = rawSeller.full_name
+        || [rawSeller.first_name, rawSeller.last_name].filter(Boolean).join(' ')
+        || rawSeller.username
+        || rawSeller.name
+        || (typeof rawSeller.email === 'string' ? rawSeller.email.split('@')[0] : '');
+
+    if (!name) return null;
+
+    const profileId = rawSeller._id || rawSeller.id || rawSeller.user_id || rawSeller.userId || null;
+
+    const user = {
+        ...rawSeller,
+        user_avatar: rawSeller.user_avatar || rawSeller.avatar || rawSeller.profile_image || rawSeller.profileImage || rawSeller.photo,
+        google_user_avatar: rawSeller.google_user_avatar || rawSeller.googleAvatar || rawSeller.picture || rawSeller.photoUrl,
+    };
+
+    return { name, profileId, user };
 };
 
 // Distance options in kilometers
@@ -114,21 +166,21 @@ const Listings = () => {
     }, []); // Only fetch on mount
 
     return (
-        <div className=" min-h-screen pb-8">
+    <div className="min-h-screen pb-8">
             {/* Filters Container */}
-            <div className="max-w-screen-xl mx-auto px-4 pt-6 space-y-4">
+            <div className="max-w-screen-xl mx-auto px-3 sm:px-4 pt-4 sm:pt-6 space-y-3 sm:space-y-4">
                 {/* Category Filter */}
                 <div className="relative">
                     <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r  dark:from-gray-900 to-transparent z-10 pointer-events-none"></div>
                     <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l dark:from-gray-900 to-transparent z-10 pointer-events-none"></div>
                     <div className="overflow-x-auto scrollbar-hide">
-                        <div className="flex gap-3 pb-2 min-w-min">
+                        <div className="flex gap-2.5 sm:gap-3 pb-2 min-w-min">
                             {categories.map((category) => (
                                 <button
                                     key={category.id}
                                     onClick={() => handleCategoryChange(category.id)}
                                     className={`
-                                        px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200 
+                                        px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 
                                         whitespace-nowrap flex items-center gap-2.5
                                         ${selectedCategory === category.id
                                             ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/25'
@@ -149,13 +201,13 @@ const Listings = () => {
                     <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r dark:from-gray-900 to-transparent z-10 pointer-events-none"></div>
                     <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l dark:from-gray-900 to-transparent z-10 pointer-events-none"></div>
                     <div className="overflow-x-auto scrollbar-hide">
-                        <div className="flex gap-3 pb-2 min-w-min">
+                        <div className="flex gap-2.5 sm:gap-3 pb-2 min-w-min">
                             {DISTANCE_OPTIONS.map((option) => (
                                 <button
                                     key={option.value}
                                     onClick={() => handleDistanceChange(option.value)}
                                     className={`
-                                        px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200 
+                                        px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 
                                         whitespace-nowrap
                                         ${selectedDistance === option.value
                                             ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
@@ -172,7 +224,7 @@ const Listings = () => {
             </div>
 
             {/* Listings Grid Container */}
-            <div className="max-w-screen-xl mx-auto px-4 mt-8">
+            <div className="max-w-screen-xl mx-auto px-3 sm:px-4 mt-6 sm:mt-8">
                 {loading ? (
                     <SkeletonLoader />
                 ) : error && listings.length === 0 ? (
@@ -185,28 +237,28 @@ const Listings = () => {
                         </p>
                     </div>
                 ) : listings.length > 0 && (
-                    <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
                         {listings.map((item) => (
                             <div 
                                 key={item._id} 
-                                className={`group bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 ${
+                                className={`group bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl hover:shadow-md transition-shadow duration-200 overflow-hidden border border-gray-200 dark:border-gray-700 ${
                                     item.isNearby === false ? 'border-yellow-200 dark:border-yellow-700' : ''
                                 }`}
                             >
                                 <Link href={`/listing/${item._id}`} aria-label={`View details of ${item.title}`} tabIndex="0">
                                     <div className="relative w-full aspect-[4/3] overflow-hidden">
                                         <Image 
-                                            src={`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${item.cover_image}`} 
-                                            className="object-cover group-hover:scale-110 transition-transform duration-300"
+                                            src={item?.cover_image ? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${item.cover_image}` : '/assets/place-holder.jpg'} 
+                                            className="object-cover group-hover:scale-105 transition-transform duration-200"
                                             alt={item.title || "Listing image"}
                                             fill
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         />
                                     </div>
                                 </Link>
-                                <div className="p-2 sm:p-4">
+                                <div className="p-2.5 sm:p-3.5">
                                     <Link href={`/listing/${item._id}`} aria-label={`View details of ${item.title}`} tabIndex="0">
-                                        <h5 className={`text-base sm:text-xl font-semibold mb-1 sm:mb-2 ${
+                                        <h5 className={`text-sm sm:text-lg font-semibold mb-1 sm:mb-1.5 ${
                                             item.price === 0 
                                                 ? 'text-green-600 dark:text-green-400' 
                                                 : 'text-gray-900 dark:text-white'
@@ -215,42 +267,76 @@ const Listings = () => {
                                         </h5>
                                     </Link>
                                     <Link href={`/listing/${item._id}`} aria-label={`View details of ${item.title}`} tabIndex="0">
-                                        <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200 mb-1 sm:mb-2 line-clamp-2">
+                                        <p className="text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 sm:mb-1.5 line-clamp-2">
                                             {item.title}
                                         </p>
                                     </Link>
-                                    <p className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-300 mb-2 sm:mb-3 capitalize">
+                                    <p className="text-[11px] sm:text-xs font-medium text-gray-600 dark:text-gray-300 mb-2 sm:mb-2.5 capitalize">
                                         {item.category}
                                     </p>
-                                    <div className="flex flex-col gap-1 mb-2 sm:mb-4">
-                                        <div className="flex items-center text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4c3.865 0 7 3.134 7 7 0 3.337-3 8-7 13-4-5-7-9.663-7-13 0-3.866 3.135-7 7-7zM12 6a2 2 0 100 4 2 2 0 000-4z" />
-                                            </svg>
-                                            <p className="truncate">{item.location_display_name}</p>
-                                        </div>
-                                        {item.distance && (
-                                            <div className="flex items-center text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-medium">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2 sm:mb-3 text-[11px] sm:text-xs text-gray-600 dark:text-gray-300">
+                                        {item.location_display_name && (
+                                            <span className="inline-flex items-center min-w-0">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4c3.865 0 7 3.134 7 7 0 3.337-3 8-7 13-4-5-7-9.663-7-13 0-3.866 3.135-7 7-7zM12 6a2 2 0 100 4 2 2 0 000-4z" />
                                                 </svg>
-                                                <span>{formatDistance(item.distance)}</span>
-                                            </div>
+                                                <span className="truncate max-w-[10rem] sm:max-w-[12rem]">{item.location_display_name}</span>
+                                            </span>
+                                        )}
+                                        {formatDistance(item.distance) && (
+                                            <>
+                                                <span className="hidden sm:inline">•</span>
+                                                <span className="inline-flex items-center text-violet-600 dark:text-violet-400 font-medium">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                    </svg>
+                                                    <span>{formatDistance(item.distance)}</span>
+                                                </span>
+                                            </>
+                                        )}
+                                        {item.created_at && (
+                                            <>
+                                                <span className="hidden sm:inline">•</span>
+                                                <time dateTime={new Date(item.created_at).toISOString()}>{formatRelativeTime(item.created_at)}</time>
+                                            </>
                                         )}
                                     </div>
-                                    <Link 
-                                        href={`/listing/${item._id}`} 
-                                        className="inline-flex items-center w-full justify-center px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 rounded-md sm:rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-700 transition-colors duration-200"
-                                        aria-label={`View details of ${item.title}`}
-                                        tabIndex="0"
-                                    >
-                                        View Details
-                                        <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 ms-1 sm:ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                                        </svg>
-                                    </Link>
+
+                                    {(() => {
+                                        const sellerMeta = resolveSellerMeta(item);
+                                        if (!sellerMeta) return null;
+
+                                        return (
+                                            <div className="mb-2 flex items-center gap-2.5">
+                                                <CompactAvatar 
+                                                    user={sellerMeta.user} 
+                                                    className="flex-shrink-0 ring-1 ring-gray-200/80 dark:ring-gray-600/50 shadow-sm" 
+                                                    showBorder={true}
+                                                />
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="text-[10px] uppercase tracking-wider font-medium text-gray-500 dark:text-gray-400 mb-0.5">
+                                                        Listed by
+                                                    </p>
+                                                    {sellerMeta.profileId ? (
+                                                        <Link
+                                                            href={`/u/${sellerMeta.profileId}`}
+                                                            className="block text-sm font-semibold text-gray-900 hover:text-violet-600 dark:text-gray-100 dark:hover:text-violet-400 truncate transition-colors duration-150"
+                                                            title={sellerMeta.name}
+                                                        >
+                                                            {sellerMeta.name}
+                                                        </Link>
+                                                    ) : (
+                                                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate" title={sellerMeta.name}>
+                                                            {sellerMeta.name}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })()}
+
                                     {item.isNearby === false && (
-                                        <div className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs">
+                                        <div className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-[11px] mt-1">
                                             Recent Listing
                                         </div>
                                     )}

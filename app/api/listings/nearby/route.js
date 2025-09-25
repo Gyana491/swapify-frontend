@@ -15,16 +15,14 @@ export async function GET(request) {
             }, { status: 400 });
         }
 
-        // Construct the backend URL with all parameters
-        let url = `${process.env.BACKEND}/nearby-listings?` +
-            `latitude=${latitude}&longitude=${longitude}&maxDistance=${maxDistance}`;
+        const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+        const backendUrl = new URL('/nearby-listings', API_BASE_URL);
+        backendUrl.searchParams.set('latitude', latitude);
+        backendUrl.searchParams.set('longitude', longitude);
+        backendUrl.searchParams.set('maxDistance', String(maxDistance));
+        if (category && category !== 'all') backendUrl.searchParams.set('category', category);
 
-        // Add category if provided
-        if (category && category !== 'all') {
-            url += `&category=${category}`;
-        }
-
-        const response = await fetch(url);
+        const response = await fetch(backendUrl.toString());
         
         if (!response.ok) {
             throw new Error(`Backend responded with status: ${response.status}`);

@@ -22,7 +22,8 @@ async function getListing(id) {
 
 async function getRelatedListings(category, currentListingId) {
   try {
-    const url = new URL(`${process.env.BACKEND}/listings`);
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+    const url = new URL('/listings', API_BASE_URL);
     url.searchParams.set('limit', '5');
     if (category) url.searchParams.set('category', category);
 

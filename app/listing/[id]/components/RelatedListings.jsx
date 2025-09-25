@@ -1,8 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { CompactAvatar } from '@/app/components/UserAvatar';
 
 // Helper function to calculate distance between two points
 function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -55,19 +56,65 @@ const formatDaysAgo = (dateString) => {
   }
 };
 
+const resolveSellerMeta = (record = {}) => {
+  const rawSeller = record?.seller_id || record?.seller || record?.owner || null;
+
+  if (!rawSeller) return null;
+
+  const name = rawSeller.full_name
+    || [rawSeller.first_name, rawSeller.last_name].filter(Boolean).join(' ')
+    || rawSeller.username
+    || rawSeller.name
+    || (typeof rawSeller.email === 'string' ? rawSeller.email.split('@')[0] : '');
+
+  if (!name) return null;
+
+  const profileId = rawSeller._id || rawSeller.id || rawSeller.user_id || rawSeller.userId || null;
+
+  const user = {
+    ...rawSeller,
+    user_avatar: rawSeller.user_avatar || rawSeller.avatar || rawSeller.profile_image || rawSeller.profileImage || rawSeller.photo,
+    google_user_avatar: rawSeller.google_user_avatar || rawSeller.googleAvatar || rawSeller.picture || rawSeller.photoUrl,
+  };
+
+  return { name, profileId, user };
+};
+
 // Individual card component
 function RelatedListingCard({ item }) {
   const [imageError, setImageError] = useState(false);
   const imageUrl = item.cover_image 
     ? `${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${item.cover_image}`
     : '/assets/listing-placeholder.jpg';
+  const sellerMeta = resolveSellerMeta(item);
+  const router = useRouter();
+
+  const handleNavigate = useCallback(() => {
+    if (!item?._id) return;
+    router.push(`/listing/${item._id}`);
+  }, [router, item?._id]);
+
+  const handleCardKeyDown = useCallback((event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleNavigate();
+    }
+  }, [handleNavigate]);
+
+  const handleSellerActivate = useCallback((event) => {
+    event.stopPropagation();
+    if (!sellerMeta?.profileId) return;
+    router.push(`/u/${sellerMeta.profileId}`);
+  }, [router, sellerMeta?.profileId]);
 
   return (
-    <Link 
-      href={`/listing/${item._id}`}
-      className="block focus:outline-none focus:ring-2 focus:ring-purple-500 rounded-lg"
-    >
-      <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800">
+      <article
+        role="button"
+        tabIndex={0}
+        onClick={handleNavigate}
+        onKeyDown={handleCardKeyDown}
+        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
         {/* Image Container */}
         <div className="relative aspect-video">
           <Image
@@ -143,6 +190,42 @@ function RelatedListingCard({ item }) {
             </div>
           )}
 
+          {sellerMeta && (
+            <div className="mt-2.5 flex items-center gap-2.5">
+              <CompactAvatar 
+                user={sellerMeta.user} 
+                className="flex-shrink-0 ring-1 ring-gray-200/80 dark:ring-gray-600/50 shadow-sm" 
+                showBorder={true}
+              />
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] uppercase tracking-wider font-medium text-gray-500 dark:text-gray-400 mb-0.5">
+                  Listed by
+                </p>
+                {sellerMeta.profileId ? (
+                  <span
+                    role="link"
+                    tabIndex={0}
+                    onClick={handleSellerActivate}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        handleSellerActivate(event);
+                      }
+                    }}
+                    className="block text-sm font-semibold text-gray-900 hover:text-purple-600 dark:text-gray-100 dark:hover:text-purple-400 truncate cursor-pointer transition-colors duration-150"
+                    title={sellerMeta.name}
+                  >
+                    {sellerMeta.name}
+                  </span>
+                ) : (
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate" title={sellerMeta.name}>
+                    {sellerMeta.name}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
            {/* Date */}
            <time 
              className="block mt-2 text-xs text-gray-500 dark:text-gray-400"
@@ -152,7 +235,6 @@ function RelatedListingCard({ item }) {
            </time>
         </div>
       </article>
-    </Link>
   );
 }
 
