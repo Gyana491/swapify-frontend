@@ -1,13 +1,30 @@
-// No longer a client component
+'use client'
+
 import Image from "next/image"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import LocationSelector from "../location/LocationSelector"
 
 
 import UserMenu from "./UserMenu"
 import OffersButton from "./OffersButton"
 
-const Header = async () => {
+const HIDE_HEADER_PREFIXES = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+  "/auth/callback",
+]
+
+const Header = () => {
+  const pathname = usePathname()
+  const shouldHide = pathname ? HIDE_HEADER_PREFIXES.some((prefix) => pathname.startsWith(prefix)) : false
+
+  if (shouldHide) {
+    return null
+  }
+
   return (
     <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200 py-2 dark:bg-gray-900/80">
       <div className="max-w-screen-xl mx-auto px-3">

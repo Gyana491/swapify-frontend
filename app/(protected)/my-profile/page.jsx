@@ -1,5 +1,4 @@
 import { headers, cookies } from 'next/headers'
-import Header from '@/app/components/header/Header'
 import MobileNavigation from '@/app/components/MobileNavigation'
 import ProfileSetupForm from './profile-setup-form'
 
@@ -46,7 +45,6 @@ export default async function ProfileSetup() {
 
   return (
     <>
-      <Header />
       <MobileNavigation />
       <div className="pb-20 md:pb-4">
         <ProfileSetupForm initialData={profileData} userId={userId} />

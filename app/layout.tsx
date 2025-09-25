@@ -2,6 +2,7 @@ import { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
+import Header from './components/header/Header';
 import PWAInstallPromptWrapper from './components/PWAInstallPromptWrapper';
 
 const geistSans = Geist({
@@ -94,7 +95,12 @@ export default function RootLayout({
           }}
         />
         <Toaster position="top-center" />
-        {children}
+        <div className="min-h-screen flex flex-col">
+          <Header />
+          <div className="flex-1">
+            {children}
+          </div>
+        </div>
         <PWAInstallPromptWrapper />
         </div>
       </body>

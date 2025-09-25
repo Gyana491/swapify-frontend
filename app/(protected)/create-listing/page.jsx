@@ -1,12 +1,9 @@
 import CreateListing from './createListingNew';
-import Header from '@/app/components/header/Header';
 import MobileNavigation from '@/app/components/MobileNavigation';
 
 const CreateListingPage = () => {
   return (
     <>
-      <Header />
-      
       <section className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 min-h-screen pb-20 md:pb-4">
         <div className="max-w-7xl mx-auto">
           <div className="px-4 py-4">

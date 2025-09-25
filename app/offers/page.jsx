@@ -21,7 +21,7 @@ export default function OffersPage() {
       setLoading(true);
       setError('');
       try {
-  await Promise.all([fetchSent(), fetchReceived()]);
+        await Promise.all([fetchSent(), fetchReceived()]);
       } catch (e) {
         // error state is set in individual fetchers
       } finally {
@@ -153,7 +153,7 @@ export default function OffersPage() {
   };
 
   const SentEmptyState = () => (
-    <div className="text-center py-20">
+  <div className="text-center py-12 sm:py-20">
       <div className="max-w-md mx-auto">
         <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h18M9 7h6m-9 4h12M7 15h10M5 19h14" />
@@ -172,7 +172,7 @@ export default function OffersPage() {
   );
 
   const ReceivedEmptyState = () => (
-    <div className="text-center py-20">
+  <div className="text-center py-12 sm:py-20">
       <div className="max-w-md mx-auto">
         <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 7h-3V6a2 2 0 0 0-2-2H10a2 2 0 0 0-2 2v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1z" />
@@ -184,55 +184,70 @@ export default function OffersPage() {
   );
 
   const SentList = () => (
-    <div className="space-y-4">
+    <div className="space-y-2 sm:space-y-3">
       {sentOffers.map((offer) => (
-        <div key={offer._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-          <div className="flex">
+        <div
+          key={offer._id}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100 dark:border-gray-700/60"
+        >
+          <div className="flex items-stretch">
             {/* Listing Image */}
-            <div className="relative w-32 h-24 bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+            <div className="relative w-24 sm:w-32 h-24 sm:h-28 bg-gray-200 dark:bg-gray-700 flex-shrink-0 overflow-hidden rounded-l-xl">
               {offer?.listing?.cover_image && (
                 <Image
                   src={`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${offer.listing.cover_image}`}
                   alt={offer?.listing?.title || 'Listing'}
                   fill
                   className="object-cover"
-                  sizes="128px"
+                  sizes="(max-width: 640px) 96px, 144px"
                 />
               )}
             </div>
             {/* Details */}
-            <div className="flex-1 p-4">
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white truncate max-w-xs">
+            <div className="flex-1 p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2.5 sm:gap-4 mb-2.5">
+                <div className="min-w-0 space-y-1">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white truncate">
                     {offer?.listing?.title || 'Listing'}
                   </h3>
                   {/* Seller details (for offers I sent) */}
                   {offer?.seller && (
-                    <div className="mt-1 flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
                       <SmallAvatar user={offer?.seller} />
-                      <span className="text-xs text-gray-700 dark:text-gray-300">Seller: <Link href={`/u/${offer?.seller?._id}`} className="font-medium hover:underline">{offer?.seller?.full_name || offer?.seller?.username || 'Seller'}</Link></span>
+                      <span>
+                        Seller:{' '}
+                        <Link href={`/u/${offer?.seller?._id}`} className="font-medium hover:underline">
+                          {offer?.seller?.full_name || offer?.seller?.username || 'Seller'}
+                        </Link>
+                      </span>
                     </div>
                   )}
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Your offer: <span className="font-semibold text-green-600 dark:text-green-400">{formatPrice(offer.offerAmount)}</span></p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Your offer:{' '}
+                    <span className="font-semibold text-green-600 dark:text-green-400">
+                      {formatPrice(offer.offerAmount)}
+                    </span>
+                  </p>
                 </div>
-                <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full ${
+                <span
+                  className={`inline-flex self-start sm:self-auto px-2 py-1 text-[11px] font-semibold rounded-full capitalize ${
                   offer.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
                   offer.status === 'accepted' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                   offer.status === 'rejected' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
                   'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                }`}>
+                }`}
+                >
                   {offer.status}
                 </span>
               </div>
               {offer.message && (
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-md p-2 mb-2">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2 mb-2.5">
                   <p className="text-xs text-gray-700 dark:text-gray-300">"{offer.message}"</p>
                 </div>
               )}
               {/* When accepted, show seller contact details and WhatsApp button */}
               {offer.status === 'accepted' && (
-                <div className="mt-2 p-3 rounded-md bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                <div className="mt-2 p-2.5 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
                   <p className="text-xs text-green-800 dark:text-green-200 font-medium">Offer accepted! You can now contact the seller.</p>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     {offer?.seller?.phone_number && (
@@ -249,8 +264,13 @@ export default function OffersPage() {
                   </div>
                 </div>
               )}
-              <div className="flex gap-2 mt-2">
-                <Link href={`/listing/${offer?.listing?._id}`} className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-sm">View Listing</Link>
+              <div className="flex flex-wrap gap-2 mt-2">
+                <Link
+                  href={`/listing/${offer?.listing?._id}`}
+                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-xs sm:text-sm font-medium"
+                >
+                  View Listing
+                </Link>
               </div>
             </div>
           </div>
@@ -260,72 +280,87 @@ export default function OffersPage() {
   );
 
   const ReceivedList = () => (
-    <div className="space-y-4">
+    <div className="space-y-2 sm:space-y-3">
       {receivedOffers.map((offer) => (
-        <div key={offer._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-          <div className="flex">
+        <div
+          key={offer._id}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100 dark:border-gray-700/60"
+        >
+          <div className="flex items-stretch">
             {/* Listing Image */}
-            <div className="relative w-32 h-24 bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+            <div className="relative w-24 sm:w-32 h-24 sm:h-28 bg-gray-200 dark:bg-gray-700 flex-shrink-0 overflow-hidden rounded-l-xl">
               {offer?.listing?.cover_image && (
                 <Image
                   src={`${process.env.NEXT_PUBLIC_MEDIACDN}/uploads/${offer.listing.cover_image}`}
                   alt={offer?.listing?.title || 'Listing'}
                   fill
                   className="object-cover"
-                  sizes="128px"
+                  sizes="(max-width: 640px) 96px, 144px"
                 />
               )}
             </div>
 
             {/* Details */}
-            <div className="flex-1 p-4">
-              <div className="flex items-start justify-between mb-2">
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-gray-900 dark:text-white truncate max-w-xs">
+            <div className="flex-1 p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2.5 sm:gap-4 mb-2.5">
+                <div className="min-w-0 space-y-1">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white truncate">
                     {offer?.listing?.title || 'Listing'}
                   </h3>
                   {/* Buyer details (for offers I received) */}
                   {offer?.buyer && (
-                    <div className="mt-1 flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
                       <SmallAvatar user={offer?.buyer} />
-                      <span className="text-xs text-gray-700 dark:text-gray-300">Buyer: <Link href={`/u/${offer?.buyer?._id}`} className="font-medium hover:underline">{offer?.buyer?.full_name || offer?.buyer?.username || offer?.contactName || 'Buyer'}</Link></span>
+                      <span>
+                        Buyer:{' '}
+                        <Link href={`/u/${offer?.buyer?._id}`} className="font-medium hover:underline">
+                          {offer?.buyer?.full_name || offer?.buyer?.username || offer?.contactName || 'Buyer'}
+                        </Link>
+                      </span>
                     </div>
                   )}
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Offer amount: <span className="font-semibold text-green-600 dark:text-green-400">{formatPrice(offer.offerAmount)}</span></p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Offer amount:{' '}
+                    <span className="font-semibold text-green-600 dark:text-green-400">
+                      {formatPrice(offer.offerAmount)}
+                    </span>
+                  </p>
                 </div>
-                <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full ${
+                <span
+                  className={`inline-flex self-start sm:self-auto px-2 py-1 text-[11px] font-semibold rounded-full capitalize ${
                   offer.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
                   offer.status === 'accepted' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                   offer.status === 'rejected' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
                   'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                }`}>
+                }`}
+                >
                   {offer.status}
                 </span>
               </div>
 
               {offer.message && (
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-md p-2 mb-2">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2 mb-2.5">
                   <p className="text-xs text-gray-700 dark:text-gray-300">"{offer.message}"</p>
                 </div>
               )}
 
-              <div className="flex gap-2 mt-2">
+              <div className="flex flex-wrap gap-2 mt-2">
                 {offer.status === 'pending' && (
                   <button
                     onClick={() => handleOfferAction(offer, 'accepted')}
                     disabled={processingOfferId === offer._id}
-                    className="bg-green-600 text-white py-1.5 px-3 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                    className="bg-green-600 text-white py-1.5 px-3 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm font-semibold"
                   >
                     {processingOfferId === offer._id ? 'Processing...' : 'Accept'}
                   </button>
                 )}
                 {offer.status === 'accepted' && (
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex items-center gap-1 text-green-600 dark:text-green-400 text-xs sm:text-sm font-medium">
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
-                      <span className="text-sm font-medium">Accepted</span>
+                      <span>Accepted</span>
                     </div>
                     {(offer?.contactPhone || offer?.buyer?.phone_number) && (
                       <a
@@ -341,14 +376,19 @@ export default function OffersPage() {
                   </div>
                 )}
                 {offer.status === 'rejected' && (
-                  <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
+                  <div className="flex items-center gap-1 text-red-600 dark:text-red-400 text-xs sm:text-sm font-medium">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-sm font-medium">Rejected</span>
+                    <span>Rejected</span>
                   </div>
                 )}
-                <Link href={`/offers/${offer?.listing?._id}`} className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-sm">View All Offers</Link>
+                <Link
+                  href={`/offers/${offer?.listing?._id}`}
+                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-xs sm:text-sm font-medium"
+                >
+                  View All Offers
+                </Link>
               </div>
             </div>
           </div>
@@ -359,9 +399,9 @@ export default function OffersPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center py-20">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 pb-24 sm:pt-20 sm:pb-28">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center py-16 sm:py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
           </div>
         </div>
@@ -370,14 +410,16 @@ export default function OffersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 pb-24 sm:pt-20 sm:pb-28">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Offers</h1>
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Offers</h1>
           </div>
-          <p className="text-gray-600 dark:text-gray-400">Track your offers as a buyer and manage offers on your listings as a seller.</p>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-2xl">
+            Track your offers as a buyer and manage offers on your listings as a seller.
+          </p>
         </div>
 
         {error && (
@@ -388,15 +430,23 @@ export default function OffersPage() {
 
         {/* Tabs */}
         <div className="mb-6 border-b border-gray-200 dark:border-gray-700">
-          <nav className="-mb-px flex space-x-4" aria-label="Tabs">
+          <nav className="-mb-px flex gap-1 sm:gap-4" aria-label="Tabs">
             <button
-              className={`whitespace-nowrap py-2 px-3 border-b-2 text-sm font-medium ${activeTab === 'received' ? 'border-purple-600 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
+              className={`whitespace-nowrap py-2 px-3 sm:px-4 border-b-2 text-sm sm:text-base font-semibold transition-colors ${
+                activeTab === 'received'
+                  ? 'border-purple-600 text-purple-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              }`}
               onClick={() => setActiveTab('received')}
             >
               Received
             </button>
             <button
-              className={`whitespace-nowrap py-2 px-3 border-b-2 text-sm font-medium ${activeTab === 'sent' ? 'border-purple-600 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
+              className={`whitespace-nowrap py-2 px-3 sm:px-4 border-b-2 text-sm sm:text-base font-semibold transition-colors ${
+                activeTab === 'sent'
+                  ? 'border-purple-600 text-purple-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              }`}
               onClick={() => setActiveTab('sent')}
             >
               Sent

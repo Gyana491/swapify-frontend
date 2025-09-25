@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import Header from '@/app/components/header/Header'
 import MobileNavigation from '@/app/components/MobileNavigation'
 import UserAvatar from '@/app/components/UserAvatar'
 // Removed grid card in favor of list view on this page
@@ -122,7 +121,6 @@ export default async function UserProfile({ params, searchParams }) {
 
   return (
     <>
-      <Header />
       <MobileNavigation />
 
       <div className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 py-6 sm:py-8 min-h-screen bg-gray-50 dark:bg-gray-900">

@@ -1,5 +1,4 @@
-import Header from '@/app/components/header/Header';
-import ListingContent from './components/ListingContent';
+import ListingClientPage from './ListingClientPage';
 
 // Fetch function for server-side data fetching
 async function getListing(id) {
@@ -17,30 +16,6 @@ async function getListing(id) {
   } catch (error) {
     console.error('Error fetching listing:', error);
     throw error;
-  }
-}
-
-async function getRelatedListings(category, currentListingId) {
-  try {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
-    const url = new URL('/listings', API_BASE_URL);
-    url.searchParams.set('limit', '5');
-    if (category) url.searchParams.set('category', category);
-
-    const response = await fetch(url.toString(), { cache: 'no-store' });
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch related listings: ${response.statusText}`);
-    }
-    
-    const data = await response.json();
-    // Filter out the current listing and limit to 4 items
-    return (Array.isArray(data) ? data : [])
-      .filter(listing => listing?._id !== currentListingId)
-      .slice(0, 4);
-  } catch (error) {
-    console.error('Error fetching related listings:', error);
-    return []; // Return empty array on error
   }
 }
 
@@ -87,50 +62,7 @@ export async function generateMetadata({ params }) {
 
 export default async function ListingPage({ params }) {
   const { id } = await params;
-  try {
-    // Fetch listing data
-    const listing = await getListing(id);
-    
-    // Only fetch related listings if we have a listing and category
-    const relatedListings = listing?.category 
-      ? await getRelatedListings(listing.category, id)
-      : [];
-
-    if (!listing) {
-      return (
-        <>
-          <Header />
-          <div className="container mx-auto px-4 py-8">
-            <div className="text-center text-gray-600 dark:text-gray-400">
-              No listing found
-            </div>
-          </div>
-        </>
-      );
-    }
-
-    return (
-      <>
-        <Header />
-        <ListingContent 
-          listing={listing} 
-          relatedListings={relatedListings}
-        />
-      </>
-    );
-  } catch (error) {
-    console.error('Error in ListingPage:', error);
-    return (
-      <>
-        <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center text-red-600 dark:text-red-400">
-            Error loading listing. Please try again later.
-          </div>
-        </div>
-      </>
-    );
-  }
+  return <ListingClientPage listingId={id} fallbackErrorMessage="Error loading listing. Please try again later." />;
 }
 
 
