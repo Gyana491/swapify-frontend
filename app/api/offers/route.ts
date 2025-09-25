@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Prefer explicit BACKEND envs and default to 8000 per project config
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+// Prefer explicit BACKEND envs and default to 5000 (backend default port)
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:5000';
 
 // GET /api/offers - Get all listings with offers for current user
 export async function GET(request: NextRequest) {

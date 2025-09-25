@@ -15,7 +15,7 @@ export async function GET(request) {
             }, { status: 400 });
         }
 
-        const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+        const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:5000';
         const backendUrl = new URL('/nearby-listings', API_BASE_URL);
         backendUrl.searchParams.set('latitude', latitude);
         backendUrl.searchParams.set('longitude', longitude);

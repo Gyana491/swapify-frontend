@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Prefer explicit BACKEND envs and default to 8000 per project config
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:5000';
 
 // GET /api/offers/received - Get all offers where current user is the seller
 export async function GET(request: NextRequest) {

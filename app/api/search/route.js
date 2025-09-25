@@ -16,7 +16,7 @@ export async function GET(request) {
         }
 
         // Construct the backend URL with all parameters
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:5000';
     const backendUrl = new URL('/search-listings', API_BASE_URL);
         backendUrl.searchParams.set('query', query);
         

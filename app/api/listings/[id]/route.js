@@ -13,7 +13,7 @@ export async function GET(request, { params }) {
     }
 
     // Fetch listing from backend
-  const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:5000';
   const response = await fetch(`${API_BASE_URL}/listings/${id}`);
     
     if (!response.ok) {
@@ -41,7 +41,7 @@ export async function PUT(request, { params }) {
     }
 
     const body = await request.json();
-  const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:8000';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND || process.env.BACKEND || 'http://localhost:5000';
   const response = await fetch(`${API_BASE_URL}/listings/${id}`, {
       method: 'PUT',
       headers: {

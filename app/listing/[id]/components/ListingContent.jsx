@@ -40,41 +40,69 @@ export default function ListingContent({ listing, relatedListings }) {
   const isVerified = Boolean(seller?.is_verified);
   const status = listing?.status || 'active';
 
-  // Status messages
-  const getStatusMessage = (status) => {
+  // Status messages and badge info
+  const getStatusInfo = (status) => {
     switch (status?.toLowerCase()) {
+      case 'active':
+        return {
+          message: 'This listing is active and available',
+          badgeText: 'Active',
+          icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+          color: 'text-green-600 dark:text-green-400',
+          bgColor: 'bg-green-50 dark:bg-green-900/20',
+          badgeColor: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+        };
       case 'sold':
         return {
           message: 'This item has been sold',
+          badgeText: 'Sold',
           icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
           color: 'text-green-600 dark:text-green-400',
-          bgColor: 'bg-green-50 dark:bg-green-900/20'
+          bgColor: 'bg-green-50 dark:bg-green-900/20',
+          badgeColor: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
         };
       case 'pending':
+      case 'pending_review':
         return {
           message: 'This listing is pending approval',
+          badgeText: 'Pending Review',
           icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
           color: 'text-yellow-600 dark:text-yellow-400',
-          bgColor: 'bg-yellow-50 dark:bg-yellow-900/20'
+          bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
+          badgeColor: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
         };
       case 'inactive':
+      case 'expired':
         return {
           message: 'This listing is no longer available',
+          badgeText: status?.toLowerCase() === 'expired' ? 'Expired' : 'Inactive',
           icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z',
           color: 'text-red-600 dark:text-red-400',
-          bgColor: 'bg-red-50 dark:bg-red-900/20'
+          bgColor: 'bg-red-50 dark:bg-red-900/20',
+          badgeColor: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+        };
+      case 'rejected':
+        return {
+          message: 'This listing has been rejected',
+          badgeText: 'Rejected',
+          icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z',
+          color: 'text-red-600 dark:text-red-400',
+          bgColor: 'bg-red-50 dark:bg-red-900/20',
+          badgeColor: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
         };
       default:
         return {
-          message: 'This listing is not available',
+          message: 'This listing status is unknown',
+          badgeText: status || 'Unknown',
           icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z',
           color: 'text-gray-600 dark:text-gray-400',
-          bgColor: 'bg-gray-50 dark:bg-gray-900/20'
+          bgColor: 'bg-gray-50 dark:bg-gray-900/20',
+          badgeColor: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
         };
     }
   };
 
-  const statusInfo = getStatusMessage(status);
+  const statusInfo = getStatusInfo(status);
   const isActive = status === 'active';
 
   return (
@@ -191,15 +219,25 @@ export default function ListingContent({ listing, relatedListings }) {
               </div>
             )}
 
-            {/* Main Details Card - Only for Active Listings */}
-            {isActive && (
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+            {/* Main Details Card - For All Listings */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
                 <div className="space-y-4">
                   {title && (
                     <div className="flex items-start justify-between gap-4">
-                      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex-1">
-                        {title}
-                      </h1>
+                      <div className="flex-1">
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                          {title}
+                        </h1>
+                        {/* Status Badge */}
+                        <div className="mt-2">
+                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusInfo.badgeColor}`}>
+                            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={statusInfo.icon} />
+                            </svg>
+                            {statusInfo.badgeText}
+                          </span>
+                        </div>
+                      </div>
                       <div className="flex-shrink-0 mt-1">
                         <SocialShare 
                           title={`${title} - Available for Swap on Swapify`}
@@ -280,33 +318,32 @@ export default function ListingContent({ listing, relatedListings }) {
                     </div>
                   )}
 
-                  {/* Make Offer Button */}
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <MakeOffer listing={listing} />
-                  </div>
+                  {/* Make Offer Button - Only for Active Listings */}
+                  {isActive && (
+                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <MakeOffer listing={listing} />
+                    </div>
+                  )}
                 </div>
               </div>
-            )}
 
-            {/* Description Card - Only for Active Listings */}
-            {isActive && (
+            {/* Description Card - For All Listings */}
+            {listing?.description && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
                 <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
                   About this item
                 </h2>
-                {listing?.description && (
-                  <ListingDescription description={listing.description} />
-                )}
+                <ListingDescription description={listing.description} />
               </div>
             )}
 
-            {/* Safety Tips - Only for Active Listings */}
-            {isActive && <SafetyTips />}
+            {/* Safety Tips - For All Listings */}
+            <SafetyTips />
           </div>
         </div>
 
-        {/* Related Listings Section - Only for Active Listings */}
-        {isActive && Array.isArray(relatedListings) && relatedListings.length > 0 && (
+        {/* Related Listings Section - For All Listings */}
+        {Array.isArray(relatedListings) && relatedListings.length > 0 && (
           <RelatedListings listings={relatedListings} currentListing={listing} />
         )}
       </div>
