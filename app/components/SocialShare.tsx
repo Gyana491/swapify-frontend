@@ -26,12 +26,6 @@ const SocialShare = ({
     return '';
   };
 
-  const shareData = {
-    title,
-    text,
-    url: getCurrentUrl()
-  };
-
   const handleShare = async () => {
     if (isSharing) return;
     

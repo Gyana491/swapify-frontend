@@ -18,7 +18,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const res = await fetch(url.toString(), { cache: 'no-store' });
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ message: 'Failed to fetch user listings' }, { status: 500 });
   }
 }

@@ -8,6 +8,15 @@ type OffersTotals = {
 	listingsWithOffers: number; // number of active listings that have >=1 offer
 };
 
+type Listing = {
+	status: string;
+	offerStats?: {
+		totalOffers: number;
+	};
+	offers?: unknown[];
+	_id: string;
+};
+
 export function useOffersCount() {
 	const [offersCount, setOffersCount] = useState<OffersTotals>({
 		totalOffers: 0,
@@ -39,8 +48,8 @@ export function useOffersCount() {
 					let totalOffers = 0;
 					let listingsWithOffers = 0;
 					listings
-				.filter((l: any) => l?.status === 'active')
-				.forEach((listing: any) => {
+				.filter((l: Listing) => l?.status === 'active')
+				.forEach((listing: Listing) => {
 					const countFromStats = Number(listing?.offerStats?.totalOffers || 0);
 					const countFromArray = Array.isArray(listing?.offers) ? listing.offers.length : 0;
 					const count = countFromStats || countFromArray;
@@ -55,7 +64,7 @@ export function useOffersCount() {
 							if (totalOffers === 0 && listings.length > 0) {
 								let allTotal = 0;
 								let allListingsWithOffers = 0;
-								listings.forEach((listing: any) => {
+								listings.forEach((listing: Listing) => {
 									const countFromStats = Number(listing?.offerStats?.totalOffers || 0);
 									const countFromArray = Array.isArray(listing?.offers) ? listing.offers.length : 0;
 									const count = countFromStats || countFromArray;
@@ -76,7 +85,7 @@ export function useOffersCount() {
 						try {
 							  const mlRes = await fetch('/api/my-listings', baseOpts);
 							const mlData = await mlRes.json();
-							const allListings: any[] = Array.isArray(mlData)
+							const allListings: Listing[] = Array.isArray(mlData)
 								? mlData
 								: (Array.isArray(mlData?.listings) ? mlData.listings : []);
 
@@ -102,9 +111,9 @@ export function useOffersCount() {
 					}
 
 					setOffersCount({ totalOffers, listingsWithOffers });
-		} catch (err: any) {
+		} catch (err: unknown) {
 			console.error('Error fetching offers count:', err);
-			setError(err?.message || 'Unknown error');
+			setError(err instanceof Error ? err.message : 'Unknown error');
 			setOffersCount({ totalOffers: 0, listingsWithOffers: 0 });
 		} finally {
 			setLoading(false);

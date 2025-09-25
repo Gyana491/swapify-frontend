@@ -33,9 +33,9 @@ export function useListingOffersCount(
       // Shape: { success: boolean, offers: Offer[] }
       const offers = Array.isArray(data?.offers) ? data.offers : [];
       setCount(offers.length);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error('Error fetching offers count:', e);
-      setError(e?.message || 'Unknown error');
+      setError(e instanceof Error ? e.message : 'Unknown error');
       setCount(0);
     } finally {
       setLoading(false);
